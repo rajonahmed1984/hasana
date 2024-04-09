@@ -2,7 +2,7 @@
 
         <section class="body-section">
             <div class="container">
-                <div class="card">
+                <div class="card mt-5">
                     <div class="card-body">
                         <div class="top-section mx-auto py-4">
                             <h6>|</h6>

@@ -8,7 +8,9 @@
                             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                                 <hr>
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="index.php">আল কুরআন বাংলা অনুবাদ (সূরা ক্রমে)</a>
+                                    <a class="nav-link active" aria-current="page" href="/hasana/index.php">
+                                        আল কুরআন বাংলা অনুবাদ (সূরা ক্রমে)
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#">আল কুরআন বাংলা অনুবাদ (পারা ক্রমে)</a>
@@ -33,7 +35,7 @@
                                     <a class="nav-link" href="#">প্রাইভেসি পলিসি</a>
                                 </li>
                                 <li class="nav-item disabled">
-                                    <span>Beta Version 1.0</span>
+                                    <span>Beta Version 1.0.0</span>
                                 </li>
                             </ul>
                         </div>

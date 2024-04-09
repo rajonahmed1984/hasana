@@ -21,14 +21,14 @@
             <nav class="navbar bg-light fixed-top">
                 <div class="container">
                     <a href="index.php" class="navbar-brand">
-                        <img src="/images/hasana-logo-g.png" alt="Logo" width="45" height="auto" class="d-inline-block align-text-top">
+                        <img src="/hasana/images/hasana-logo-g.png" alt="Logo" width="45" height="auto" class="d-inline-block align-text-top">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                         <i class="bi bi-text-right"></i>
                     </button>
                     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><img src="/images/hasana-logo-g.png" alt="Logo" width="100" height="auto" class="d-inline-block align-text-top"></h5>
+                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><img src="/hasana/images/hasana-logo-g.png" alt="Logo" width="100" height="auto" class="d-inline-block align-text-top"></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
