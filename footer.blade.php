@@ -2,19 +2,19 @@
         
         <div class="fixed-bottom" style="">
             <div class="navigation-list">
-                <a href="/didartel/reports.php" class="navigation-icon">
+                <a href="/hasana/hajj.php" class="navigation-icon">
                     <img src="/hasana/images/icon/hajj.png" alt="icon" width="30" height="auto">
                     <p>হজ</p>
                 </a>
-                <a href="/didartel/reports.php" class="navigation-icon">
+                <a href="/hasana/hadith.php" class="navigation-icon">
                     <img src="/hasana/images/icon/hadis.svg" alt="icon" width="30" height="auto">
                     <p>হাদিস</p>
                 </a>
-                <a href="/didartel/home.php" class="navigation-icon active">
+                <a href="/hasana/index.php" class="navigation-icon active">
                     <img src="/hasana/images/icon/quran.png" alt="icon" width="30" height="auto">
                     <p>আল কোরআন</p>
                 </a>
-                <a href="/didartel/resellers.php" class="navigation-icon">
+                <a href="/hasana/dua.php" class="navigation-icon">
                     <img src="/hasana/images/icon/prayer-hand.svg" alt="icon" width="30" height="auto">
                     <p>দুআ</p>
                 </a>

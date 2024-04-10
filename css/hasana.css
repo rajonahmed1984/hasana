@@ -260,3 +260,6 @@ a.btn.position-relative {
     margin-bottom: 0;
     text-shadow: 0 0 3px #4CAF50;
 }
+.navigation-icon.active p {
+    color: #FF5722; 
+}
