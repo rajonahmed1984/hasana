@@ -59,12 +59,19 @@ div#offcanvasNavbar {
     background: #cedcd5;
 }
 /*head*/
-.text-dark {
-    margin-bottom: 0px;
-}
+
 .bi.bi-arrow-left {
-    color: black;
+    color: #fff;
     font-size: 20px;
+}
+.page-head {
+    padding: 10px 20px;
+    color: #fff;
+    border-radius: 0 0 20px 20px;
+    background: rgb(255 255 255 / 48%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 button.navbar-toggler {
     border: none;
@@ -88,7 +95,7 @@ svg.bi.bi-search {
 
 /*Pages*/
     section.inner-body-section {
-        padding-top: 57px;
+        padding-top: 75px;
         padding-bottom: 10px;
     }
     section.inner-body-section .card {
@@ -157,23 +164,39 @@ p.sub-name {
     color: #00512f;
     margin-bottom: 0px;
 }
-/*Page Section*/
-section.notice {
-    margin-top: 75px;
+
+/*content-box*/
+.content-slidtext-box {
+    color:#fff;
+    text-align: center;
+    
 }
-.hajj-section {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.content-slidtext-box h4 {
+    border-bottom: 1px solid #fff;
 }
 .content-box {
-    padding: 20px;
+    padding: 20px 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background: rgb(255 255 255 / 57%);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
-.content-box p {
+.content-box .left {
+    width: 100px;
+}
+.content-box .right {
+    text-align: center;
+}
+.content-box img {
+    width: 100px;
+}
+.content-box h1 {
     color: #fff;
+    margin-bottom: 0;
+}
+.content-box p {
     margin-bottom: 0;
 }
 /*Notification*/
@@ -227,13 +250,14 @@ a.btn.position-relative {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #0c5230;
 }
 .navigation-icon p {
     font-size: 17px;
+    color: #0c5230;
     margin-bottom: 0;
-    text-shadow: 0 0 3px #4CAF50;
 }
 .navigation-icon.active p {
-    color: #FF5722; 
+    font-size: 19px;
+    color: #ffffff;
+    text-shadow: 0 0 3px #000000;
 }

@@ -18,7 +18,7 @@
             </nav>
         </header>
 
-        <section class="notice">
+        <section class="inner-body-section">
             <div class="container">
                 <div class="row">
                     <a href="https://flid.org/m/notification/visiting/48">

@@ -4,7 +4,7 @@
                 <div class="navigation-list">
                     <a href="/hasana/hajj.php" class="navigation-icon">
                         <img src="/hasana/images/icon/hajj.png" alt="icon" width="30" height="auto">
-                        <p>হজ</p>
+                        <p>হজ্জ</p>
                     </a>
                     <a href="/hasana/hadith.php" class="navigation-icon">
                         <img src="/hasana/images/icon/hadis.svg" alt="icon" width="30" height="auto">
