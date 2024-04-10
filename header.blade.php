@@ -23,9 +23,13 @@
                     <a href="index.php" class="navbar-brand">
                         <img src="/hasana/images/hasana-logo-g.png" alt="Logo" width="45" height="auto" class="d-inline-block align-text-top">
                     </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                        <i class="bi bi-text-right"></i>
-                    </button>
+                    <a type="button" class="btn position-relative" href="/didartel/notification.php">
+                        <img src="/hasana/images/icon/bell.svg" alt="icon" width="30" height="auto">
+                        <span class="position-absolute top-0 end-50 translate-middle badge rounded-pill bg-primary">
+                            99+
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    </a>
                     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                         <div class="offcanvas-header">
                             <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><img src="/hasana/images/hasana-logo-g.png" alt="Logo" width="100" height="auto" class="d-inline-block align-text-top"></h5>

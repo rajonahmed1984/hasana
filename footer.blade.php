@@ -2,29 +2,25 @@
         
         <div class="fixed-bottom" style="">
             <div class="navigation-list">
-                <a type="button" class="btn position-relative" href="/didartel/notification.php">
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-                        99+
-                        <span class="visually-hidden">unread messages</span>
-                    </span>
-                    <i class="bi bi-bell"></i>
-                    <p>Notification</p>
+                <a href="/didartel/reports.php" class="navigation-icon">
+                    <img src="/hasana/images/icon/hajj.png" alt="icon" width="30" height="auto">
+                    <p>হজ</p>
                 </a>
                 <a href="/didartel/reports.php" class="navigation-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
-                    <p>Reports</p>
+                    <img src="/hasana/images/icon/hadis.svg" alt="icon" width="30" height="auto">
+                    <p>হাদিস</p>
                 </a>
                 <a href="/didartel/home.php" class="navigation-icon active">
-                    <i class="bi bi-house-door-fill"></i>
-                    <p>Home</p>
+                    <img src="/hasana/images/icon/quran.png" alt="icon" width="30" height="auto">
+                    <p>আল কোরআন</p>
                 </a>
                 <a href="/didartel/resellers.php" class="navigation-icon">
-                    <i class="bi bi-people"></i>
-                    <p>Reseller</p>
+                    <img src="/hasana/images/icon/prayer-hand.svg" alt="icon" width="30" height="auto">
+                    <p>দুআ</p>
                 </a>
                 <a class="navigation-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                    <i class="bi bi-text-right"></i>
-                    <p>Menu</p>
+                    <img src="/hasana/images/icon/menu.svg" alt="icon" width="30" height="auto">
+                    <p>মেনু</p>
                 </a>
             </div>
         </div>
