@@ -212,6 +212,20 @@ p.sub-name {
     color: #00512f;
     margin-bottom: 0px;
 }
+/*Page Section*/
+section.notice {
+    margin-top: 75px;
+}
+/*Notification*/
+.callout {
+    padding: 0.5rem 1.25rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-left: 1px solid #ed4849;
+    border-left-width: 0.25rem;
+    background: rgb(255 255 255 / 48%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
 /*Canvas menu*/
 .offcanvas-body {
     border-radius: 20px 20px 0 0;
