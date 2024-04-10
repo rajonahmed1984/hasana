@@ -212,8 +212,12 @@ p.sub-name {
     color: #00512f;
     margin-bottom: 0px;
 }
-
-
+/*Canvas menu*/
+.offcanvas-body {
+    border-radius: 20px 20px 0 0;
+    background: rgb(255 255 255 / 48%);
+    border: 1px solid #8BC34A;
+}
 /*footer menu*/
 footer {
     margin-top: 75px;
@@ -228,15 +232,15 @@ footer {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgb(255 255 255);
 }
 a.btn.position-relative {
     padding: 0;
     color: #0c5230;
 }
 .btn .badge {
-    margin-left: 5px;
-    margin-top: 10px;
+    margin-top: 0;
+    background-color: #00512f !important;
 }
 i.bi {
     font-size: 25px;
@@ -245,9 +249,6 @@ a.btn.position-relative {
     padding: 0;
     color: #0c5230;
 }
-footer p {
-    font-size: 10px;
-}
 .navigation-icon {
     display: flex;
     flex-direction: column;
@@ -255,6 +256,7 @@ footer p {
     color: #0c5230;
 }
 .navigation-icon p {
+    font-size: 17px;
     margin-bottom: 0;
     text-shadow: 0 0 3px #4CAF50;
 }
