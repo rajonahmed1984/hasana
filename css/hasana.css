@@ -184,9 +184,10 @@ p.sub-name {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 .content-box .left {
-    width: 100px;
+    align-items: center;
 }
 .content-box .right {
+    align-items: center;
     text-align: center;
 }
 .content-box img {

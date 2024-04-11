@@ -52,11 +52,13 @@
 			<div class="container">
 				<a href="#">
 					<div class="content-box">				
-						<div class="left">
+						<div class="left d-flex">
 							<img src="/hasana/images/icon/hajj.png" alt="Logo" width="45" height="auto">
+							<h1>
+								হজ্জ গাইড
+							</h1>
 						</div>
 						<div class="right">
-							
 							<h1>
 								হজ্জ গাইড
 							</h1>
@@ -71,14 +73,15 @@
 			<div class="container mt-3">
 				<a href="#">
 					<div class="content-box">
-						<div class="left">
+						<div class="left d-flex">
 							<img src="/hasana/images/icon/umrah.png" alt="Logo" width="45" height="auto">
-						</div>
-						<div class="right">
-							
 							<h1>
 								ওমরাহ গাইড
 							</h1>
+						</div>
+						<div class="right">
+							
+							
 							<p>
 								দোয়া ও জিকির
 							</p>
