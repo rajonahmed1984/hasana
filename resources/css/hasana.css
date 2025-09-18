@@ -1,5 +1,10 @@
-/* Google Font - Hind Siliguri for Bengali */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700&display=swap');
+@font-face {
+    font-family: 'Baloo Da 2';
+    src: url('../fonts/hasana/BalooDa2-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
 /* --- CSS Variables --- */
 :root {
     --primary-color: #01512f;
@@ -917,21 +922,3 @@ body.dark-mode .prayer-header {
 .prayer-time-card.next-prayer .end-time {
     color: rgba(255, 255, 255, 0.8);
 }
-/* Utility classes added for Laravel integration */
-.hidden { display: none !important; }
-.hasana-body { font-family: var(--bengali-font); background: var(--bg-color); }
-.overflow-hidden { overflow: hidden; }
-
-
-/* Utility classes for spacing (bootstrap-style) */
-.mb-0 { margin-bottom: 0 !important; }
-.mb-1 { margin-bottom: 0.25rem !important; }
-.mb-2 { margin-bottom: 0.5rem !important; }
-.mb-3 { margin-bottom: 1rem !important; }
-.mb-4 { margin-bottom: 1.5rem !important; }
-.d-block { display: block !important; }
-.ms-1 { margin-left: 0.25rem !important; }
-.text-muted { color: var(--text-light) !important; }
-.badge { display: inline-block; padding: 0.35em 0.65em; border-radius: 10px; font-size: 0.75rem; }
-.bg-success { background-color: var(--primary-color); color: var(--white-color); }
-
