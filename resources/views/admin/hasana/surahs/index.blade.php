@@ -1,9 +1,9 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Hasana · Surahs</h1>
+        <h1 class="h3 mb-0">Hasana - Surahs</h1>
         <a href="{{ route('admin.hasana.surahs.create') }}" class="btn btn-primary">New Surah</a>
     </div>
 
@@ -30,7 +30,7 @@
                             <td>{{ $surah->number }}</td>
                             <td>{{ $surah->name_ar }}</td>
                             <td>{{ $surah->name_en }}</td>
-                            <td>{{ $surah->revelation_type ?? '—' }}</td>
+                            <td>{{ $surah->revelation_type ?? '�' }}</td>
                             <td>{{ $surah->ayah_count }}</td>
                             <td class="text-end">
                                 <div class="btn-group" role="group">
@@ -58,3 +58,5 @@
     </div>
 </div>
 @endsection
+
+
