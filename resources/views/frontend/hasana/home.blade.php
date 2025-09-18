@@ -11,13 +11,13 @@
         <button class="close-btn" id="close-menu-btn">&times;</button>
     </div>
     <nav class="offcanvas-nav">
-        <a href="{{ route('hasana.home') }}" class="offcanvas-link active"><i class="bi bi-house-fill"></i> ???</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> ?????????</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> ??????</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i> ????????</a>
+        <a href="{{ route('hasana.home') }}" class="offcanvas-link active"><i class="bi bi-house-fill"></i> হোম </a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> বুকমার্ক </a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> সেটিংস </a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i>আমাদের সম্পর্কে </a>
     </nav>
     <div class="offcanvas-footer">
-        <p class="mb-0">????? ???</p>
+        <p class="mb-0">ডার্ক মোড</p>
         <label class="toggle-switch">
             <input type="checkbox" id="dark-mode-toggle">
             <span class="slider"></span>
@@ -41,7 +41,7 @@
             <div>
                 <div class="location">
                     <i class="bi bi-geo-alt-fill"></i>
-                    <span id="location-text">????? ?????? ??? ?????�</span>
+                    <span id="location-text">--</span>
                 </div>
                 <h2 id="current-time">--:-- --</h2>
                 <p id="current-date"></p>
@@ -50,34 +50,34 @@
         </div>
         <div class="prayer-times-grid">
             <div class="prayer-time-card" id="fajr">
-                <p>???</p>
+                <p>ফজর</p>
                 <i class="bi bi-brightness-alt-high"></i>
-                <p class="time">--:--</p>
-                <p class="end-time">???: --:--</p>
+                <p class="time">শুরু: --:--</p>
+                <p class="end-time">শেষ: --:--</p>
             </div>
             <div class="prayer-time-card" id="dhuhr">
-                <p>????</p>
+                <p>যোহর</p>
                 <i class="bi bi-brightness-high-fill"></i>
-                <p class="time">--:--</p>
-                <p class="end-time">???: --:--</p>
+                <p class="time">শুরু: --:--</p>
+                <p class="end-time">শেষ: --:--</p>
             </div>
             <div class="prayer-time-card" id="asr">
-                <p>???</p>
+                <p>আসর</p>
                 <i class="bi bi-brightness-high"></i>
-                <p class="time">--:--</p>
-                <p class="end-time">???: --:--</p>
+                <p class="time">শুরু: --:--</p>
+                <p class="end-time">শেষ: --:--</p>
             </div>
             <div class="prayer-time-card" id="maghrib">
-                <p>??????</p>
+                <p>মাগরিব</p>
                 <i class="bi bi-sunset-fill"></i>
-                <p class="time">--:--</p>
-                <p class="end-time">???: --:--</p>
+                <p class="time">শুরু: --:--</p>
+                <p class="end-time">শেষ: --:--</p>
             </div>
             <div class="prayer-time-card" id="isha">
-                <p>???</p>
+                <p>ইশা</p>
                 <i class="bi bi-moon-stars-fill"></i>
-                <p class="time">--:--</p>
-                <p class="end-time">???: --:--</p>
+                <p class="time">শুরু: --:--</p>
+                <p class="end-time">শেষ: --:--</p>
             </div>
         </div>
     </section>
@@ -100,23 +100,23 @@
 <nav class="bottom-nav">
     <a href="{{ route('hasana.home') }}" class="nav-item {{ request()->routeIs('hasana.home') ? 'active' : '' }}">
         <i class="fa-solid fa-house"></i>
-        <span>???</span>
+        <span>হোম</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-book-open"></i>
-        <span>?????</span>
+        <span>হাদিস</span>
     </a>
     <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') ? 'active' : '' }}">
         <i class="fa-solid fa-quran"></i>
-        <span>?????</span>
+        <span>কুরআন</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-hands-praying"></i>
-        <span>????</span>
+        <span>দোয়া</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-kaaba"></i>
-        <span>????? ????</span>
+        <span>ওমরাহ গাইড</span>
     </a>
 </nav>
 @endsection
