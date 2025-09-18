@@ -1,0 +1,937 @@
+/* Google Font - Hind Siliguri for Bengali */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700&display=swap');
+/* --- CSS Variables --- */
+:root {
+    --primary-color: #01512f;
+    --secondary-color: #1f7a34;
+    --text-color: #343a40;
+    --text-light: #6c757d;
+    --bg-color: #f8f9fa;
+    --white-color: #ffffff;
+    --light-gray: #e9ecef;
+    --border-color: #dee2e6;
+    --arabic-font: 'Lateef', serif;
+    --bengali-font: 'Baloo Da 2', sans-serif;
+    --menu-width: 280px;
+}
+/* --- Dark Mode Variables --- */
+body.dark-mode {
+    --text-color: #e0e0e0;
+    --text-light: #a0a0a0;
+    --bg-color: #121212;
+    --white-color: #1e1e1e; /* Card backgrounds */
+    --border-color: #333333;
+}
+/* --- General Body & Reset --- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--bengali-font);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    /* Add padding to prevent content from hiding behind fixed nav/header */
+    padding-top: 60px; /* Height of header */
+    padding-bottom: 70px; /* Height of bottom nav */
+}
+h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+/* --- Sticky Header --- */
+.app-header {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 10px 15px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+.header-icon {
+    color: var(--white-color);
+    background: transparent;
+    border: transparent;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+.header-icon-placeholder {
+    width: 24px; /* Same as icon size to keep title centered */
+}
+/* --- Off-canvas Menu (FIXED) --- */
+.offcanvas-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1010;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.offcanvas-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.offcanvas-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--menu-width);
+    height: 100%;
+    background-color: var(--bg-color);
+    z-index: 1020;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    transform: translateX(-100%); /* Hide off-screen to the left */
+    transition: transform 0.3s ease; /* Animate the transform property */
+}
+.offcanvas-menu.active {
+    transform: translateX(0); /* Bring it into view */
+}
+.offcanvas-header {
+    padding: 20px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.offcanvas-logo {
+    width: 40px;
+    height: 40px;
+}
+.offcanvas-title {
+    margin: 0;
+    font-size: 1.4rem;
+    flex-grow: 1;
+}
+.close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 2rem;
+    cursor: pointer;
+}
+.offcanvas-nav {
+    padding: 20px 0;
+    flex-grow: 1;
+}
+.offcanvas-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+.offcanvas-link.active, .offcanvas-link:hover {
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+}
+body.dark-mode .offcanvas-link.active, body.dark-mode .offcanvas-link:hover {
+    background-color: #2a2a2a;
+}
+.offcanvas-link i {
+    font-size: 1.3rem;
+    width: 25px;
+}
+.offcanvas-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Sticky Header --- */
+.app-header {
+    background-color: var(--primary-color);
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    color: #ffffff;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    height: 40px;
+}
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+.header-icon {
+    color: #ffffff;
+    font-size: 1.5rem;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+.header-icon-placeholder {
+    width: 34px;
+}
+
+/* --- Main Container --- */
+.main-container {
+    padding: 15px;
+}
+/* --- Greeting Card Styles (NEW) --- */
+/* --- Greeting & Surah Info Cards --- */
+.greeting-card-container, .surah-info-card-container {
+    margin-bottom: 20px;
+}
+.greeting-card, .surah-info-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+/* .greeting-text h2, .surah-info-card h2 {
+    margin: 0 0 5px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+} */
+.greeting-text p, .surah-info-card p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+.verse-of-the-day {
+    margin-top: 15px;
+    /* padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2); */
+}
+.surah-info-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 10px auto;
+    width: 50px;
+}
+.surah-info-card .surah-info-meta {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.surah-info-card .surah-info-details {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 10px;
+    line-height: 1.6;
+}
+body.dark-mode .greeting-card, body.dark-mode .surah-info-card {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+/* --- Header Search (NEW) --- */
+.header-search-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 15px;
+}
+.header-search-container.active {
+    max-height: 60px; /* Animate to this height */
+    padding: 0 15px 10px 15px;
+}
+body.search-active {
+    padding-top: 115px; /* Adjust body padding when search is open */
+}
+.header-search-container .search-bar {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--bengali-font);
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+.header-search-container .search-bar:focus {
+    outline: none;
+}
+
+/* --- Surah List (Home Page) --- */
+.surah-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.surah-card {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.surah-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.surah-card-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* --- SURAH NUMBER STYLE UPDATED --- */
+.surah-number-bg {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3e%3cpolygon points='50,5 58,25 79,21 75,42 95,50 75,58 79,79 58,75 50,95 42,75 21,79 25,58 5,50 25,42 21,21 42,25' fill='%23e9ecef'/%3e%3c/svg%3e");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.surah-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-color);
+}
+.surah-meaning {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 2px 0 0 0;
+}
+.surah-ayat-count {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 2px 0px 0px;
+}
+.surah-details {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin: 2px 0 0 0;
+}
+.surah-arabic-name {
+    font-family: var(--arabic-font);
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+/* --- Ayah Cards (Surah Page) --- */
+.ayah-card {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 15px;
+    padding: 15px;
+}
+.ayah-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--light-gray);
+}
+.ayah-number {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+.ayah-actions {
+    display: flex;
+    gap: 15px;
+    font-size: 1.2rem;
+    color: var(--text-light);
+}
+.ayah-actions i {
+    cursor: pointer;
+}
+.ayah-arabic {
+    font-family: var(--arabic-font);
+    font-size: 2rem;
+    text-align: right;
+    direction: rtl;
+    line-height: 2.2;
+    margin-bottom: 1rem;
+}
+.ayah-translation {
+    font-size: 1rem;
+    line-height: 1.7;
+    text-align: left;
+}
+
+/* --- Settings Page --- */
+.settings-group {
+    margin-bottom: 25px;
+}
+.settings-group-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+.settings-list {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--light-gray);
+    cursor: pointer;
+}
+.settings-item:last-child {
+    border-bottom: none;
+}
+.settings-item-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+.settings-item-content i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+.font-slider {
+    width: 100px;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.toggle-switch input { display: none; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* --- Bottom Navigation Bar (UPDATED) --- */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background-color: var(--white-color);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.08);
+    border-top: 1px solid var(--border-color);
+    z-index: 999;
+}
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-light);
+    font-size: 0.75rem;
+    padding: 5px 0;
+    flex: 1;
+    transition: color 0.2s ease;
+}
+/* Using attribute selector to target Font Awesome icons */
+.nav-item [class*="fa-"] {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+}
+.nav-item.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+* Other pages like surah.html, settings.html will inherit these styles */
+/* Add specific styles for them if needed, like the ones from previous versions */
+.ayah-card, .settings-list {
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
+}
+
+/* --- Toggle Switch from Settings --- */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.toggle-switch input { display: none; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #ffffff;
+    transition: .4s;
+    border-radius: 50%;
+}
+body:not(.dark-mode) .slider:before {
+    background-color: white;
+}
+body.dark-mode .slider:before {
+    background-color: #1e1e1e;
+}
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* --- Toast Notification --- */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1050;
+    left: 50%;
+    bottom: 90px;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    opacity: 0;
+    transition: visibility 0s 2.5s, opacity 0.5s linear;
+}
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.5s linear;
+}
+
+/* --- Share Modal (NEW) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1030;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background-color: var(--bg-color);
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.modal-header .close-btn {
+    font-size: 2rem;
+    color: var(--text-light);
+}
+.modal-body textarea {
+    width: 100%;
+    height: 120px;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    font-family: var(--bengali-font);
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 15px;
+}
+body.dark-mode .modal-body textarea {
+    background-color: #333;
+}
+.modal-body .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-family: var(--bengali-font);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* --- Share Page Specific Styles (UPDATED) --- */
+.share-page-body {
+    background-color: var(--light-gray);
+}
+body.dark-mode .share-page-body {
+    background-color: #2a2a2a;
+}
+.share-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+.share-card {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    /* BACKGROUND IMAGE UPDATED TO FIX ERROR */
+    background-color: #eaf6f0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2328a745' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #333;
+}
+body.dark-mode .share-card {
+    background-color: #1c2b22;
+    color: #e0e0e0;
+}
+.share-text-content {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+body.dark-mode .share-text-content {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+#share-ayah-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+}
+#share-ayah-ref {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+}
+.share-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.btn-primary, .btn-secondary {
+    width: auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+.btn-secondary {
+    background-color: #6c757d;
+}
+body.dark-mode .btn-secondary {
+    background-color: #495057;
+}
+
+
+
+/* --- Hadis Page Styles (NEW) --- */
+.hadis-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background-color: var(--light-gray);
+    padding: 5px;
+    border-radius: 8px;
+}
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: var(--bengali-font);
+    border: none;
+    background-color: transparent;
+    color: var(--text-light);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+.tab-btn.active {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.hadis-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.hadis-card {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color);
+}
+.hadis-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin: 0 0 15px 0;
+    text-align: justify;
+}
+.hadis-ref {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* --- Dua Page Styles (NEW) --- */
+.dua-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.dua-card {
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+.dua-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 15px 0;
+}
+.dua-arabic {
+    font-family: var(--arabic-font);
+    font-size: 1.8rem;
+    text-align: right;
+    direction: rtl;
+    line-height: 2;
+    margin: 0 0 15px 0;
+}
+.dua-translation {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0 0 15px 0;
+    font-style: italic;
+    color: var(--text-light);
+}
+.dua-ref {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* --- Prayer Times Section (NEW) --- */
+.prayer-times-section {
+    background-color: var(--white-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+.prayer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--light-gray);
+}
+body.dark-mode .prayer-header {
+    border-bottom-color: var(--border-color);
+}
+.prayer-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.prayer-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+.location {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+.location i {
+    color: var(--primary-color);
+}
+.prayer-times-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+.prayer-time-card {
+    text-align: center;
+    padding: 10px 5px;
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    transition: background-color 0.3s, transform 0.3s;
+}
+.prayer-time-card p {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-light);
+}
+.prayer-time-card i {
+    font-size: 1.6rem; /* Slightly smaller to make space */
+    margin: 5px 0; /* Reduced margin */
+    color: var(--text-color);
+}
+.prayer-time-card .time {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+/* New style for end time */
+.prayer-time-card .end-time {
+    font-size: 0.6rem;
+    color: var(--text-light);
+    line-height: 1.2;
+}
+/* Style for the next upcoming prayer */
+.prayer-time-card.next-prayer {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+.prayer-time-card.next-prayer p,
+.prayer-time-card.next-prayer i,
+.prayer-time-card.next-prayer .time {
+    color: white;
+}
+/* New style for highlighted end time */
+.prayer-time-card.next-prayer .end-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+/* Utility classes added for Laravel integration */
+.hidden { display: none !important; }
+.hasana-body { font-family: var(--bengali-font); background: var(--bg-color); }
+.overflow-hidden { overflow: hidden; }
+
+
+/* Utility classes for spacing (bootstrap-style) */
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.d-block { display: block !important; }
+.ms-1 { margin-left: 0.25rem !important; }
+.text-muted { color: var(--text-light) !important; }
+.badge { display: inline-block; padding: 0.35em 0.65em; border-radius: 10px; font-size: 0.75rem; }
+.bg-success { background-color: var(--primary-color); color: var(--white-color); }
+
