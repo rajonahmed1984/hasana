@@ -1,10 +1,10 @@
-﻿@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1">Edit Surah · {{ $surah->name_en }}</h1>
+            <h1 class="h3 mb-1">Edit Surah � {{ $surah->name_en }}</h1>
             <span class="text-muted">Manage core info and ayahs</span>
         </div>
         <div class="btn-group">

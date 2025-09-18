@@ -1,4 +1,5 @@
-﻿import "../hasana/css/style.css";
+import '../frontend/assets/js/script.js';
+import "../frontend/assets/css/style.css";
 
 document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menu-toggle');

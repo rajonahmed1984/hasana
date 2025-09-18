@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Hasana;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Surah;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class HasanaController extends Controller
@@ -21,13 +20,13 @@ class HasanaController extends Controller
             ->orderBy('number')
             ->get();
 
-        return view('hasana.home', compact('surahs'));
+        return view('frontend.hasana.home', compact('surahs'));
     }
 
     public function surah(Surah $surah): View
     {
         $surah->load(['ayahs' => fn ($query) => $query->orderBy('number')]);
 
-        return view('hasana.surah', compact('surah'));
+        return view('frontend.hasana.surah', compact('surah'));
     }
 }

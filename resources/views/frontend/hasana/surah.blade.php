@@ -1,4 +1,4 @@
-﻿@extends('hasana.layouts.app')
+@extends('frontend.layouts.app')
 
 @section('title', $surah->name_en . ' - Hasana')
 
@@ -6,18 +6,18 @@
 <div class="offcanvas-overlay" id="offcanvas-overlay"></div>
 <aside class="offcanvas-menu" id="offcanvas-menu">
     <div class="offcanvas-header">
-        <img src="{{ Vite::asset('resources/hasana/img/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
+        <img src="{{ Vite::asset('resources/frontend/assets/img/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
         <h2 class="offcanvas-title">Hasana</h2>
         <button class="close-btn" id="close-menu-btn">&times;</button>
     </div>
     <nav class="offcanvas-nav">
-        <a href="{{ route('hasana.home') }}" class="offcanvas-link"><i class="bi bi-house-fill"></i> হোম</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> বুকমার্কস</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> সেটিংস</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i> সম্পর্কে</a>
+        <a href="{{ route('hasana.home') }}" class="offcanvas-link"><i class="bi bi-house-fill"></i> ???</a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> ?????????</a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> ??????</a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i> ????????</a>
     </nav>
     <div class="offcanvas-footer">
-        <p class="mb-0">ডার্ক মোড</p>
+        <p class="mb-0">????? ???</p>
         <label class="toggle-switch">
             <input type="checkbox" disabled>
             <span class="slider"></span>
@@ -40,17 +40,17 @@
 <main class="main-container">
     <section class="surah-info-card-container">
         <div class="surah-info-card">
-            <p class="surah-info-meta mb-2">সূরা {{ $surah->number }} · {{ ucfirst($surah->revelation_type ?? 'Unknown') }}</p>
+            <p class="surah-info-meta mb-2">???? {{ $surah->number }} � {{ ucfirst($surah->revelation_type ?? 'Unknown') }}</p>
             <h2 class="mb-1">{{ $surah->name_en }}</h2>
             <p class="surah-info-details mb-2">{{ $surah->name_ar }}</p>
-            <p class="surah-info-details mb-0">মোট {{ $surah->ayahs->count() }} টি আয়াত</p>
+            <p class="surah-info-details mb-0">??? {{ $surah->ayahs->count() }} ?? ????</p>
         </div>
     </section>
 
     @foreach ($surah->ayahs as $ayah)
         <article class="ayah-card" id="ayah-{{ $ayah->number }}">
             <div class="ayah-header">
-                <span class="ayah-number">আয়াত {{ $ayah->number }}</span>
+                <span class="ayah-number">???? {{ $ayah->number }}</span>
                 <div class="ayah-actions">
                     @if ($ayah->audio_url)
                         <a href="{{ $ayah->audio_url }}" target="_blank" rel="noopener" title="Audio"><i class="bi bi-play-circle"></i></a>
@@ -74,19 +74,19 @@
 <nav class="bottom-nav">
     <a href="{{ route('hasana.home') }}" class="nav-item active">
         <i class="fa-solid fa-quran"></i>
-        <span>কুরআন</span>
+        <span>?????</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-book-open-reader"></i>
-        <span>হাদিস</span>
+        <span>?????</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-hands-praying"></i>
-        <span>দোয়া</span>
+        <span>????</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-kaaba"></i>
-        <span>উমরাহ</span>
+        <span>?????</span>
     </a>
 </nav>
 @endsection

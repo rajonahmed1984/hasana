@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\Hasana\HasanaController;
+use App\Http\Controllers\Frontend\HasanaController;
 use App\Http\Controllers\Admin\SurahController as AdminSurahController;
 use App\Http\Controllers\Admin\AyahController as AdminAyahController;
 
@@ -36,4 +36,3 @@ Route::middleware('auth')->group(function () {
         Route::resource('surahs.ayahs', AdminAyahController::class)->except(['show']);
     });
 });
-

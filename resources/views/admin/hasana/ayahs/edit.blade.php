@@ -1,9 +1,9 @@
-﻿@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Edit Ayah · {{ $surah->name_en }} #{{ $ayah->number }}</h1>
+        <h1 class="h3 mb-0">Edit Ayah � {{ $surah->name_en }} #{{ $ayah->number }}</h1>
         <a href="{{ route('admin.hasana.surahs.ayahs.index', $surah) }}" class="btn btn-outline-secondary">Back</a>
     </div>
 
