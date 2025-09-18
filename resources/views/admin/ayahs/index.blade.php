@@ -8,8 +8,8 @@
             <span class="text-muted">Manage verses line by line</span>
         </div>
         <div class="btn-group">
-            <a href="{{ route('admin.hasana.surahs.edit', $surah) }}" class="btn btn-outline-secondary">Back to Surah</a>
-            <a href="{{ route('admin.hasana.surahs.ayahs.create', $surah) }}" class="btn btn-primary">Add Ayah</a>
+            <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn btn-outline-secondary">Back to Surah</a>
+            <a href="{{ route('admin.surahs.ayahs.create', $surah) }}" class="btn btn-primary">Add Ayah</a>
         </div>
     </div>
 
@@ -38,8 +38,8 @@
                             <td>{{ $ayah->is_active ? 'Yes' : 'No' }}</td>
                             <td class="text-end">
                                 <div class="btn-group">
-                                    <a href="{{ route('admin.hasana.surahs.ayahs.edit', [$surah, $ayah]) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <form action="{{ route('admin.hasana.surahs.ayahs.destroy', [$surah, $ayah]) }}" method="POST" onsubmit="return confirm('Delete this ayah?')">
+                                    <a href="{{ route('admin.surahs.ayahs.edit', [$surah, $ayah]) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    <form action="{{ route('admin.surahs.ayahs.destroy', [$surah, $ayah]) }}" method="POST" onsubmit="return confirm('Delete this ayah?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>

@@ -13,14 +13,14 @@ class AyahController extends Controller
     {
         $ayahs = $surah->ayahs()->paginate(50);
 
-        return view('admin.hasana.ayahs.index', compact('surah', 'ayahs'));
+        return view('admin.ayahs.index', compact('surah', 'ayahs'));
     }
 
     public function create(Surah $surah)
     {
         $ayah = new Ayah(['is_active' => true]);
 
-        return view('admin.hasana.ayahs.create', compact('surah', 'ayah'));
+        return view('admin.ayahs.create', compact('surah', 'ayah'));
     }
 
     public function store(Request $request, Surah $surah)
@@ -40,7 +40,7 @@ class AyahController extends Controller
         $surah->update(['ayah_count' => $surah->ayahs()->count()]);
 
         return redirect()
-            ->route('admin.hasana.surahs.ayahs.index', $surah)
+            ->route('admin.surahs.ayahs.index', $surah)
             ->with('status', 'Ayah created successfully.');
     }
 
@@ -48,7 +48,7 @@ class AyahController extends Controller
     {
         $this->ensureBelongsToSurah($surah, $ayah);
 
-        return view('admin.hasana.ayahs.edit', compact('surah', 'ayah'));
+        return view('admin.ayahs.edit', compact('surah', 'ayah'));
     }
 
     public function update(Request $request, Surah $surah, Ayah $ayah)
@@ -70,7 +70,7 @@ class AyahController extends Controller
         $surah->update(['ayah_count' => $surah->ayahs()->count()]);
 
         return redirect()
-            ->route('admin.hasana.surahs.ayahs.index', $surah)
+            ->route('admin.surahs.ayahs.index', $surah)
             ->with('status', 'Ayah updated successfully.');
     }
 
@@ -82,7 +82,7 @@ class AyahController extends Controller
         $surah->update(['ayah_count' => $surah->ayahs()->count()]);
 
         return redirect()
-            ->route('admin.hasana.surahs.ayahs.index', $surah)
+            ->route('admin.surahs.ayahs.index', $surah)
             ->with('status', 'Ayah removed.');
     }
 
@@ -91,3 +91,4 @@ class AyahController extends Controller
         abort_if($ayah->surah_id !== $surah->id, 404);
     }
 }
+

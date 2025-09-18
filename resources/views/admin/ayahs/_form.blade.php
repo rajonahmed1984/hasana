@@ -1,4 +1,4 @@
-﻿<div class="row g-3">
+<div class="row g-3">
     <div class="col-md-2">
         <label class="form-label">Ayah Number</label>
         <input type="number" class="form-control" min="1" name="number" value="{{ old('number', $ayah->number) }}" required>

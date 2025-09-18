@@ -67,13 +67,17 @@
 </main>
 
 <nav class="bottom-nav">
-    <a href="{{ route('hasana.home') }}" class="nav-item active">
-        <i class="fa-solid fa-quran"></i>
-        <span>?????</span>
+    <a href="{{ route('hasana.home') }}" class="nav-item {{ request()->routeIs('hasana.home') ? 'active' : '' }}">
+        <i class="fa-solid fa-house"></i>
+        <span>???</span>
     </a>
     <a href="#" class="nav-item">
-        <i class="fa-solid fa-book-open-reader"></i>
-        <span>?????????</span>
+        <i class="fa-solid fa-book-open"></i>
+        <span>?????</span>
+    </a>
+    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') || request()->routeIs('hasana.surah') ? 'active' : '' }}">
+        <i class="fa-solid fa-quran"></i>
+        <span>?????</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-hands-praying"></i>
@@ -81,7 +85,8 @@
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-kaaba"></i>
-        <span>?????</span>
+        <span>????? ????</span>
     </a>
 </nav>
 @endsection
+

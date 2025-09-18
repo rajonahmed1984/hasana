@@ -1,12 +1,14 @@
 const THEME_STORAGE_KEY = 'hasana-theme';
+let prayerSchedule = [];
+let prayerUpdateTimer = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     applyStoredTheme();
     initMenuToggle();
     initDarkModeToggle();
-    initSurahSearch();
     initDateTimeTicker();
     initPrayerTimes();
+    initSurahSearch();
 });
 
 function initMenuToggle() {
@@ -61,25 +63,6 @@ function initDarkModeToggle() {
     });
 }
 
-function initSurahSearch() {
-    const searchInput = document.querySelector('[data-surah-search]');
-    const items = Array.from(document.querySelectorAll('[data-surah-item]'));
-    if (!searchInput || !items.length) {
-        return;
-    }
-
-    const filterItems = value => {
-        const term = value.trim().toLowerCase();
-        items.forEach(item => {
-            const haystack = (item.dataset.search || '').toLowerCase();
-            const match = !term || haystack.includes(term);
-            item.classList.toggle('hidden', !match);
-        });
-    };
-
-    searchInput.addEventListener('input', event => filterItems(event.target.value));
-}
-
 function initDateTimeTicker() {
     const timeElem = document.getElementById('current-time');
     const gregorianElem = document.getElementById('current-date');
@@ -92,21 +75,21 @@ function initDateTimeTicker() {
     const update = () => {
         const now = new Date();
         if (timeElem) {
-            timeElem.textContent = now.toLocaleTimeString('bn-BD', {
+            timeElem.textContent = formatDigits(now.toLocaleTimeString('bn-BD', {
                 hour: 'numeric',
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: true,
-            });
+            }));
         }
 
         if (gregorianElem) {
-            gregorianElem.textContent = now.toLocaleDateString('bn-BD', {
+            gregorianElem.textContent = formatDigits(now.toLocaleDateString('bn-BD', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
-            });
+            }));
         }
 
         if (islamicElem) {
@@ -118,7 +101,7 @@ function initDateTimeTicker() {
                     year: 'numeric',
                     numberingSystem: 'beng',
                 };
-                islamicElem.textContent = `${new Intl.DateTimeFormat('bn-BD', options).format(now)} 	`;
+                islamicElem.textContent = formatDigits(new Intl.DateTimeFormat('bn-BD', options).format(now)) + ' ?????';
             } catch (error) {
                 islamicElem.textContent = '';
             }
@@ -137,12 +120,13 @@ function initPrayerTimes() {
     }
 
     const applyTimings = timings => {
+        prayerSchedule = [];
         const mapping = [
             { id: 'fajr', key: 'Fajr', endKey: 'Sunrise' },
             { id: 'dhuhr', key: 'Dhuhr', endKey: 'Asr' },
             { id: 'asr', key: 'Asr', endKey: 'Maghrib' },
             { id: 'maghrib', key: 'Maghrib', endKey: 'Isha' },
-            { id: 'isha', key: 'Isha', endKey: 'Midnight' },
+            { id: 'isha', key: 'Isha', endKey: 'Fajr' },
         ];
 
         mapping.forEach(entry => {
@@ -150,33 +134,60 @@ function initPrayerTimes() {
             if (!card) return;
             const timeElem = card.querySelector('.time');
             const endElem = card.querySelector('.end-time');
+            const startMinutes = toMinutes(timings[entry.key]);
+
+            card.classList.remove('next-prayer', 'current-prayer');
+
             if (timeElem && timings[entry.key]) {
-                timeElem.textContent = timings[entry.key];
+                timeElem.textContent = formatDigits(timings[entry.key]);
             }
+
             if (endElem && timings[entry.endKey]) {
-                endElem.textContent = `??? ???: ${timings[entry.endKey]}`;
+                endElem.textContent = `???: ${formatDigits(timings[entry.endKey])}`;
             }
-            card.classList.remove('next-prayer');
+
+            if (startMinutes !== null) {
+                prayerSchedule.push({ card, startMinutes });
+            }
         });
+
+        prayerSchedule.sort((a, b) => a.startMinutes - b.startMinutes);
+        updateActivePrayer();
+
+        if (!prayerUpdateTimer) {
+            prayerUpdateTimer = setInterval(updateActivePrayer, 60000);
+        }
+    };
+
+    const updateActivePrayer = () => {
+        if (!prayerSchedule.length) {
+            return;
+        }
 
         const now = new Date();
-        let nextPrayerCard = null;
-        mapping.forEach(entry => {
-            const time = timings[entry.key];
-            const card = document.getElementById(entry.id);
-            if (!time || !card) return;
-            const [hourStr, minuteStr] = time.split(':');
-            const prayerDate = new Date();
-            prayerDate.setHours(parseInt(hourStr, 10));
-            prayerDate.setMinutes(parseInt(minuteStr, 10));
-            prayerDate.setSeconds(0);
-            if (prayerDate > now && !nextPrayerCard) {
-                nextPrayerCard = card;
-            }
-        });
+        const minutesNow = now.getHours() * 60 + now.getMinutes();
+        let active = prayerSchedule[0];
 
-        if (nextPrayerCard) {
-            nextPrayerCard.classList.add('next-prayer');
+        for (let i = 0; i < prayerSchedule.length; i++) {
+            const current = prayerSchedule[i];
+            const next = prayerSchedule[(i + 1) % prayerSchedule.length];
+            const currentStart = current.startMinutes;
+            let windowEnd = next.startMinutes;
+
+            if (next.startMinutes <= currentStart) {
+                windowEnd += 1440;
+            }
+
+            const adjustedNow = minutesNow < currentStart ? minutesNow + 1440 : minutesNow;
+            if (adjustedNow >= currentStart && adjustedNow < windowEnd) {
+                active = current;
+                break;
+            }
+        }
+
+        prayerSchedule.forEach(({ card }) => card.classList.remove('next-prayer', 'current-prayer'));
+        if (active) {
+            active.card.classList.add('current-prayer', 'next-prayer');
         }
     };
 
@@ -218,4 +229,40 @@ function initPrayerTimes() {
         handleError();
     }
 }
+
+function initSurahSearch() {
+    const searchInput = document.querySelector('[data-surah-search]');
+    const items = Array.from(document.querySelectorAll('[data-surah-item]'));
+    if (!searchInput || items.length === 0) {
+        return;
+    }
+
+    const filterItems = (term) => {
+        const query = term.trim().toLowerCase();
+        items.forEach((item) => {
+            const haystack = (item.dataset.search || '').toLowerCase();
+            item.classList.toggle('hidden', query.length > 0 && !haystack.includes(query));
+        });
+    };
+
+    searchInput.addEventListener('input', (event) => filterItems(event.target.value));
+    filterItems(searchInput.value || '');
+}
+function toMinutes(value) {
+    if (!value) return null;
+    const match = value.match(/(\d{1,2}):(\d{2})/);
+    if (!match) return null;
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    return hours * 60 + minutes;
+}
+
+function formatDigits(input) {
+    if (!input) return '';
+    const digits = ['?', '?', '?', '?', '?', '?', '?', '?', '?', '?'];
+    return String(input).replace(/\d/g, d => digits[parseInt(d, 10)] ?? d);
+}
+
+
+
 

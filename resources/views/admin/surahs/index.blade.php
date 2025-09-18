@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Hasana - Surahs</h1>
-        <a href="{{ route('admin.hasana.surahs.create') }}" class="btn btn-primary">New Surah</a>
+        <a href="{{ route('admin.surahs.create') }}" class="btn btn-primary">New Surah</a>
     </div>
 
     @if (session('status'))
@@ -34,9 +34,9 @@
                             <td>{{ $surah->ayah_count }}</td>
                             <td class="text-end">
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.hasana.surahs.edit', $surah) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <a href="{{ route('admin.hasana.surahs.ayahs.index', $surah) }}" class="btn btn-sm btn-outline-primary">Ayahs</a>
-                                    <form action="{{ route('admin.hasana.surahs.destroy', $surah) }}" method="POST" onsubmit="return confirm('Delete this surah?')">
+                                    <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    <a href="{{ route('admin.surahs.ayahs.index', $surah) }}" class="btn btn-sm btn-outline-primary">Ayahs</a>
+                                    <form action="{{ route('admin.surahs.destroy', $surah) }}" method="POST" onsubmit="return confirm('Delete this surah?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>

@@ -44,7 +44,7 @@
                     <span id="location-text">????? ?????? ??? ?????…</span>
                 </div>
                 <h2 id="current-time">--:-- --</h2>
-                <p id="current-date">{{ now()->format('l, d F Y') }}</p>
+                <p id="current-date"></p>
                 <p id="islamic-date"></p>
             </div>
         </div>
@@ -53,105 +53,62 @@
                 <p>???</p>
                 <i class="bi bi-brightness-alt-high"></i>
                 <p class="time">--:--</p>
-                <p class="end-time">??? ????: --:--</p>
+                <p class="end-time">???: --:--</p>
             </div>
             <div class="prayer-time-card" id="dhuhr">
                 <p>????</p>
                 <i class="bi bi-brightness-high-fill"></i>
                 <p class="time">--:--</p>
-                <p class="end-time">??? ????: --:--</p>
+                <p class="end-time">???: --:--</p>
             </div>
             <div class="prayer-time-card" id="asr">
                 <p>???</p>
                 <i class="bi bi-brightness-high"></i>
                 <p class="time">--:--</p>
-                <p class="end-time">??? ????: --:--</p>
+                <p class="end-time">???: --:--</p>
             </div>
             <div class="prayer-time-card" id="maghrib">
                 <p>??????</p>
                 <i class="bi bi-sunset-fill"></i>
                 <p class="time">--:--</p>
-                <p class="end-time">??? ????: --:--</p>
+                <p class="end-time">???: --:--</p>
             </div>
             <div class="prayer-time-card" id="isha">
                 <p>???</p>
                 <i class="bi bi-moon-stars-fill"></i>
                 <p class="time">--:--</p>
-                <p class="end-time">??? ????: --:--</p>
+                <p class="end-time">???: --:--</p>
             </div>
         </div>
     </section>
 
-    <section class="greeting-card-container">
-        <div class="greeting-card">
-            <div class="greeting-text">
-                <h2 class="mb-1">???????? ???????</h2>
-                <p class="mb-0">?? {{ now()->format('l, d F Y') }}</p>
+    @if (!empty($verseOfDay))
+        <section class="greeting-card-container">
+            <div class="greeting-card">
+                <div class="greeting-text">
+                    <h2 id="greeting-title">{{ $verseOfDay['title'] }}</h2>
+                </div>
+                <div class="verse-of-the-day">
+                    <p id="verse-text">{{ $verseOfDay['text'] }}</p>
+                    <p id="verse-reference">{{ $verseOfDay['reference'] }}</p>
+                </div>
             </div>
-            <div class="verse-of-the-day" id="verse-text">
-                <p class="mb-0">"?? ???? ?????? ???, ???? ???????? ?????? ????"</p>
-                <span class="d-block">(???? ??-????? ??:?)</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="quick-action-grid">
-        <a href="{{ route('hasana.home') }}" class="quick-action-card">
-            <i class="fa-solid fa-quran"></i>
-            <div>
-                <h3>???? ??????</h3>
-                <p>?? ???? ?? ??????</p>
-            </div>
-        </a>
-        <a href="#" class="quick-action-card">
-            <i class="fa-solid fa-book-open-reader"></i>
-            <div>
-                <h3>???? ????</h3>
-                <p>???????? ????? ??????</p>
-            </div>
-        </a>
-        <a href="#" class="quick-action-card">
-            <i class="fa-solid fa-kaaba"></i>
-            <div>
-                <h3>???? ? ??????</h3>
-                <p>????? ???? ?????????</p>
-            </div>
-        </a>
-    </section>
-
-    <section class="mb-4">
-        <div class="search-wrapper">
-            <input type="search" class="search-bar" placeholder="???? ?????..." data-surah-search>
-            <i class="bi bi-search"></i>
-        </div>
-        <div class="surah-list">
-            @foreach ($surahs as $surah)
-                <a href="{{ route('hasana.surah', $surah) }}" class="surah-card" data-surah-item data-search="{{ $surah->number }} {{ $surah->name_en }} {{ $surah->name_ar }}">
-                    <div class="surah-card-info">
-                        <div class="surah-number-bg">{{ $surah->number }}</div>
-                        <div>
-                            <p class="surah-name mb-1">{{ $surah->name_en }}</p>
-                            <p class="surah-meaning mb-1">{{ $surah->name_ar }}</p>
-                            <p class="surah-details mb-0">{{ ucfirst($surah->revelation_type ?? 'Unknown') }} • {{ $surah->ayahs_count }} ????</p>
-                        </div>
-                    </div>
-                    <div class="surah-card-right">
-                        <p class="surah-arabic-name">{{ $surah->name_ar }}</p>
-                    </div>
-                </a>
-            @endforeach
-        </div>
-    </section>
+        </section>
+    @endif
 </main>
 
 <nav class="bottom-nav">
-    <a href="{{ route('hasana.home') }}" class="nav-item active">
-        <i class="fa-solid fa-quran"></i>
-        <span>?????</span>
+    <a href="{{ route('hasana.home') }}" class="nav-item {{ request()->routeIs('hasana.home') ? 'active' : '' }}">
+        <i class="fa-solid fa-house"></i>
+        <span>???</span>
     </a>
     <a href="#" class="nav-item">
-        <i class="fa-solid fa-book-open-reader"></i>
-        <span>?????????</span>
+        <i class="fa-solid fa-book-open"></i>
+        <span>?????</span>
+    </a>
+    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') ? 'active' : '' }}">
+        <i class="fa-solid fa-quran"></i>
+        <span>?????</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-hands-praying"></i>
@@ -159,7 +116,8 @@
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-kaaba"></i>
-        <span>?????</span>
+        <span>????? ????</span>
     </a>
 </nav>
 @endsection
+

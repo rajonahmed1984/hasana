@@ -1,21 +1,16 @@
-<?php
+﻿<?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Admin\AyahController;
+use App\Http\Controllers\Admin\SurahController;
 use App\Http\Controllers\Frontend\HasanaController;
-use App\Http\Controllers\Admin\SurahController as AdminSurahController;
-use App\Http\Controllers\Admin\AyahController as AdminAyahController;
 
-Route::get('/', function () {
-    return redirect()->route('hasana.home');
-});
-
-Route::prefix('hasana')->name('hasana.')->group(function () {
-    Route::get('/', [HasanaController::class, 'home'])->name('home');
-    Route::get('/surah/{surah}', [HasanaController::class, 'surah'])->name('surah');
-});
+Route::get('/', [HasanaController::class, 'home'])->name('hasana.home');
+Route::get('/surah/{surah}', [HasanaController::class, 'surah'])->name('hasana.surah');
+Route::get('/quran', [HasanaController::class, 'quran'])->name('hasana.quran');
 
 Route::get('/clear-cache', function () {
     Artisan::call('optimize');
@@ -28,11 +23,13 @@ Route::get('/clear-cache', function () {
     return 'ok';
 });
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
-Route::middleware('auth')->group(function () {
-    Route::prefix('admin/hasana')->name('admin.hasana.')->group(function () {
-        Route::resource('surahs', AdminSurahController::class);
-        Route::resource('surahs.ayahs', AdminAyahController::class)->except(['show']);
-    });
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.surahs.index');
+    })->name('dashboard');
+
+    Route::resource('surahs', SurahController::class);
+    Route::resource('surahs.ayahs', AyahController::class)->except(['show']);
 });

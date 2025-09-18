@@ -14,14 +14,14 @@ class SurahController extends Controller
     {
         $surahs = Surah::orderBy('number')->paginate(30);
 
-        return view('admin.hasana.surahs.index', compact('surahs'));
+        return view('admin.surahs.index', compact('surahs'));
     }
 
     public function create()
     {
         $surah = new Surah();
 
-        return view('admin.hasana.surahs.create', compact('surah'));
+        return view('admin.surahs.create', compact('surah'));
     }
 
     public function store(Request $request)
@@ -31,20 +31,20 @@ class SurahController extends Controller
         $surah = Surah::create($data);
 
         return redirect()
-            ->route('admin.hasana.surahs.edit', $surah)
+            ->route('admin.surahs.edit', $surah)
             ->with('status', 'Surah created successfully. You can now add ayahs.');
     }
 
     public function show(Surah $surah)
     {
-        return redirect()->route('admin.hasana.surahs.edit', $surah);
+        return redirect()->route('admin.surahs.edit', $surah);
     }
 
     public function edit(Surah $surah)
     {
         $surah->load('ayahs');
 
-        return view('admin.hasana.surahs.edit', compact('surah'));
+        return view('admin.surahs.edit', compact('surah'));
     }
 
     public function update(Request $request, Surah $surah)
@@ -53,7 +53,7 @@ class SurahController extends Controller
         $surah->update($data);
 
         return redirect()
-            ->route('admin.hasana.surahs.edit', $surah)
+            ->route('admin.surahs.edit', $surah)
             ->with('status', 'Surah updated successfully.');
     }
 
@@ -62,7 +62,7 @@ class SurahController extends Controller
         $surah->delete();
 
         return redirect()
-            ->route('admin.hasana.surahs.index')
+            ->route('admin.surahs.index')
             ->with('status', 'Surah removed.');
     }
 
@@ -83,3 +83,4 @@ class SurahController extends Controller
         return $data;
     }
 }
+

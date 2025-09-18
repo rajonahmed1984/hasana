@@ -21,7 +21,7 @@
                 <ul class="navbar-nav me-auto">
                     @auth
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.hasana.surahs.index') }}">Surahs</a>
+                        <a class="nav-link" href="{{ route('admin.surahs.index') }}">Surahs</a>
                     </li>
                     @endauth
                 </ul>
