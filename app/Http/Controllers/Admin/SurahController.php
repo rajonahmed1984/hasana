@@ -49,7 +49,7 @@ class SurahController extends Controller
 
     public function update(Request $request, Surah $surah)
     {
-        $data = $this->validatedData($request, $surah->id);
+        $data = $this->validatedData($request, $surah->id, $surah->meta ?? []);
         $surah->update($data);
 
         return redirect()
@@ -66,21 +66,50 @@ class SurahController extends Controller
             ->with('status', 'Surah removed.');
     }
 
-    protected function validatedData(Request $request, ?int $ignoreId = null): array
+    protected function validatedData(Request $request, ?int $ignoreId = null, array $currentMeta = []): array
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'number' => ['required', 'integer', 'min:1', 'max:250', Rule::unique('surahs', 'number')->ignore($ignoreId)],
             'name_ar' => ['required', 'string', 'max:255'],
             'name_en' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('surahs', 'slug')->ignore($ignoreId)],
             'revelation_type' => ['nullable', 'string', 'max:50'],
             'summary' => ['nullable', 'string'],
+            'name_bn' => ['nullable', 'string', 'max:255'],
+            'meaning_bn' => ['nullable', 'string', 'max:255'],
+            'summary_bn' => ['nullable', 'string'],
+            'revelation_order' => ['nullable', 'integer', 'min:1', 'max:250'],
         ]);
 
-        $data['slug'] = $data['slug'] ? Str::slug($data['slug']) : Str::slug($data['name_en']);
-        $data['meta'] = $request->input('meta', []);
+        $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['name_en']);
 
-        return $data;
+        $metaUpdates = [
+            'name_bn' => $validated['name_bn'] ?? null,
+            'meaning_bn' => $validated['meaning_bn'] ?? null,
+            'summary_bn' => $validated['summary_bn'] ?? null,
+            'revelation_order' => $validated['revelation_order'] ?? null,
+        ];
+
+        foreach (['name_bn', 'meaning_bn', 'summary_bn'] as $key) {
+            $value = $metaUpdates[$key];
+            if ($value !== null && $value !== '') {
+                $currentMeta[$key] = $value;
+            } else {
+                unset($currentMeta[$key]);
+            }
+            unset($validated[$key]);
+        }
+
+        $order = $metaUpdates['revelation_order'];
+        if ($order !== null && $order !== '') {
+            $currentMeta['revelation_order'] = (int) $order;
+        } else {
+            unset($currentMeta['revelation_order']);
+        }
+        unset($validated['revelation_order']);
+
+        $validated['meta'] = $currentMeta;
+
+        return $validated;
     }
 }
-

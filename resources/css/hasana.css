@@ -1,4 +1,4 @@
-@font-face {
+﻿@font-face {
     font-family: 'Baloo Da 2';
     font-style: normal;
     font-weight: 400;
@@ -408,8 +408,26 @@ body.search-active {
     font-size: 1.2rem;
     color: var(--text-light);
 }
-.ayah-actions i {
+.ayah-actions a,
+.ayah-actions button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+.ayah-actions button {
     cursor: pointer;
+}
+.ayah-actions a:hover,
+.ayah-actions button:hover {
+    color: var(--primary-color);
+}
+.ayah-actions i {
+    pointer-events: none;
 }
 .ayah-arabic {
     font-family: var(--arabic-font);
@@ -943,5 +961,6 @@ body.dark-mode .prayer-header {
 .prayer-time-card.next-prayer .end-time {
     color: rgba(255, 255, 255, 0.8);
 }
+
 
 

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDateTimeTicker();
     initPrayerTimes();
     initSurahSearch();
+    setupSearchToggle();
 });
 
 function initMenuToggle() {
@@ -231,9 +232,9 @@ function initPrayerTimes() {
 }
 
 function initSurahSearch() {
-    const searchInput = document.querySelector('[data-surah-search]');
+    const inputs = Array.from(document.querySelectorAll('[data-surah-search]'));
     const items = Array.from(document.querySelectorAll('[data-surah-item]'));
-    if (!searchInput || items.length === 0) {
+    if (!inputs.length || !items.length) {
         return;
     }
 
@@ -245,9 +246,53 @@ function initSurahSearch() {
         });
     };
 
-    searchInput.addEventListener('input', (event) => filterItems(event.target.value));
-    filterItems(searchInput.value || '');
+    inputs.forEach((input) => {
+        input.addEventListener('input', (event) => filterItems(event.target.value));
+    });
+
+    filterItems(inputs[0].value || '');
 }
+
+function setupSearchToggle() {
+    const toggle = document.getElementById('search-toggle');
+    const container = document.getElementById('header-search-container');
+    if (!toggle || !container) {
+        return;
+    }
+
+    const input = container.querySelector('[data-surah-search]');
+
+    const close = () => {
+        container.classList.remove('active');
+        document.body.classList.remove('search-active');
+    };
+
+    toggle.addEventListener('click', (event) => {
+        event.preventDefault();
+        const willOpen = !container.classList.contains('active');
+        container.classList.toggle('active', willOpen);
+        document.body.classList.toggle('search-active', willOpen);
+        if (willOpen && input) {
+            requestAnimationFrame(() => input.focus());
+        }
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!container.classList.contains('active')) {
+            return;
+        }
+        if (!container.contains(event.target) && !toggle.contains(event.target)) {
+            close();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && container.classList.contains('active')) {
+            close();
+        }
+    });
+}
+
 function toMinutes(value) {
     if (!value) return null;
     const match = value.match(/(\d{1,2}):(\d{2})/);
@@ -262,6 +307,12 @@ function formatDigits(input) {
     const digits = ['?', '?', '?', '?', '?', '?', '?', '?', '?', '?'];
     return String(input).replace(/\d/g, d => digits[parseInt(d, 10)] ?? d);
 }
+
+
+
+
+
+
 
 
 
