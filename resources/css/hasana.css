@@ -410,6 +410,7 @@ body.search-active {
 }
 .ayah-actions a,
 .ayah-actions button {
+    font-size: 1.2rem;
     border: none;
     background: transparent;
     padding: 0;

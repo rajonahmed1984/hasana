@@ -12,13 +12,13 @@
     <div class="auth-container">
         <div class="auth-card card shadow-lg border-0">
             <div class="card-body">
-                <div class="auth-header text-center mb-4">
-                    <img src="{{ asset('assets/logo.png') }}" alt="Hasana" class="logo mb-3">
+                <div class="auth-header text-center">
+                    <img src="{{ asset('assets/logo.svg') }}" alt="Hasana" class="logo mb-3">
                     <h1 class="h4 mb-1">Sign in to Hasana Admin</h1>
                     <p class="text-muted mb-0">Use your account to manage surahs and ayahs.</p>
                 </div>
 
-                <form id="loginForm" method="POST" action="{{ route('login') }}">
+                <form id="loginForm" method="POST" action="{{ route('login') }}" class="p-4">
                     @csrf
                     <div class="form-floating mb-3">
                         <input type="email" name="email" value="{{ old('email') }}" class="form-control" id="email" placeholder="name@example.com" required>
