@@ -36,12 +36,4 @@
         <label class="form-label">Meaning (Bangla)</label>
         <input type="text" class="form-control" name="meaning_bn" value="{{ old('meaning_bn', $surah->meta['meaning_bn'] ?? '') }}" placeholder="উদাহরণ: সূচনা">
     </div>
-    <div class="col-12">
-        <label class="form-label">Summary / Description</label>
-        <textarea name="summary" class="form-control" rows="4">{{ old('summary', $surah->summary) }}</textarea>
-    </div>
-    <div class="col-12">
-        <label class="form-label">Summary (Bangla)</label>
-        <textarea name="summary_bn" class="form-control" rows="4" placeholder="বিস্তারিত বিবরণ লিখুন...">{{ old('summary_bn', $surah->meta['summary_bn'] ?? '') }}</textarea>
-    </div>
 </div>

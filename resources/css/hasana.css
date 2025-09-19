@@ -1,4 +1,4 @@
-﻿@font-face {
+@font-face {
     font-family: 'Baloo Da 2';
     font-style: normal;
     font-weight: 400;
@@ -37,7 +37,7 @@
     --light-gray: #e9ecef;
     --border-color: #dee2e6;
     --arabic-font: 'Lateef', serif;
-    --bengali-font: 'Baloo Da 2', sans-serif;
+    --bengali-font: 'Hind Siliguri', 'Noto Sans Bengali', 'Baloo Da 2', sans-serif;
     --menu-width: 280px;
 }
 /* --- Dark Mode Variables --- */
