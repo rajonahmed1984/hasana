@@ -1,6 +1,22 @@
 const THEME_STORAGE_KEY = 'hasana-theme';
 let prayerSchedule = [];
 let prayerUpdateTimer = null;
+const HIJRI_MONTHS_BN = {
+    'Muharram': 'মুহাররম',
+    'Safar': 'সফর',
+    'Rabi Al-Awwal': 'রবিউল আউয়াল',
+    'Rabi Al-Thani': 'রবিউস সানি',
+    'Jumada Al-Awwal': 'জমাদিউল আউয়াল',
+    'Jumada Al-Thani': 'জমাদিউস সানি',
+    'Rajab': 'রজব',
+    'Sha\'ban': 'শাবান',
+    'Ramadan': 'রমজান',
+    'Shawwal': 'শাওয়াল',
+    'Dhu Al-Qadah': 'জিলকদ',
+    'Dhu Al-Hijjah': 'জিলহজ',
+};
+let hasIslamicCalendarSupport = true;
+
 
 document.addEventListener('DOMContentLoaded', () => {
     applyStoredTheme();
@@ -93,7 +109,7 @@ function initDateTimeTicker() {
             }));
         }
 
-        if (islamicElem) {
+        if (islamicElem && hasIslamicCalendarSupport) {
             try {
                 const options = {
                     calendar: 'islamic-umalqura',
@@ -102,9 +118,10 @@ function initDateTimeTicker() {
                     year: 'numeric',
                     numberingSystem: 'beng',
                 };
-                islamicElem.textContent = formatDigits(new Intl.DateTimeFormat('bn-BD', options).format(now)) + ' ?????';
+                const formatted = new Intl.DateTimeFormat('bn-BD', options).format(now);
+                updateIslamicDate(formatted);
             } catch (error) {
-                islamicElem.textContent = '';
+                hasIslamicCalendarSupport = false;
             }
         }
     };
@@ -119,8 +136,9 @@ function initPrayerTimes() {
     if (!locationElem || !cards.length) {
         return;
     }
+    locationElem.textContent = 'লোকেশন নির্ধারণ করা হচ্ছে...';
 
-    const applyTimings = timings => {
+    const applyTimings = (timings, hijriLabel = null) => {
         prayerSchedule = [];
         const mapping = [
             { id: 'fajr', key: 'Fajr', endKey: 'Sunrise' },
@@ -140,11 +158,11 @@ function initPrayerTimes() {
             card.classList.remove('next-prayer', 'current-prayer');
 
             if (timeElem && timings[entry.key]) {
-                timeElem.textContent = formatDigits(timings[entry.key]);
+                timeElem.textContent = 'শুরু: ' + formatDigits(timings[entry.key]);
             }
 
             if (endElem && timings[entry.endKey]) {
-                endElem.textContent = `???: ${formatDigits(timings[entry.endKey])}`;
+                endElem.textContent = 'শেষ: ' + formatDigits(timings[entry.endKey]);
             }
 
             if (startMinutes !== null) {
@@ -157,6 +175,10 @@ function initPrayerTimes() {
 
         if (!prayerUpdateTimer) {
             prayerUpdateTimer = setInterval(updateActivePrayer, 60000);
+        }
+
+        if (hijriLabel && !hasIslamicCalendarSupport) {
+            updateIslamicDate(hijriLabel);
         }
     };
 
@@ -192,12 +214,34 @@ function initPrayerTimes() {
         }
     };
 
+    const useFallbackLocation = () => {
+        locationElem.textContent = 'Dhaka, Bangladesh';
+        fetchByCity('Dhaka', 'Bangladesh');
+    };
+
+    const fetchByIp = async () => {
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            if (!response.ok) {
+                throw new Error('IP lookup failed');
+            }
+            const result = await response.json();
+            const city = result.city || result.region || 'Dhaka';
+            const country = result.country_name || result.country || 'Bangladesh';
+            locationElem.textContent = `${city}, ${country}`;
+            fetchByCity(city, country);
+        } catch (error) {
+            useFallbackLocation();
+        }
+    };
+
     const fetchByCity = async (city, country) => {
         try {
             const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=2`);
             const result = await response.json();
             if (result?.code === 200) {
-                applyTimings(result.data.timings);
+                const hijriLabel = formatHijriDate(result.data?.date?.hijri);
+                applyTimings(result.data.timings, hijriLabel);
             }
         } catch (error) {
             console.warn('Prayer times fetch failed', error);
@@ -214,14 +258,12 @@ function initPrayerTimes() {
             locationElem.textContent = `${city}, ${country}`;
             fetchByCity(city, country);
         } catch (error) {
-            locationElem.textContent = 'Dhaka, Bangladesh';
-            fetchByCity('Dhaka', 'Bangladesh');
+            useFallbackLocation();
         }
     };
 
     const handleError = () => {
-        locationElem.textContent = 'Dhaka, Bangladesh';
-        fetchByCity('Dhaka', 'Bangladesh');
+        fetchByIp();
     };
 
     if (navigator.geolocation) {
@@ -303,9 +345,11 @@ function toMinutes(value) {
 }
 
 function formatDigits(input) {
-    if (!input) return '';
-    const digits = ['?', '?', '?', '?', '?', '?', '?', '?', '?', '?'];
-    return String(input).replace(/\d/g, d => digits[parseInt(d, 10)] ?? d);
+    if (input === undefined || input === null) {
+        return '';
+    }
+    const digits = [''০'', ''১'', ''২'', ''৩'', ''৪'', ''৫'', ''৬'', ''৭'', ''৮'', ''৯''];
+    return String(input).replace(/\d/g, digit => digits[Number(digit)] ?? digit);
 }
 
 
@@ -315,5 +359,38 @@ function formatDigits(input) {
 
 
 
+
+
+
+
+
+
+
+function formatHijriDate(hijri) {
+    if (!hijri) {
+        return null;
+    }
+    const day = hijri.day ? formatDigits(hijri.day) : '';
+    const monthSource = hijri.month?.bn || hijri.month?.en || hijri.month || '';
+    const monthName = typeof monthSource === 'string' ? (HIJRI_MONTHS_BN[monthSource] || monthSource) : '';
+    const year = hijri.year ? formatDigits(hijri.year) : '';
+    const parts = [day, monthName, year].filter(Boolean);
+    return parts.length ? parts.join(' ') : null;
+}
+
+function updateIslamicDate(rawText, options = {}) {
+    const islamicElem = document.getElementById('islamic-date');
+    if (!islamicElem) {
+        return;
+    }
+    const { appendSuffix = true } = options;
+    const baseText = typeof rawText === 'string' ? rawText.trim() : '';
+    if (!baseText) {
+        return;
+    }
+    const normalized = formatDigits(baseText);
+    const needsSuffix = appendSuffix && !normalized.endsWith('হিজরি');
+    islamicElem.textContent = needsSuffix ? `${normalized} হিজরি` : normalized;
+}
 
 

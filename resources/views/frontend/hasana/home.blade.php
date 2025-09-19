@@ -44,8 +44,8 @@
                     <span id="location-text">--</span>
                 </div>
                 <h2 id="current-time">--:-- --</h2>
-                <p id="current-date"></p>
-                <p id="islamic-date"></p>
+                <p id="current-date">--</p>
+                <p id="islamic-date">--</p>
             </div>
         </div>
         <div class="prayer-times-grid">
@@ -98,17 +98,17 @@
 </main>
 
 <nav class="bottom-nav">
-    <a href="{{ route('hasana.home') }}" class="nav-item {{ request()->routeIs('hasana.home') ? 'active' : '' }}">
-        <i class="fa-solid fa-house"></i>
-        <span>হোম</span>
+    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') ? 'active' : '' }}">
+        <i class="fa-solid fa-quran"></i>
+        <span>কুরআন</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-book-open"></i>
         <span>হাদিস</span>
     </a>
-    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') ? 'active' : '' }}">
-        <i class="fa-solid fa-quran"></i>
-        <span>কুরআন</span>
+    <a href="{{ route('hasana.home') }}" class="nav-item {{ request()->routeIs('hasana.home') ? 'active' : '' }}">
+        <i class="fa-solid fa-house"></i>
+        <span>হোম</span>
     </a>
     <a href="#" class="nav-item">
         <i class="fa-solid fa-hands-praying"></i>

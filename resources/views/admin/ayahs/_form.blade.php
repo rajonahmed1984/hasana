@@ -1,11 +1,11 @@
 <div class="row g-3">
     <div class="col-md-2">
         <label class="form-label">Ayah Number</label>
-        <input type="number" class="form-control" min="1" name="number" value="{{ old('number', $ayah->number) }}" required>
+        <input type="number" class="form-control" min="1" name="number" value="{{ old('number', $ayah->number) }}">
     </div>
     <div class="col-md-10">
         <label class="form-label">Arabic Text</label>
-        <textarea name="text_ar" class="form-control" rows="3" required>{{ old('text_ar', $ayah->text_ar) }}</textarea>
+        <textarea name="text_ar" class="form-control" rows="3">{{ old('text_ar', $ayah->text_ar) }}</textarea>
     </div>
     <div class="col-md-12">
         <label class="form-label">English Translation</label>
@@ -28,3 +28,5 @@
         <label class="form-check-label" for="ayah-is-active">Visible</label>
     </div>
 </div>
+
+

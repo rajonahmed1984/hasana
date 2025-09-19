@@ -26,14 +26,23 @@ class AyahController extends Controller
     public function store(Request $request, Surah $surah)
     {
         $data = $request->validate([
-            'number' => ['required', 'integer', 'min:1', 'unique:ayahs,number,NULL,id,surah_id,' . $surah->id],
-            'text_ar' => ['required', 'string'],
+            'number' => ['nullable', 'integer', 'min:1', 'unique:ayahs,number,NULL,id,surah_id,' . $surah->id],
+            'text_ar' => ['nullable', 'string'],
             'text_en' => ['nullable', 'string'],
             'transliteration' => ['nullable', 'string'],
             'audio_url' => ['nullable', 'url'],
             'footnotes' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ]);
+
+        if (!isset($data['number']) || $data['number'] === null || $data['number'] === '') {
+            $nextNumber = (int) $surah->ayahs()->max('number');
+            $data['number'] = $nextNumber ? $nextNumber + 1 : 1;
+        }
+
+        if (!isset($data['text_ar']) || $data['text_ar'] === null) {
+            $data['text_ar'] = '';
+        }
 
         $data['is_active'] = $request->boolean('is_active', true);
         $surah->ayahs()->create($data);
@@ -56,14 +65,22 @@ class AyahController extends Controller
         $this->ensureBelongsToSurah($surah, $ayah);
 
         $data = $request->validate([
-            'number' => ['required', 'integer', 'min:1', 'unique:ayahs,number,' . $ayah->id . ',id,surah_id,' . $surah->id],
-            'text_ar' => ['required', 'string'],
+            'number' => ['nullable', 'integer', 'min:1', 'unique:ayahs,number,' . $ayah->id . ',id,surah_id,' . $surah->id],
+            'text_ar' => ['nullable', 'string'],
             'text_en' => ['nullable', 'string'],
             'transliteration' => ['nullable', 'string'],
             'audio_url' => ['nullable', 'url'],
             'footnotes' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ]);
+
+        if (!isset($data['number']) || $data['number'] === null || $data['number'] === '') {
+            $data['number'] = $ayah->number;
+        }
+
+        if (!isset($data['text_ar']) || $data['text_ar'] === null) {
+            $data['text_ar'] = '';
+        }
 
         $data['is_active'] = $request->boolean('is_active', true);
         $ayah->update($data);
@@ -91,4 +108,3 @@ class AyahController extends Controller
         abort_if($ayah->surah_id !== $surah->id, 404);
     }
 }
-

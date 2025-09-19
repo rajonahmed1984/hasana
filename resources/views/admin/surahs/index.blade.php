@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 
 @section('content')
 <div class="container-fluid py-4">
@@ -19,6 +19,7 @@
                         <th>#</th>
                         <th>Name (Arabic)</th>
                         <th>Name (English)</th>
+                        <th>Name (বাংলা)</th>
                         <th>Revelation</th>
                         <th>Ayahs</th>
                         <th class="text-end">Actions</th>
@@ -30,7 +31,8 @@
                             <td>{{ $surah->number }}</td>
                             <td>{{ $surah->name_ar }}</td>
                             <td>{{ $surah->name_en }}</td>
-                            <td>{{ $surah->revelation_type ?? '�' }}</td>
+                            <td>{{ data_get($surah->meta, 'name_bn', '-') }}</td>
+                            <td>{{ $surah->revelation_type ?? '—' }}</td>
                             <td>{{ $surah->ayah_count }}</td>
                             <td class="text-end">
                                 <div class="btn-group" role="group">
@@ -46,7 +48,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4">No surahs yet.</td>
+                            <td colspan="7" class="text-center py-4">No surahs yet.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -58,5 +60,7 @@
     </div>
 </div>
 @endsection
+
+
 
 

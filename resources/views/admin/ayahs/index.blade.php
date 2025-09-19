@@ -23,8 +23,9 @@
                 <thead>
                     <tr>
                         <th style="width: 70px;">#</th>
-                        <th style="width: 35%;">Arabic</th>
-                        <th style="width: 35%;">English</th>
+                        <th style="width: 30%;">Arabic</th>
+                        <th style="width: 30%;">English</th>
+                        <th style="width: 30%;">Transliteration</th>
                         <th>Active</th>
                         <th class="text-end" style="width: 150px;">Actions</th>
                     </tr>
@@ -35,6 +36,7 @@
                             <td>{{ $ayah->number }}</td>
                             <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_ar }}</td>
                             <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_en }}</td>
+                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->transliteration ?: '-' }}</td>
                             <td>{{ $ayah->is_active ? 'Yes' : 'No' }}</td>
                             <td class="text-end">
                                 <div class="btn-group">
@@ -49,7 +51,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-4">No ayahs yet.</td>
+                            <td colspan="6" class="text-center py-4">No ayahs yet.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -61,5 +63,10 @@
     </div>
 </div>
 @endsection
+
+
+
+
+
 
 
