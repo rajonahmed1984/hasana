@@ -16,6 +16,8 @@ const HIJRI_MONTHS_BN = {
     'Dhu Al-Hijjah': 'জিলহজ',
 };
 let hasIslamicCalendarSupport = true;
+const PRAYER_START_PREFIX_BN = '\u09B6\u09C1\u09B0\u09C1: ';
+const PRAYER_END_PREFIX_BN = '\u09B6\u09C7\u09B6: ';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -148,25 +150,39 @@ function initPrayerTimes() {
             { id: 'isha', key: 'Isha', endKey: 'Fajr' },
         ];
 
-        mapping.forEach(entry => {
+        mapping.forEach((entry, index) => {
             const card = document.getElementById(entry.id);
             if (!card) return;
             const timeElem = card.querySelector('.time');
             const endElem = card.querySelector('.end-time');
-            const startMinutes = toMinutes(timings[entry.key]);
+            const startValue = timings[entry.key];
+            const endValue = timings[entry.endKey];
+            const startMinutes = toMinutes(startValue);
 
             card.classList.remove('next-prayer', 'current-prayer');
 
-            if (timeElem && timings[entry.key]) {
-                timeElem.textContent = 'শুরু: ' + formatDigits(timings[entry.key]);
+            if (timeElem) {
+                const startText = formatDigits(formatPrayerTime(startValue));
+                timeElem.textContent = PRAYER_START_PREFIX_BN + startText;
             }
 
-            if (endElem && timings[entry.endKey]) {
-                endElem.textContent = 'শেষ: ' + formatDigits(timings[entry.endKey]);
+            if (endElem) {
+                const endText = formatDigits(formatPrayerTime(endValue));
+                endElem.textContent = PRAYER_END_PREFIX_BN + endText;
             }
 
             if (startMinutes !== null) {
-                prayerSchedule.push({ card, startMinutes });
+                let endMinutes = toMinutes(endValue);
+                if (endMinutes === null) {
+                    const fallback = mapping[(index + 1) % mapping.length];
+                    endMinutes = toMinutes(timings[fallback.key]);
+                }
+
+                if (endMinutes !== null && endMinutes <= startMinutes) {
+                    endMinutes += 1440;
+                }
+
+                prayerSchedule.push({ card, startMinutes, endMinutes });
             }
         });
 
@@ -189,28 +205,46 @@ function initPrayerTimes() {
 
         const now = new Date();
         const minutesNow = now.getHours() * 60 + now.getMinutes();
-        let active = prayerSchedule[0];
+        let activeEntry = null;
 
         for (let i = 0; i < prayerSchedule.length; i++) {
             const current = prayerSchedule[i];
             const next = prayerSchedule[(i + 1) % prayerSchedule.length];
-            const currentStart = current.startMinutes;
-            let windowEnd = next.startMinutes;
+            const start = current.startMinutes;
+            let end = current.endMinutes;
 
-            if (next.startMinutes <= currentStart) {
-                windowEnd += 1440;
+            if (end === null || end === undefined) {
+                end = next ? next.startMinutes : start;
             }
 
-            const adjustedNow = minutesNow < currentStart ? minutesNow + 1440 : minutesNow;
-            if (adjustedNow >= currentStart && adjustedNow < windowEnd) {
-                active = current;
+            if (end <= start) {
+                end += 1440;
+            }
+
+            const adjustedNow = minutesNow < start ? minutesNow + 1440 : minutesNow;
+            if (adjustedNow >= start && adjustedNow < end) {
+                activeEntry = current;
                 break;
             }
         }
 
+        if (!activeEntry) {
+            const fallback = prayerSchedule.reduce((closest, entry) => {
+                let diff = entry.startMinutes - minutesNow;
+                if (diff < 0) {
+                    diff += 1440;
+                }
+                if (!closest || diff < closest.diff) {
+                    return { entry, diff };
+                }
+                return closest;
+            }, null);
+            activeEntry = fallback ? fallback.entry : prayerSchedule[0];
+        }
+
         prayerSchedule.forEach(({ card }) => card.classList.remove('next-prayer', 'current-prayer'));
-        if (active) {
-            active.card.classList.add('current-prayer', 'next-prayer');
+        if (activeEntry) {
+            activeEntry.card.classList.add('current-prayer', 'next-prayer');
         }
     };
 
@@ -344,26 +378,28 @@ function toMinutes(value) {
     return hours * 60 + minutes;
 }
 
+function formatPrayerTime(value) {
+    if (!value) {
+        return '--:-- --';
+    }
+    const match = String(value).match(/(\d{1,2}):(\d{2})/);
+    if (!match) {
+        return String(value);
+    }
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2];
+    const suffix = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const hourLabel = String(hours).padStart(2, '0');
+    return `${hourLabel}:${minutes} ${suffix}`;
+}
 function formatDigits(input) {
     if (input === undefined || input === null) {
         return '';
     }
-    const digits = [''০'', ''১'', ''২'', ''৩'', ''৪'', ''৫'', ''৬'', ''৭'', ''৮'', ''৯''];
+    const digits = ['\u09E6', '\u09E7', '\u09E8', '\u09E9', '\u09EA', '\u09EB', '\u09EC', '\u09ED', '\u09EE', '\u09EF'];
     return String(input).replace(/\d/g, digit => digits[Number(digit)] ?? digit);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function formatHijriDate(hijri) {

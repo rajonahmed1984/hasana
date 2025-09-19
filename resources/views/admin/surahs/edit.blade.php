@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1">Edit Surah · {{ $surah->name_en }}</h1>
+            <h1 class="h3 mb-1">Edit Surah - {{ $surah->name_en }}</h1>
             <span class="text-muted">Manage core info and ayahs</span>
         </div>
         <div class="btn-group">
@@ -52,20 +52,22 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Bangla Translation</th>
+                        <th>Bangla Pronunciation</th>
                         <th>Arabic</th>
-                        <th>English</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($surah->ayahs->take(10) as $ayah)
                         <tr>
                             <td>{{ $ayah->number }}</td>
-                            <td class="text-truncate" style="max-width: 240px;">{{ $ayah->text_ar }}</td>
-                            <td class="text-truncate" style="max-width: 240px;">{{ $ayah->text_en }}</td>
+                            <td class="text-truncate" style="max-width: 240px;">{{ $ayah->text_bn ?: '-' }}</td>
+                            <td class="text-truncate" style="max-width: 240px;">{{ $ayah->transliteration ?: '-' }}</td>
+                            <td class="text-truncate" style="max-width: 240px;">{{ $ayah->text_ar ?: '-' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center py-3">No ayahs yet. Add one to get started.</td>
+                            <td colspan="4" class="text-center py-3">No ayahs yet. Add one to get started.</td>
                         </tr>
                     @endforelse
                 </tbody>

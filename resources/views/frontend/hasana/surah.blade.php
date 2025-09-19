@@ -1,4 +1,4 @@
-﻿@extends('frontend.layouts.app')
+@extends('frontend.layouts.app')
 
 @section('title', $surah->name_en . ' - Hasana')
 
@@ -77,7 +77,10 @@
         @foreach ($surah->ayahs as $ayah)
             @php
                 $ayahKey = $surah->number . ':' . $ayah->number;
-                $translation = $ayah->text_en ?: $ayah->text_ar;
+                $translation = trim($ayah->text_bn ?? '');
+                $translation = $translation !== '' ? $translation : null;
+                $pronunciation = trim($ayah->transliteration ?? '');
+                $pronunciation = $pronunciation !== '' ? $pronunciation : null;
                 $audioUrl = $ayah->audio_url;
             @endphp
             <article class="ayah-card" id="ayah-{{ $ayah->number }}">
@@ -98,13 +101,13 @@
                     </div>
                 </div>
                 <div class="ayah-content">
-                    <p class="ayah-arabic">{!! nl2br(e($ayah->text_ar)) !!}</p>
-                    @if ($ayah->transliteration)
-                        <p class="ayah-transliteration text-muted">{!! nl2br(e($ayah->transliteration)) !!}</p>
-                    @endif
                     @if ($translation)
                         <p class="ayah-translation">{!! nl2br(e($translation)) !!}</p>
                     @endif
+                    @if ($pronunciation)
+                        <p class="ayah-transliteration text-muted">{!! nl2br(e($pronunciation)) !!}</p>
+                    @endif
+                    <p class="ayah-arabic">{!! nl2br(e($ayah->text_ar)) !!}</p>
                     @if ($ayah->footnotes)
                         <p class="ayah-footnotes text-muted"><small>{!! nl2br(e($ayah->footnotes)) !!}</small></p>
                     @endif

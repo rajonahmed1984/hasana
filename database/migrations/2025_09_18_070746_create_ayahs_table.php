@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('surah_id')->constrained('surahs')->cascadeOnDelete();
             $table->unsignedSmallInteger('number');
             $table->text('text_ar');
-            $table->text('text_en')->nullable();
+            $table->text('text_bn')->nullable();
             $table->text('transliteration')->nullable();
             $table->string('audio_url')->nullable();
             $table->text('footnotes')->nullable();

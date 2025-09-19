@@ -52,32 +52,32 @@
             <div class="prayer-time-card" id="fajr">
                 <p>ফজর</p>
                 <i class="bi bi-brightness-alt-high"></i>
-                <p class="time">শুরু: --:--</p>
-                <p class="end-time">শেষ: --:--</p>
+                <p class="time">--:--</p>
+                <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="dhuhr">
                 <p>যোহর</p>
                 <i class="bi bi-brightness-high-fill"></i>
-                <p class="time">শুরু: --:--</p>
-                <p class="end-time">শেষ: --:--</p>
+                <p class="time">--:--</p>
+                <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="asr">
                 <p>আসর</p>
                 <i class="bi bi-brightness-high"></i>
-                <p class="time">শুরু: --:--</p>
-                <p class="end-time">শেষ: --:--</p>
+                <p class="time">--:--</p>
+                <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="maghrib">
                 <p>মাগরিব</p>
                 <i class="bi bi-sunset-fill"></i>
-                <p class="time">শুরু: --:--</p>
-                <p class="end-time">শেষ: --:--</p>
+                <p class="time">--:--</p>
+                <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="isha">
                 <p>ইশা</p>
                 <i class="bi bi-moon-stars-fill"></i>
-                <p class="time">শুরু: --:--</p>
-                <p class="end-time">শেষ: --:--</p>
+                <p class="time">--:--</p>
+                <p class="end-time">--:--</p>
             </div>
         </div>
     </section>

@@ -28,7 +28,7 @@ class AyahController extends Controller
         $data = $request->validate([
             'number' => ['nullable', 'integer', 'min:1', 'unique:ayahs,number,NULL,id,surah_id,' . $surah->id],
             'text_ar' => ['nullable', 'string'],
-            'text_en' => ['nullable', 'string'],
+            'text_bn' => ['nullable', 'string'],
             'transliteration' => ['nullable', 'string'],
             'audio_url' => ['nullable', 'url'],
             'footnotes' => ['nullable', 'string'],
@@ -67,7 +67,7 @@ class AyahController extends Controller
         $data = $request->validate([
             'number' => ['nullable', 'integer', 'min:1', 'unique:ayahs,number,' . $ayah->id . ',id,surah_id,' . $surah->id],
             'text_ar' => ['nullable', 'string'],
-            'text_en' => ['nullable', 'string'],
+            'text_bn' => ['nullable', 'string'],
             'transliteration' => ['nullable', 'string'],
             'audio_url' => ['nullable', 'url'],
             'footnotes' => ['nullable', 'string'],

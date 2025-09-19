@@ -13,7 +13,7 @@ class Ayah extends Model
         'surah_id',
         'number',
         'text_ar',
-        'text_en',
+        'text_bn',
         'transliteration',
         'audio_url',
         'footnotes',

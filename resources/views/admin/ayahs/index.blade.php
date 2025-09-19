@@ -23,9 +23,9 @@
                 <thead>
                     <tr>
                         <th style="width: 70px;">#</th>
+                        <th style="width: 30%;">Bangla Translation</th>
+                        <th style="width: 30%;">Bangla Pronunciation</th>
                         <th style="width: 30%;">Arabic</th>
-                        <th style="width: 30%;">English</th>
-                        <th style="width: 30%;">Transliteration</th>
                         <th>Active</th>
                         <th class="text-end" style="width: 150px;">Actions</th>
                     </tr>
@@ -34,11 +34,11 @@
                     @forelse ($ayahs as $ayah)
                         <tr>
                             <td>{{ $ayah->number }}</td>
-                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_ar }}</td>
-                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_en }}</td>
+                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_bn ?: '-' }}</td>
                             <td class="text-truncate" style="max-width: 320px;">{{ $ayah->transliteration ?: '-' }}</td>
+                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_ar ?: '-' }}</td>
                             <td>{{ $ayah->is_active ? 'Yes' : 'No' }}</td>
-                            <td class="text-end">
+                            <td class="text-end" style="width: 150px;">
                                 <div class="btn-group">
                                     <a href="{{ route('admin.surahs.ayahs.edit', [$surah, $ayah]) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                     <form action="{{ route('admin.surahs.ayahs.destroy', [$surah, $ayah]) }}" method="POST" onsubmit="return confirm('Delete this ayah?')">
@@ -63,10 +63,3 @@
     </div>
 </div>
 @endsection
-
-
-
-
-
-
-
