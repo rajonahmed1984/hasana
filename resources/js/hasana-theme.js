@@ -16,8 +16,8 @@ const HIJRI_MONTHS_BN = {
     'Dhu Al-Hijjah': 'জিলহজ',
 };
 let hasIslamicCalendarSupport = true;
-const PRAYER_START_PREFIX_BN = '\u09B6\u09C1\u09B0\u09C1: ';
-const PRAYER_END_PREFIX_BN = '\u09B6\u09C7\u09B6: ';
+const PRAYER_START_PREFIX_BN = 'শুরু: ';
+const PRAYER_END_PREFIX_BN = 'শেষ: ';
 
 
 document.addEventListener('DOMContentLoaded', () => {
