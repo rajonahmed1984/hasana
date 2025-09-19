@@ -1,4 +1,4 @@
-const THEME_STORAGE_KEY = 'hasana-theme';
+﻿const THEME_STORAGE_KEY = 'hasana-theme';
 let prayerSchedule = [];
 let prayerUpdateTimer = null;
 const HIJRI_MONTHS_BN = {
@@ -17,17 +17,28 @@ const HIJRI_MONTHS_BN = {
 };
 let hasIslamicCalendarSupport = true;
 const PRAYER_START_PREFIX_BN = 'শুরু: ';
-const PRAYER_END_PREFIX_BN = 'শেষ: ';
+const PRAYER_END_PREFIX_BN = '???: ';
+const BOOKMARK_STORAGE_KEY = 'hasana_bookmarks';
+const ARABIC_FONT_KEY = 'hasana_arabic_font_size';
+const TRANSLATION_FONT_KEY = 'hasana_translation_font_size';
+const TRANSLATION_TOGGLE_KEY = 'hasana_translation_enabled';
+let bookmarkListContainer = null;
 
 
 document.addEventListener('DOMContentLoaded', () => {
     applyStoredTheme();
+    applyStoredFontSizes();
+    applyTranslationVisibility();
     initMenuToggle();
     initDarkModeToggle();
     initDateTimeTicker();
     initPrayerTimes();
     initSurahSearch();
     setupSearchToggle();
+    initBookmarkButtons();
+    initBookmarkListPage();
+    initSettingsPage();
+    initShareButtons();
 });
 
 function initMenuToggle() {
@@ -429,4 +440,405 @@ function updateIslamicDate(rawText, options = {}) {
     islamicElem.textContent = needsSuffix ? `${normalized} হিজরি` : normalized;
 }
 
+
+
+
+
+function applyStoredFontSizes() {
+    const arabicSize = localStorage.getItem(ARABIC_FONT_KEY);
+    const translationSize = localStorage.getItem(TRANSLATION_FONT_KEY);
+    if (arabicSize) {
+        document.documentElement.style.setProperty('--ayah-arabic-font-size', `${arabicSize}px`);
+    }
+    if (translationSize) {
+        document.documentElement.style.setProperty('--ayah-translation-font-size', `${translationSize}px`);
+    }
+}
+
+function applyTranslationVisibility() {
+    const stored = localStorage.getItem(TRANSLATION_TOGGLE_KEY);
+    const enabled = stored === null ? true : stored === '1';
+    document.body.classList.toggle('translation-hidden', !enabled);
+}
+
+function getBookmarkSet() {
+    try {
+        const raw = localStorage.getItem(BOOKMARK_STORAGE_KEY);
+        if (!raw) {
+            return new Set();
+        }
+        const parsed = JSON.parse(raw);
+        return new Set(Array.isArray(parsed) ? parsed : []);
+    } catch (error) {
+        console.warn('Failed to parse bookmarks', error);
+        return new Set();
+    }
+}
+
+function saveBookmarkSet(set) {
+    localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify([...set]));
+}
+
+function refreshBookmarkButtons() {
+    const bookmarks = getBookmarkSet();
+    document.querySelectorAll('.bookmark-btn[data-ayah]').forEach((button) => {
+        setBookmarkButtonState(button, bookmarks.has(button.dataset.ayah));
+    });
+}
+
+function setBookmarkButtonState(button, isActive) {
+    button.classList.toggle('active', isActive);
+    const icon = button.querySelector('i');
+    if (icon) {
+        icon.classList.toggle('bi-bookmark-fill', isActive);
+        icon.classList.toggle('bi-bookmark', !isActive);
+    }
+}
+
+function initBookmarkButtons() {
+    const buttons = document.querySelectorAll('.bookmark-btn[data-ayah]');
+    if (!buttons.length) {
+        return;
+    }
+    refreshBookmarkButtons();
+    buttons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const key = button.dataset.ayah;
+            if (!key) {
+                return;
+            }
+            const isActive = toggleBookmark(key);
+            setBookmarkButtonState(button, isActive);
+            showToast(isActive ? 'বুকমার্কে যোগ করা হয়েছে' : 'বুকমার্ক থেকে সরানো হয়েছে');
+        });
+    });
+}
+
+function toggleBookmark(key) {
+    const bookmarks = getBookmarkSet();
+    let isActive = false;
+    if (bookmarks.has(key)) {
+        bookmarks.delete(key);
+    } else {
+        bookmarks.add(key);
+        isActive = true;
+    }
+    saveBookmarkSet(bookmarks);
+    refreshBookmarkButtons();
+    renderBookmarkList();
+    return isActive;
+}
+
+function initBookmarkListPage() {
+    const container = document.getElementById('bookmark-list');
+    if (!container) {
+        return;
+    }
+    bookmarkListContainer = container;
+    container.addEventListener('click', (event) => {
+        const removeBtn = event.target.closest('.remove-bookmark-btn');
+        if (removeBtn) {
+            event.preventDefault();
+            const key = removeBtn.dataset.ayah;
+            if (!key) {
+                return;
+            }
+            const bookmarks = getBookmarkSet();
+            if (bookmarks.delete(key)) {
+                saveBookmarkSet(bookmarks);
+                renderBookmarkList();
+                refreshBookmarkButtons();
+                showToast('বুকমার্ক সরানো হয়েছে');
+            }
+            return;
+        }
+    });
+    renderBookmarkList();
+}
+
+function renderBookmarkList() {
+    if (!bookmarkListContainer) {
+        return;
+    }
+    const emptyState = bookmarkListContainer.querySelector('[data-empty]');
+    bookmarkListContainer.querySelectorAll('.bookmark-item').forEach((node) => node.remove());
+
+    const keys = Array.from(getBookmarkSet());
+    if (!keys.length) {
+        if (emptyState) {
+            emptyState.classList.remove('hidden');
+        }
+        return;
+    }
+    if (emptyState) {
+        emptyState.classList.add('hidden');
+    }
+
+    const endpoint = bookmarkListContainer.dataset.endpoint;
+    if (!endpoint) {
+        return;
+    }
+
+    fetch(`${endpoint}?keys=${encodeURIComponent(keys.join(','))}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Request failed');
+            }
+            return response.json();
+        })
+        .then((payload) => {
+            const items = Array.isArray(payload?.data) ? payload.data : [];
+            if (!items.length) {
+                if (emptyState) {
+                    emptyState.textContent = 'বুকমার্ক লোড করা যায়নি।';
+                    emptyState.classList.remove('hidden');
+                }
+                return;
+            }
+
+            const shareBase = bookmarkListContainer.dataset.shareBase || getShareBaseUrl();
+
+            items.forEach((item) => {
+                const card = document.createElement('article');
+                card.className = 'ayah-card bookmark-item';
+                card.dataset.ayahKey = item.key;
+
+                const header = document.createElement('div');
+                header.className = 'ayah-header';
+
+                const number = document.createElement('span');
+                number.className = 'ayah-number';
+                const referenceLabel = item.surah_name ? `${item.surah_name} (${item.reference_bn})` : item.reference_bn;
+                number.textContent = referenceLabel;
+                header.appendChild(number);
+
+                const actions = document.createElement('div');
+                actions.className = 'ayah-actions';
+
+                const shareBtn = document.createElement('button');
+                shareBtn.type = 'button';
+                shareBtn.className = 'share-btn';
+                shareBtn.dataset.ayah = item.key;
+                shareBtn.dataset.shareBase = shareBase;
+                if (item.text_bn) {
+                    shareBtn.dataset.shareText = item.text_bn;
+                } else if (item.text_ar) {
+                    shareBtn.dataset.shareText = item.text_ar;
+                }
+                shareBtn.dataset.shareReference = referenceLabel;
+                const shareIcon = document.createElement('i');
+                shareIcon.className = 'bi bi-share';
+                shareBtn.appendChild(shareIcon);
+                actions.appendChild(shareBtn);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'remove-bookmark-btn';
+                removeBtn.dataset.ayah = item.key;
+                const removeIcon = document.createElement('i');
+                removeIcon.className = 'bi bi-trash3';
+                removeBtn.appendChild(removeIcon);
+                actions.appendChild(removeBtn);
+
+                header.appendChild(actions);
+                card.appendChild(header);
+
+                const content = document.createElement('div');
+                content.className = 'ayah-content';
+
+                if (item.text_bn) {
+                    const translation = document.createElement('p');
+                    translation.className = 'ayah-translation';
+                    translation.innerHTML = formatWithBreaks(item.text_bn);
+                    content.appendChild(translation);
+                }
+
+                if (item.transliteration) {
+                    const transliteration = document.createElement('p');
+                    transliteration.className = 'ayah-transliteration text-muted';
+                    transliteration.innerHTML = formatWithBreaks(item.transliteration);
+                    content.appendChild(transliteration);
+                }
+
+                if (item.text_ar) {
+                    const arabic = document.createElement('p');
+                    arabic.className = 'ayah-arabic';
+                    arabic.innerHTML = formatWithBreaks(item.text_ar);
+                    content.appendChild(arabic);
+                }
+
+                if (item.footnotes) {
+                    const footnotes = document.createElement('p');
+                    footnotes.className = 'ayah-footnotes text-muted';
+                    const small = document.createElement('small');
+                    small.innerHTML = formatWithBreaks(item.footnotes);
+                    footnotes.appendChild(small);
+                    content.appendChild(footnotes);
+                }
+
+                card.appendChild(content);
+                bookmarkListContainer.appendChild(card);
+            });
+
+            applyTranslationVisibility();
+        })
+        .catch(() => {
+            if (emptyState) {
+                emptyState.textContent = 'বুকমার্ক লোড করা সম্ভব হয়নি।';
+                emptyState.classList.remove('hidden');
+            }
+        });
+}
+
+function initSettingsPage() {
+    const group = document.querySelector('.settings-group[data-default-arabic]');
+    if (!group) {
+        return;
+    }
+
+    const arabicSlider = document.getElementById('arabic-font-slider');
+    const translationSlider = document.getElementById('translation-font-slider');
+    const translationToggle = document.getElementById('translation-toggle');
+
+    const storedArabic = localStorage.getItem(ARABIC_FONT_KEY);
+    const storedTranslation = localStorage.getItem(TRANSLATION_FONT_KEY);
+    const storedToggle = localStorage.getItem(TRANSLATION_TOGGLE_KEY);
+
+    if (arabicSlider && storedArabic) {
+        arabicSlider.value = storedArabic;
+    }
+    if (translationSlider && storedTranslation) {
+        translationSlider.value = storedTranslation;
+    }
+    if (translationToggle) {
+        const enabled = storedToggle === null ? true : storedToggle === '1';
+        translationToggle.checked = enabled;
+    }
+
+    if (arabicSlider) {
+        arabicSlider.addEventListener('input', () => {
+            localStorage.setItem(ARABIC_FONT_KEY, arabicSlider.value);
+            document.documentElement.style.setProperty('--ayah-arabic-font-size', `${arabicSlider.value}px`);
+        });
+        arabicSlider.addEventListener('change', () => {
+            showToast('আরবি ফন্ট সাইজ হালনাগাদ হয়েছে');
+        });
+    }
+
+    if (translationSlider) {
+        translationSlider.addEventListener('input', () => {
+            localStorage.setItem(TRANSLATION_FONT_KEY, translationSlider.value);
+            document.documentElement.style.setProperty('--ayah-translation-font-size', `${translationSlider.value}px`);
+        });
+        translationSlider.addEventListener('change', () => {
+            showToast('অনুবাদের ফন্ট সাইজ হালনাগাদ হয়েছে');
+        });
+    }
+
+    if (translationToggle) {
+        translationToggle.addEventListener('change', () => {
+            localStorage.setItem(TRANSLATION_TOGGLE_KEY, translationToggle.checked ? '1' : '0');
+            applyTranslationVisibility();
+        });
+    }
+}
+
+function initShareButtons() {
+    document.addEventListener('click', (event) => {
+        const button = event.target.closest('.share-btn');
+        if (!button) {
+            return;
+        }
+        event.preventDefault();
+        const shareBase = button.dataset.shareBase || getShareBaseUrl();
+        const ayahKey = button.dataset.ayah || '';
+        let shareText = button.dataset.shareText || extractShareText(button);
+        const shareReference = button.dataset.shareReference || extractShareReference(button, ayahKey);
+
+        if (!shareText && !shareReference) {
+            showToast('শেয়ার করার জন্য তথ্য পাওয়া যায়নি');
+            return;
+        }
+
+        const url = new URL(shareBase, window.location.origin);
+        if (shareText) {
+            url.searchParams.set('text', shareText);
+        }
+        if (shareReference) {
+            url.searchParams.set('ref', shareReference);
+        }
+        window.location.href = url.toString();
+    });
+}
+
+function getShareBaseUrl() {
+    return document.body.dataset.shareUrl || '/share';
+}
+
+function extractShareText(button) {
+    const card = button.closest('.ayah-card');
+    if (!card) {
+        return '';
+    }
+    const translation = card.querySelector('.ayah-translation');
+    if (translation && translation.textContent.trim()) {
+        return translation.textContent.trim();
+    }
+    const arabic = card.querySelector('.ayah-arabic');
+    if (arabic && arabic.textContent.trim()) {
+        return arabic.textContent.trim();
+    }
+    return '';
+}
+
+function extractShareReference(button, ayahKey) {
+    const card = button.closest('.ayah-card');
+    if (card) {
+        const number = card.querySelector('.ayah-number');
+        if (number && number.textContent.trim()) {
+            return number.textContent.trim();
+        }
+    }
+    if (ayahKey && /\d+:\d+/.test(ayahKey)) {
+        return ayahKey.split(':').map((part) => formatDigits(part)).join(':');
+    }
+    return ayahKey || '';
+}
+
+function showToast(message) {
+    if (!message) {
+        return;
+    }
+    let toast = document.getElementById('hasana-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'hasana-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    if (toast.dataset.timeoutId) {
+        clearTimeout(Number(toast.dataset.timeoutId));
+    }
+    const timeoutId = window.setTimeout(() => {
+        toast.classList.remove('show');
+        delete toast.dataset.timeoutId;
+    }, 2400);
+    toast.dataset.timeoutId = timeoutId;
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (match) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '\'': '&#39;',
+    }[match] || match));
+}
+
+function formatWithBreaks(value) {
+    return escapeHtml(value).replace(/\r?\n/g, '<br>');
+}
 

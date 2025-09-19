@@ -39,6 +39,8 @@
     --arabic-font: 'Lateef', serif;
     --bengali-font: 'Hind Siliguri', 'Noto Sans Bengali', 'Baloo Da 2', sans-serif;
     --menu-width: 280px;
+    --ayah-arabic-font-size: 2rem;
+    --ayah-translation-font-size: 1rem;
 }
 /* --- Dark Mode Variables --- */
 body.dark-mode {
@@ -432,14 +434,14 @@ body.search-active {
 }
 .ayah-arabic {
     font-family: var(--arabic-font);
-    font-size: 2rem;
+    font-size: var(--ayah-arabic-font-size);
     text-align: right;
     direction: rtl;
     line-height: 2.2;
     margin-bottom: 1rem;
 }
 .ayah-translation {
-    font-size: 1rem;
+    font-size: var(--ayah-translation-font-size);
     line-height: 1.7;
     text-align: left;
 }
@@ -701,10 +703,10 @@ body.dark-mode .modal-body textarea {
 
 /* --- Share Page Specific Styles (UPDATED) --- */
 .share-page-body {
-    background-color: var(--light-gray);
+    background-color: var(--bg-color);
 }
 body.dark-mode .share-page-body {
-    background-color: #2a2a2a;
+    background-color: #121212;
 }
 .share-card-container {
     display: flex;
@@ -716,9 +718,8 @@ body.dark-mode .share-page-body {
     width: 100%;
     max-width: 400px;
     aspect-ratio: 1 / 1;
-    /* BACKGROUND IMAGE UPDATED TO FIX ERROR */
     background-color: #eaf6f0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2328a745' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2301512f' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6H4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     background-size: auto;
     background-position: center;
     border-radius: 12px;
@@ -726,32 +727,34 @@ body.dark-mode .share-page-body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 24px;
     box-sizing: border-box;
     text-align: center;
-    color: #333;
+    color: var(--text-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 body.dark-mode .share-card {
     background-color: #1c2b22;
     color: #e0e0e0;
 }
 .share-text-content {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.85);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 body.dark-mode .share-text-content {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.35);
 }
 #share-ayah-text {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0 0 12px;
 }
 #share-ayah-ref {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
     margin: 0;
+    color: var(--text-light);
 }
 .share-actions {
     display: flex;
@@ -761,207 +764,64 @@ body.dark-mode .share-text-content {
     align-items: center;
     margin-top: 20px;
 }
-.btn-primary, .btn-secondary {
+.share-instructions {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+.social-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.social-btn {
+    border: none;
+    color: #ffffff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.social-btn:hover {
+    transform: scale(1.07);
+}
+.facebook { background-color: #1877F2; }
+.whatsapp { background-color: #25D366; }
+.twitter { background-color: #000000; }
+.telegram { background-color: #2AABEE; }
+.btn-primary,
+.btn-secondary {
     width: auto;
     padding: 12px 20px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
 }
 .btn-secondary {
     background-color: #6c757d;
+    color: #ffffff;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--bengali-font);
+    cursor: pointer;
 }
 body.dark-mode .btn-secondary {
     background-color: #495057;
 }
-
-
-
-/* --- Hadis Page Styles (NEW) --- */
-.hadis-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    background-color: var(--light-gray);
-    padding: 5px;
-    border-radius: 8px;
-}
-.tab-btn {
-    flex: 1;
-    padding: 10px;
-    font-size: 1rem;
-    font-family: var(--bengali-font);
-    border: none;
-    background-color: transparent;
-    color: var(--text-light);
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s, color 0.3s;
-}
-.tab-btn.active {
-    background-color: var(--white-color);
-    color: var(--primary-color);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.hadis-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.hadis-card {
-    background-color: var(--white-color);
-    border-radius: 10px;
-    padding: 20px;
-    border: 1px solid var(--border-color);
-    border-left: 4px solid var(--primary-color);
-}
-.hadis-text {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin: 0 0 15px 0;
-    text-align: justify;
-}
-.hadis-ref {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin: 0;
-    text-align: right;
-    font-weight: 500;
+body.translation-hidden .ayah-translation,
+body.translation-hidden .ayah-transliteration {
+    display: none !important;
 }
 
-/* --- Dua Page Styles (NEW) --- */
-.dua-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.dua-card {
-    background-color: var(--white-color);
-    border-radius: 10px;
-    padding: 20px;
-    border: 1px solid var(--border-color);
-}
-.dua-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin: 0 0 15px 0;
-}
-.dua-arabic {
-    font-family: var(--arabic-font);
-    font-size: 1.8rem;
-    text-align: right;
-    direction: rtl;
-    line-height: 2;
-    margin: 0 0 15px 0;
-}
-.dua-translation {
-    font-size: 1rem;
-    line-height: 1.7;
-    margin: 0 0 15px 0;
-    font-style: italic;
-    color: var(--text-light);
-}
-.dua-ref {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin: 0;
-    text-align: right;
-    font-weight: 500;
-}
 
-/* --- Prayer Times Section (NEW) --- */
-.prayer-times-section {
-    background-color: var(--white-color);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
-}
-.prayer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--light-gray);
-}
-body.dark-mode .prayer-header {
-    border-bottom-color: var(--border-color);
-}
-.prayer-header h2 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-.prayer-header p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--text-light);
-}
-.location {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 600;
-    color: var(--text-color);
-}
-.location i {
-    color: var(--primary-color);
-}
-.prayer-times-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-}
-.prayer-time-card {
-    text-align: center;
-    padding: 10px 5px;
-    border-radius: 8px;
-    background-color: var(--bg-color);
-    transition: background-color 0.3s, transform 0.3s;
-}
-.prayer-time-card p {
-    margin: 0;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--text-light);
-}
-.prayer-time-card i {
-    font-size: 1.6rem; /* Slightly smaller to make space */
-    margin: 5px 0; /* Reduced margin */
-    color: var(--text-color);
-}
-.prayer-time-card .time {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--text-color);
-    line-height: 1.2;
-}
-/* New style for end time */
-.prayer-time-card .end-time {
-    font-size: 0.6rem;
-    color: var(--text-light);
-    line-height: 1.2;
-}
-/* Style for the next upcoming prayer */
-.prayer-time-card.next-prayer {
-    background-color: var(--primary-color);
-    color: white;
-    transform: scale(1.05);
-}
-.prayer-time-card.next-prayer p,
-.prayer-time-card.next-prayer i,
-.prayer-time-card.next-prayer .time {
-    color: white;
-}
-/* New style for highlighted end time */
-.prayer-time-card.next-prayer .end-time {
-    color: rgba(255, 255, 255, 0.8);
-}
 
 
 

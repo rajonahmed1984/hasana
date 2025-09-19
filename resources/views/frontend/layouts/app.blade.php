@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/js/hasana.js'])
 </head>
-<body class="hasana-body">
+<body class="hasana-body @yield('body_class', '')" data-share-url="{{ route('hasana.share') }}">
     @yield('body')
+    @stack('scripts')
 </body>
 </html>

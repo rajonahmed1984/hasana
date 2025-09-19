@@ -3,28 +3,7 @@
 @section('title', 'Hasana - ওমরাহ গাইড')
 
 @section('body')
-<div class="offcanvas-overlay" id="offcanvas-overlay"></div>
-<aside class="offcanvas-menu" id="offcanvas-menu">
-    <div class="offcanvas-header">
-        <img src="{{ Vite::asset('resources/images/hasana/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
-        <h2 class="offcanvas-title">Hasana</h2>
-        <button class="close-btn" id="close-menu-btn">&times;</button>
-    </div>
-    <nav class="offcanvas-nav">
-        <a href="{{ route('hasana.home') }}" class="offcanvas-link"><i class="bi bi-house-fill"></i> হোম</a>
-        <a href="{{ route('hasana.quran') }}" class="offcanvas-link"><i class="bi bi-journal-text"></i> কুরআন</a>
-        <a href="{{ route('hasana.hadiths') }}" class="offcanvas-link"><i class="bi bi-book"></i> হাদিস</a>
-        <a href="{{ route('hasana.duas') }}" class="offcanvas-link"><i class="bi bi-hurricane"></i> দোয়া</a>
-        <a href="{{ route('hasana.umrah') }}" class="offcanvas-link active"><i class="bi bi-compass"></i> ওমরাহ গাইড</a>
-    </nav>
-    <div class="offcanvas-footer">
-        <p class="mb-0">থিম পরিবর্তন করুন</p>
-        <label class="toggle-switch">
-            <input type="checkbox" id="dark-mode-toggle">
-            <span class="slider"></span>
-        </label>
-    </div>
-</aside>
+@include('frontend.hasana.partials.offcanvas', ['active' => 'umrah'])
 
 <header class="app-header sticky-top">
     <div class="header-content">
@@ -105,26 +84,6 @@
     </section>
 </main>
 
-<nav class="bottom-nav">
-    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') || request()->routeIs('hasana.surah') ? 'active' : '' }}">
-        <i class="fa-solid fa-quran"></i>
-        <span>কুরআন</span>
-    </a>
-    <a href="{{ route('hasana.hadiths') }}" class="nav-item {{ request()->routeIs('hasana.hadiths') ? 'active' : '' }}">
-        <i class="fa-solid fa-book-open"></i>
-        <span>হাদিস</span>
-    </a>
-    <a href="{{ route('hasana.home') }}" class="nav-item {{ request()->routeIs('hasana.home') ? 'active' : '' }}">
-        <i class="fa-solid fa-house"></i>
-        <span>হোম</span>
-    </a>
-    <a href="{{ route('hasana.duas') }}" class="nav-item {{ request()->routeIs('hasana.duas') ? 'active' : '' }}">
-        <i class="fa-solid fa-hands-praying"></i>
-        <span>দোয়া</span>
-    </a>
-    <a href="{{ route('hasana.umrah') }}" class="nav-item {{ request()->routeIs('hasana.umrah') ? 'active' : '' }}">
-        <i class="fa-solid fa-kaaba"></i>
-        <span>ওমরাহ গাইড</span>
-    </a>
-</nav>
+@include('frontend.hasana.partials.bottom-nav', ['active' => 'umrah'])
 @endsection
+
