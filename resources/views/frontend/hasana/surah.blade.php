@@ -1,17 +1,17 @@
-@extends('frontend.layouts.app')
+﻿@extends('frontend.layouts.app')
 
 @section('title', $surah->name_en . ' - Hasana')
 
 @php
     $meta = $surah->meta ?? [];
-    $digitsMap = ['0' => '০', '1' => '১', '2' => '২', '3' => '৩', '4' => '৪', '5' => '৫', '6' => '৬', '7' => '৭', '8' => '৮', '9' => '৯'];
+    $digitsMap = ['0' => 'à§¦', '1' => 'à§§', '2' => 'à§¨', '3' => 'à§©', '4' => 'à§ª', '5' => 'à§«', '6' => 'à§¬', '7' => 'à§­', '8' => 'à§®', '9' => 'à§¯'];
     $formatDigits = fn ($value) => strtr((string) $value, $digitsMap);
     $nameBn = $meta['name_bn'] ?? $surah->name_en;
     $meaningBn = $meta['meaning_bn'] ?? ($meta['meaning'] ?? null);
     $revelationBn = match (strtolower($surah->revelation_type ?? '')) {
-        'meccan' => 'মাক্কী',
-        'medinan' => 'মাদানী',
-        default => '—',
+        'meccan' => 'à¦®à¦¾à¦•à§à¦•à§€',
+        'medinan' => 'à¦®à¦¾à¦¦à¦¾à¦¨à§€',
+        default => 'â€”',
     };
     $revelationOrder = $meta['revelation_order'] ?? null;
     $summaryBn = $meta['summary_bn'] ?? ($meta['summary'] ?? $surah->summary);
@@ -26,13 +26,13 @@
         <button class="close-btn" id="close-menu-btn">&times;</button>
     </div>
     <nav class="offcanvas-nav">
-        <a href="{{ route('hasana.home') }}" class="offcanvas-link"><i class="bi bi-house-fill"></i> হোম</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> বুকমার্কস</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> সেটিংস</a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i> সম্পর্কে</a>
+        <a href="{{ route('hasana.home') }}" class="offcanvas-link"><i class="bi bi-house-fill"></i> à¦¹à§‹à¦®</a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> à¦¬à§à¦•à¦®à¦¾à¦°à§à¦•à¦¸</a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> à¦¸à§‡à¦Ÿà¦¿à¦‚à¦¸</a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i> à¦¸à¦®à§à¦ªà¦°à§à¦•à§‡</a>
     </nav>
     <div class="offcanvas-footer">
-        <p class="mb-0">ডার্ক মোড</p>
+        <p class="mb-0">à¦¡à¦¾à¦°à§à¦• à¦®à§‹à¦¡</p>
         <label class="toggle-switch">
             <input type="checkbox" id="dark-mode-toggle">
             <span class="slider"></span>
@@ -62,9 +62,9 @@
             <div class="surah-info-divider"></div>
             <p class="surah-info-meta">
                 {{ $revelationBn }}
-                ● {{ $formatDigits($surah->ayahs->count()) }} আয়াত
+                â— {{ $formatDigits($surah->ayahs->count()) }} à¦†à§Ÿà¦¾à¦¤
                 @if ($revelationOrder)
-                    ● অবতীর্ণের ক্রম: {{ $formatDigits($revelationOrder) }}
+                    â— à¦…à¦¬à¦¤à§€à¦°à§à¦£à§‡à¦° à¦•à§à¦°à¦®: {{ $formatDigits($revelationOrder) }}
                 @endif
             </p>
             @if (!empty($summaryBn))
@@ -122,7 +122,7 @@
         <i class="fa-solid fa-quran"></i>
         <span>কুরআন</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.hadiths') }}" class="nav-item {{ request()->routeIs('hasana.hadiths') ? 'active' : '' }}">
         <i class="fa-solid fa-book-open"></i>
         <span>হাদিস</span>
     </a>
@@ -130,13 +130,15 @@
         <i class="fa-solid fa-house"></i>
         <span>হোম</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.duas') }}" class="nav-item {{ request()->routeIs('hasana.duas') ? 'active' : '' }}">
         <i class="fa-solid fa-hands-praying"></i>
         <span>দোয়া</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.umrah') }}" class="nav-item {{ request()->routeIs('hasana.umrah') ? 'active' : '' }}">
         <i class="fa-solid fa-kaaba"></i>
         <span>ওমরাহ গাইড</span>
     </a>
 </nav>
 @endsection
+
+

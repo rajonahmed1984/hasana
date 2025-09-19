@@ -1,4 +1,4 @@
-@extends('frontend.layouts.app')
+﻿@extends('frontend.layouts.app')
 
 @section('title', 'Hasana')
 
@@ -11,13 +11,13 @@
         <button class="close-btn" id="close-menu-btn">&times;</button>
     </div>
     <nav class="offcanvas-nav">
-        <a href="{{ route('hasana.home') }}" class="offcanvas-link active"><i class="bi bi-house-fill"></i> হোম </a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> বুকমার্ক </a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> সেটিংস </a>
-        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i>আমাদের সম্পর্কে </a>
+        <a href="{{ route('hasana.home') }}" class="offcanvas-link active"><i class="bi bi-house-fill"></i> à¦¹à§‹à¦® </a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-bookmark-fill"></i> à¦¬à§à¦•à¦®à¦¾à¦°à§à¦• </a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-gear-fill"></i> à¦¸à§‡à¦Ÿà¦¿à¦‚à¦¸ </a>
+        <a href="#" class="offcanvas-link"><i class="bi bi-info-circle-fill"></i>à¦†à¦®à¦¾à¦¦à§‡à¦° à¦¸à¦®à§à¦ªà¦°à§à¦•à§‡ </a>
     </nav>
     <div class="offcanvas-footer">
-        <p class="mb-0">ডার্ক মোড</p>
+        <p class="mb-0">à¦¡à¦¾à¦°à§à¦• à¦®à§‹à¦¡</p>
         <label class="toggle-switch">
             <input type="checkbox" id="dark-mode-toggle">
             <span class="slider"></span>
@@ -50,31 +50,31 @@
         </div>
         <div class="prayer-times-grid">
             <div class="prayer-time-card" id="fajr">
-                <p>ফজর</p>
+                <p>à¦«à¦œà¦°</p>
                 <i class="bi bi-brightness-alt-high"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="dhuhr">
-                <p>যোহর</p>
+                <p>à¦¯à§‹à¦¹à¦°</p>
                 <i class="bi bi-brightness-high-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="asr">
-                <p>আসর</p>
+                <p>à¦†à¦¸à¦°</p>
                 <i class="bi bi-brightness-high"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="maghrib">
-                <p>মাগরিব</p>
+                <p>à¦®à¦¾à¦—à¦°à¦¿à¦¬</p>
                 <i class="bi bi-sunset-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="isha">
-                <p>ইশা</p>
+                <p>à¦‡à¦¶à¦¾</p>
                 <i class="bi bi-moon-stars-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
@@ -98,11 +98,11 @@
 </main>
 
 <nav class="bottom-nav">
-    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') ? 'active' : '' }}">
+    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') || request()->routeIs('hasana.surah') ? 'active' : '' }}">
         <i class="fa-solid fa-quran"></i>
         <span>কুরআন</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.hadiths') }}" class="nav-item {{ request()->routeIs('hasana.hadiths') ? 'active' : '' }}">
         <i class="fa-solid fa-book-open"></i>
         <span>হাদিস</span>
     </a>
@@ -110,14 +110,16 @@
         <i class="fa-solid fa-house"></i>
         <span>হোম</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.duas') }}" class="nav-item {{ request()->routeIs('hasana.duas') ? 'active' : '' }}">
         <i class="fa-solid fa-hands-praying"></i>
         <span>দোয়া</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.umrah') }}" class="nav-item {{ request()->routeIs('hasana.umrah') ? 'active' : '' }}">
         <i class="fa-solid fa-kaaba"></i>
         <span>ওমরাহ গাইড</span>
     </a>
 </nav>
 @endsection
+
+
 

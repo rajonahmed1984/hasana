@@ -20,9 +20,9 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">
                     @auth
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.surahs.index') }}">Surahs</a>
-                    </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.surahs.index') }}">Surahs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.hadiths.index') }}">Hadith</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.duas.index') }}">Duas</a></li>
                     @endauth
                 </ul>
 

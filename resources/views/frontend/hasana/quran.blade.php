@@ -82,11 +82,11 @@
 </main>
 
 <nav class="bottom-nav">
-        <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') ? 'active' : '' }}">
+    <a href="{{ route('hasana.quran') }}" class="nav-item {{ request()->routeIs('hasana.quran') || request()->routeIs('hasana.surah') ? 'active' : '' }}">
         <i class="fa-solid fa-quran"></i>
         <span>কুরআন</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.hadiths') }}" class="nav-item {{ request()->routeIs('hasana.hadiths') ? 'active' : '' }}">
         <i class="fa-solid fa-book-open"></i>
         <span>হাদিস</span>
     </a>
@@ -94,13 +94,16 @@
         <i class="fa-solid fa-house"></i>
         <span>হোম</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.duas') }}" class="nav-item {{ request()->routeIs('hasana.duas') ? 'active' : '' }}">
         <i class="fa-solid fa-hands-praying"></i>
         <span>দোয়া</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{{ route('hasana.umrah') }}" class="nav-item {{ request()->routeIs('hasana.umrah') ? 'active' : '' }}">
         <i class="fa-solid fa-kaaba"></i>
         <span>ওমরাহ গাইড</span>
     </a>
 </nav>
 @endsection
+
+
+
