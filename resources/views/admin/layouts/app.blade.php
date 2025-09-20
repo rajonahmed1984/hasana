@@ -1,65 +1,140 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Hasana Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <title>@yield('title', 'Hasana Admin')</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-0Ayuk+gdt1PegGIlOCqljsFvdcGaVbL50DJBSSTXobHxPPH/FkOFjvFsRQAt2bQVWwtIg9Y9ycYkG9eu1+RL1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @vite(['resources/js/admin.js'])
     @stack('styles')
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('hasana.home') }}">Hasana</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto">
-                    @auth
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.surahs.index') }}">Surahs</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.hadiths.index') }}">Hadith</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.hadith-categories.index') }}">Hadith Collections</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.duas.index') }}">Duas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dua-categories.index') }}">Dua Categories</a></li>
-                    @endauth
-                </ul>
-
-                <ul class="navbar-nav ms-auto">
-                    @guest
-                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                    @else
-                        <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ Auth::user()->name }}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Logout
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </div>
-                        </li>
-                    @endguest
-                </ul>
+<body class="admin-body">
+    <div class="admin-layout" data-admin-app>
+        <aside class="admin-sidebar" data-admin-sidebar>
+            <div class="sidebar-brand">
+                <a href="{{ route('hasana.home') }}" class="brand-link">
+                    <i class="bi bi-moon-stars"></i>
+                    <span>Hasana</span>
+                </a>
+                <button class="sidebar-close" data-admin-sidebar-close aria-label="Close navigation">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
-        </div>
-    </nav>
+            @php
+                $navItems = [
+                    [
+                        'label' => 'Surahs',
+                        'icon' => 'bi-journal-richtext',
+                        'route' => 'admin.surahs.index',
+                        'active' => request()->routeIs('admin.surahs.*'),
+                    ],
+                    [
+                        'label' => 'Ayahs',
+                        'icon' => 'bi-collection-play',
+                        'route' => 'admin.surahs.ayahs.index',
+                        'active' => request()->routeIs('admin.surahs.ayahs.*'),
+                        'params' => isset($surah) ? ['surah' => $surah] : null,
+                        'disabled' => !isset($surah),
+                    ],
+                    [
+                        'label' => 'Hadith',
+                        'icon' => 'bi-bookmark-heart',
+                        'route' => 'admin.hadiths.index',
+                        'active' => request()->routeIs('admin.hadiths.*'),
+                    ],
+                    [
+                        'label' => 'Hadith Collections',
+                        'icon' => 'bi-folder2-open',
+                        'route' => 'admin.hadith-categories.index',
+                        'active' => request()->routeIs('admin.hadith-categories.*'),
+                    ],
+                    [
+                        'label' => 'Duas',
+                        'icon' => 'bi-hands',
+                        'route' => 'admin.duas.index',
+                        'active' => request()->routeIs('admin.duas.*'),
+                    ],
+                    [
+                        'label' => 'Dua Categories',
+                        'icon' => 'bi-grid-1x2',
+                        'route' => 'admin.dua-categories.index',
+                        'active' => request()->routeIs('admin.dua-categories.*'),
+                    ],
+                ];
+            @endphp
+            <nav class="sidebar-nav">
+                <ul>
+                    @foreach ($navItems as $item)
+                        @php
+                            $hasParams = array_key_exists('params', $item);
+                            $params = $hasParams ? $item['params'] : null;
+                            $disabled = ($item['disabled'] ?? false) || ($hasParams && empty($params));
+                            $url = '#';
 
-    <main class="py-4">
-        <div class="container">
-            @yield('content')
-        </div>
-    </main>
+                            if (! $disabled) {
+                                $url = $hasParams ? route($item['route'], $params) : route($item['route']);
+                            }
+                        @endphp
+                        <li class="sidebar-item {{ $item['active'] ? 'active' : '' }} {{ $disabled ? 'disabled' : '' }}">
+                            <a href="{{ $url }}" @class(['sidebar-link', 'disabled-link' => $disabled])>
+                                <i class="bi {{ $item['icon'] }}"></i>
+                                <span>{{ $item['label'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ route('hasana.home') }}" class="sidebar-footer-link" target="_blank" rel="noopener">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    <span>View Frontend</span>
+                </a>
+            </div>
+        </aside>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" data-admin-sidebar-toggle aria-label="Open navigation">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="topbar-page-meta">
+                        <h1 class="page-title">@yield('page_title', 'Dashboard')</h1>
+                        <p class="page-subtitle">@yield('page_subtitle', 'Manage Hasana content with quick inline tools.')</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-chip">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="user-meta">
+                            <span class="user-name">{{ Auth::user()->name ?? 'Admin' }}</span>
+                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                                @csrf
+                                <button type="submit">Sign out</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                @yield('content')
+            </main>
+        </div>
+    </div>
+
+    <div id="admin-dialog-root"></div>
+    <div id="admin-toast" class="admin-toast" role="status" aria-live="polite"></div>
+
     @stack('scripts')
 </body>
 </html>
+
 

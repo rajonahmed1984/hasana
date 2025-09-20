@@ -1,66 +1,63 @@
 ﻿@extends('admin.layouts.app')
 
+@section('page_title', 'Surahs')
+@section('page_subtitle', 'Browse, paginate, and edit surahs instantly with inline tools.')
+
 @section('content')
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Hasana - Surahs</h1>
-        <a href="{{ route('admin.surahs.create') }}" class="btn btn-primary">New Surah</a>
-    </div>
+<div
+    class="admin-card"
+    data-admin-table="surahs"
+    data-endpoint="{{ route('admin.surahs.index') }}"
+    data-create-endpoint="{{ route('admin.surahs.create') }}"
+    data-store-endpoint="{{ route('admin.surahs.store') }}"
+    data-edit-template="{{ url('admin/surahs/__ID__/edit') }}"
+    data-update-template="{{ url('admin/surahs/__ID__') }}"
+    data-delete-template="{{ url('admin/surahs/__ID__') }}"
+    data-extra='@json(["links" => ["ayahs" => url("admin/surahs/__ID__/ayahs")]])'
+>
+    <div class="admin-table-shell">
+        <div class="table-controls">
+            <div class="controls-left">
+                <h2 class="controls-title">Surah Library</h2>
+                <p class="controls-description">Use the search box to filter by English, Arabic, or Bangla names. Open each surah to curate ayahs without leaving the page.</p>
+            </div>
+            <div class="controls-right">
+                <label class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input type="search" placeholder="Search surahs..." data-admin-search>
+                </label>
+                <button type="button" class="btn-primary" data-admin-create>
+                    <i class="bi bi-plus-lg"></i>
+                    <span>New Surah</span>
+                </button>
+            </div>
+        </div>
 
-    @if (session('status'))
-        <div class="alert alert-success">{{ session('status') }}</div>
-    @endif
-
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-striped mb-0">
+        <div class="table-wrapper">
+            <table class="admin-table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name (Arabic)</th>
-                        <th>Name (English)</th>
-                        <th>Name (বাংলা)</th>
-                        <th>Revelation</th>
+                        <th>Arabic</th>
+                        <th>English</th>
+                        <th>Bangla</th>
                         <th>Ayahs</th>
+                        <th>Revelation</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($surahs as $surah)
-                        <tr>
-                            <td>{{ $surah->number }}</td>
-                            <td>{{ $surah->name_ar }}</td>
-                            <td>{{ $surah->name_en }}</td>
-                            <td>{{ data_get($surah->meta, 'name_bn', '-') }}</td>
-                            <td>{{ $surah->revelation_type ?? '—' }}</td>
-                            <td>{{ $surah->ayah_count }}</td>
-                            <td class="text-end">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <a href="{{ route('admin.surahs.ayahs.index', $surah) }}" class="btn btn-sm btn-outline-primary">Ayahs</a>
-                                    <form action="{{ route('admin.surahs.destroy', $surah) }}" method="POST" onsubmit="return confirm('Delete this surah?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-4">No surahs yet.</td>
-                        </tr>
-                    @endforelse
+                <tbody data-admin-tbody>
+                    <tr class="table-empty">
+                        <td colspan="7">Loading records...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
-            {{ $surahs->links() }}
+
+        <div class="table-footer">
+            <div class="table-info" data-admin-table-info></div>
+            <nav class="pagination" data-admin-pagination></nav>
         </div>
     </div>
 </div>
 @endsection
-
-
-
-

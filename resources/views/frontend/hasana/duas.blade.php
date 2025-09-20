@@ -1,6 +1,6 @@
-﻿@extends('frontend.layouts.app')
+@extends('frontend.layouts.app')
 
-@section('title', 'Hasana - দোআ ও যিকির')
+@section('title', 'Hasana - ??? ? ?????')
 
 @section('body')
 @include('frontend.hasana.partials.offcanvas', ['active' => 'duas'])
@@ -10,60 +10,40 @@
         <a href="{{ url()->previous() === url()->current() ? route('hasana.home') : url()->previous() }}" class="header-icon">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h1 class="header-title">দোআ ও যিকির</h1>
+        <h1 class="header-title">??? ? ?????</h1>
         <span class="header-icon-placeholder"></span>
     </div>
 </header>
 
 <main class="main-container">
-    @php($hasGroups = $duaGroups->isNotEmpty())
-
-    @if (!$hasGroups)
-        <p class="no-results">দোআ ক্যাটাগরি তৈরি করতে অ্যাডমিন প্যানেলে একটি ক্যাটাগরি যুক্ত করুন।</p>
-    @else
-        <div class="hadis-tabs" data-tab-group="dua">
-            @foreach ($duaGroups as $group)
-                <button
-                    type="button"
-                    class="tab-btn {{ $loop->first ? 'active' : '' }}"
-                    data-tab-target="{{ $group['key'] }}"
-                >
-                    {{ $group['title'] }}
-                </button>
-            @endforeach
+    <section id="dua-app"
+        data-category-endpoint="{{ route('api.hasana.duas.categories') }}"
+        data-dua-endpoint="{{ route('api.hasana.duas.index') }}"
+        data-per-page="6">
+        <div class="hadis-tabs" id="dua-tabs"></div>
+        <p class="tab-description d-none" id="dua-description"></p>
+        <div class="dua-list" id="dua-list">
+            <article class="dua-card loading-card">
+                <div class="dua-card-body">
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                </div>
+            </article>
+            <article class="dua-card loading-card">
+                <div class="dua-card-body">
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                </div>
+            </article>
         </div>
-
-        <div class="tab-panels" data-tab-panels="dua">
-            @foreach ($duaGroups as $group)
-                <section class="tab-panel {{ $loop->first ? 'active' : '' }}" data-tab-id="{{ $group['key'] }}">
-                    @if (!empty($group['description']))
-                        <p class="tab-description">{{ $group['description'] }}</p>
-                    @endif
-                    <div class="dua-list">
-                        @forelse ($group['items'] as $dua)
-                            <article class="dua-card">
-                                <h2 class="dua-title">{{ $dua->title }}</h2>
-                                @if ($dua->text_ar)
-                                    <p class="dua-arabic">{!! nl2br(e($dua->text_ar)) !!}</p>
-                                @endif
-                                @if ($dua->transliteration)
-                                    <p class="dua-translation">{!! nl2br(e($dua->transliteration)) !!}</p>
-                                @endif
-                                @if ($dua->text_bn)
-                                    <p class="hadis-text">{!! nl2br(e($dua->text_bn)) !!}</p>
-                                @endif
-                                @if ($dua->reference)
-                                    <p class="dua-ref">{{ $dua->reference }}</p>
-                                @endif
-                            </article>
-                        @empty
-                            <p class="no-results">এই ক্যাটাগরিতে এখনও কোনো দোআ যোগ করা হয়নি।</p>
-                        @endforelse
-                    </div>
-                </section>
-            @endforeach
-        </div>
-    @endif
+        <p class="no-results text-center text-muted d-none" id="dua-empty">??? ????????? ???? ???? ???????? ???????? ???? ????????? ????? ?????</p>
+        <div class="pagination-controls d-none" id="dua-pagination"></div>
+        <noscript>
+            <p class="text-center text-danger mt-3">?? ??? ????????? ???? ????? ??????? ????</p>
+        </noscript>
+    </section>
 </main>
 
 @include('frontend.hasana.partials.bottom-nav', ['active' => 'duas'])

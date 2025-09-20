@@ -1,64 +1,73 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
+
+@section('page_title', 'Ayahs - ' . $surah->name_en)
+@section('page_subtitle', 'Review and update ayahs without breaking your editing flow.')
 
 @section('content')
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1">Ayahs - {{ $surah->name_en }}</h1>
-            <span class="text-muted">Manage verses line by line</span>
+<div
+    class="admin-card"
+    data-admin-table="ayahs"
+    data-endpoint="{{ route('admin.surahs.ayahs.index', $surah) }}"
+    data-create-endpoint="{{ route('admin.surahs.ayahs.create', $surah) }}"
+    data-store-endpoint="{{ route('admin.surahs.ayahs.store', $surah) }}"
+    data-edit-template="{{ url('admin/surahs/' . $surah->id . '/ayahs/__ID__/edit') }}"
+    data-update-template="{{ url('admin/surahs/' . $surah->id . '/ayahs/__ID__') }}"
+    data-delete-template="{{ url('admin/surahs/' . $surah->id . '/ayahs/__ID__') }}"
+    data-extra='@json(["surah" => ["id" => $surah->id, "number" => $surah->number, "name_en" => $surah->name_en]])'
+>
+    <div class="admin-table-shell">
+        <div class="table-controls">
+            <div class="controls-left">
+                <h2 class="controls-title">Ayahs for {{ $surah->name_en }}</h2>
+                <p class="controls-description">Search by translation or ayah number, toggle visibility, and update transliterations inline.</p>
+            </div>
+            <div class="controls-right">
+                <label class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input type="search" placeholder="Search ayahs..." data-admin-search>
+                </label>
+                <label class="select-field" data-admin-filter="is_active">
+                    <span>Status</span>
+                    <select data-admin-filter-select>
+                        <option value="">All</option>
+                        <option value="1">Active</option>
+                        <option value="0">Hidden</option>
+                    </select>
+                </label>
+                <button type="button" class="btn-primary" data-admin-create>
+                    <i class="bi bi-plus-lg"></i>
+                    <span>New Ayah</span>
+                </button>
+                <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Back to Surah</span>
+                </a>
+            </div>
         </div>
-        <div class="btn-group">
-            <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn btn-outline-secondary">Back to Surah</a>
-            <a href="{{ route('admin.surahs.ayahs.create', $surah) }}" class="btn btn-primary">Add Ayah</a>
-        </div>
-    </div>
 
-    @if (session('status'))
-        <div class="alert alert-success">{{ session('status') }}</div>
-    @endif
-
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
+        <div class="table-wrapper">
+            <table class="admin-table">
                 <thead>
                     <tr>
-                        <th style="width: 70px;">#</th>
-                        <th style="width: 30%;">Bangla Translation</th>
-                        <th style="width: 30%;">Bangla Pronunciation</th>
-                        <th style="width: 30%;">Arabic</th>
-                        <th>Active</th>
-                        <th class="text-end" style="width: 150px;">Actions</th>
+                        <th>#</th>
+                        <th>Bangla</th>
+                        <th>Transliteration</th>
+                        <th>Arabic</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($ayahs as $ayah)
-                        <tr>
-                            <td>{{ $ayah->number }}</td>
-                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_bn ?: '-' }}</td>
-                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->transliteration ?: '-' }}</td>
-                            <td class="text-truncate" style="max-width: 320px;">{{ $ayah->text_ar ?: '-' }}</td>
-                            <td>{{ $ayah->is_active ? 'Yes' : 'No' }}</td>
-                            <td class="text-end" style="width: 150px;">
-                                <div class="btn-group">
-                                    <a href="{{ route('admin.surahs.ayahs.edit', [$surah, $ayah]) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <form action="{{ route('admin.surahs.ayahs.destroy', [$surah, $ayah]) }}" method="POST" onsubmit="return confirm('Delete this ayah?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4">No ayahs yet.</td>
-                        </tr>
-                    @endforelse
+                <tbody data-admin-tbody>
+                    <tr class="table-empty">
+                        <td colspan="6">Loading records...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
-            {{ $ayahs->links() }}
+
+        <div class="table-footer">
+            <div class="table-info" data-admin-table-info></div>
+            <nav class="pagination" data-admin-pagination></nav>
         </div>
     </div>
 </div>

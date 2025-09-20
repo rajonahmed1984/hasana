@@ -1,73 +1,68 @@
 ﻿@extends('admin.layouts.app')
 
+@section('page_title', 'Dua Categories')
+@section('page_subtitle', 'Group duas by theme and manage sort order for the frontend experience.')
+
 @section('content')
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1">Dua Categories</h1>
-            <span class="text-muted">Configure the tabs and grouping on the dua page</span>
+<div
+    class="admin-card"
+    data-admin-table="dua-categories"
+    data-endpoint="{{ route('admin.dua-categories.index') }}"
+    data-create-endpoint="{{ route('admin.dua-categories.create') }}"
+    data-store-endpoint="{{ route('admin.dua-categories.store') }}"
+    data-edit-template="{{ url('admin/dua-categories/__ID__/edit') }}"
+    data-update-template="{{ url('admin/dua-categories/__ID__') }}"
+    data-delete-template="{{ url('admin/dua-categories/__ID__') }}"
+>
+    <div class="admin-table-shell">
+        <div class="table-controls">
+            <div class="controls-left">
+                <h2 class="controls-title">Dua Categories</h2>
+                <p class="controls-description">Fine tune the sort order and visibility of dua categories in one place.</p>
+            </div>
+            <div class="controls-right">
+                <label class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input type="search" placeholder="Search categories..." data-admin-search>
+                </label>
+                <label class="select-field" data-admin-filter="is_active">
+                    <span>Status</span>
+                    <select data-admin-filter-select>
+                        <option value="">All</option>
+                        <option value="1">Active</option>
+                        <option value="0">Hidden</option>
+                    </select>
+                </label>
+                <button type="button" class="btn-primary" data-admin-create>
+                    <i class="bi bi-plus-lg"></i>
+                    <span>New Category</span>
+                </button>
+            </div>
         </div>
-        <a href="{{ route('admin.dua-categories.create') }}" class="btn btn-primary">New Category</a>
-    </div>
 
-    @if (session('status'))
-        <div class="alert alert-success">{{ session('status') }}</div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $message)
-                    <li>{{ $message }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
+        <div class="table-wrapper">
+            <table class="admin-table">
                 <thead>
                     <tr>
-                        <th style="width:60px;">#</th>
+                        <th>ID</th>
                         <th>Name</th>
-                        <th style="width:20%;">Slug</th>
-                        <th style="width:120px;">Duas</th>
-                        <th style="width:120px;">Order</th>
-                        <th style="width:100px;">Active</th>
-                        <th class="text-end" style="width:160px;">Actions</th>
+                        <th>Slug</th>
+                        <th>Duas</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($categories as $category)
-                        <tr>
-                            <td>{{ $category->id }}</td>
-                            <td>{{ $category->name }}</td>
-                            <td>{{ $category->slug }}</td>
-                            <td>{{ $category->duas_count }}</td>
-                            <td>{{ $category->sort_order }}</td>
-                            <td>{{ $category->is_active ? 'Yes' : 'No' }}</td>
-                            <td class="text-end">
-                                <div class="btn-group">
-                                    <a href="{{ route('admin.dua-categories.edit', $category) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <form action="{{ route('admin.dua-categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Delete this category?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-4">No categories yet.</td>
-                        </tr>
-                    @endforelse
+                <tbody data-admin-tbody>
+                    <tr class="table-empty">
+                        <td colspan="6">Loading records...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
-            {{ $categories->links() }}
+
+        <div class="table-footer">
+            <div class="table-info" data-admin-table-info></div>
+            <nav class="pagination" data-admin-pagination></nav>
         </div>
     </div>
 </div>

@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ayah;
-use App\Models\Dua;
-use App\Models\Hadith;
 use App\Models\Surah;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -42,40 +40,23 @@ class HasanaController extends Controller
 
     public function quran(): View
     {
-        $surahs = Surah::withCount('ayahs')
-            ->orderBy('number')
-            ->get();
-
-        return view('frontend.hasana.quran', compact('surahs'));
+        return view('frontend.hasana.quran');
     }
 
     public function surah(Surah $surah): View
     {
-        $surah->load(['ayahs' => fn ($query) => $query->orderBy('number')]);
-
         return view('frontend.hasana.surah', compact('surah'));
     }
 
     public function hadiths(): View
     {
-        $hadiths = Hadith::query()
-            ->where('is_active', true)
-            ->latest('id')
-            ->paginate(20);
-
-        return view('frontend.hasana.hadiths', compact('hadiths'));
+        return view('frontend.hasana.hadiths');
     }
 
     public function duas(): View
     {
-        $duas = Dua::query()
-            ->where('is_active', true)
-            ->latest('id')
-            ->paginate(20);
-
-        return view('frontend.hasana.duas', compact('duas'));
+        return view('frontend.hasana.duas');
     }
-
     public function umrah(): View
     {
         return view('frontend.hasana.umrah');
@@ -249,3 +230,14 @@ class HasanaController extends Controller
         return $name ?: ($surah->name_ar ?: $surah->name_en);
     }
 }
+
+
+
+
+
+
+
+
+
+
+

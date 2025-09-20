@@ -1,10 +1,21 @@
 ﻿import { initBookmarkButtons } from './hasana-theme.js';
 
-const digitsMapBn = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };\n\nconst formatBanglaDigits = (value) => String(value ?? '').replace(/[0-9]/g, (digit) => digitsMapBn[digit] ?? digit);\n\nconst debounce = (fn, delay = 320) => {
+const digitsMapBn = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+
+const escapeHtml = (value) => String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const formatBanglaDigits = (value) => String(value ?? '').replace(/[0-9]/g, (digit) => digitsMapBn[digit] ?? digit);
+
+const debounce = (fn, delay = 320) => {
     let timer;
     return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), delay);
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => fn(...args), delay);
     };
 };
 
@@ -12,33 +23,49 @@ const convertToHtml = (value) => {
     if (!value) {
         return '';
     }
-    return String(value).replace(/\n/g, '<br>');
+    return String(value).replace(/\r?\n/g, '<br>');
 };
 
 const renderSurahInfo = (cardEl, surah) => {
     if (!cardEl || !surah) {
         return;
     }
-    const headerTitle = document.getElementById('surah-header-title');
-    if (headerTitle) {
-        headerTitle.textContent = surah.name_bn || surah.name_en;
+    const title = document.getElementById('surah-header-title');
+    if (title) {
+        title.textContent = surah.name_bn || surah.name_en || '';
     }
 
+    const ayahLabel = surah.ayah_count_bn || surah.ayah_count || '';
+    const revelationLabel = surah.revelation_label_bn || surah.revelation_label || '';
+    const orderLabel = surah.revelation_order_bn || surah.revelation_order || '';
+
     cardEl.innerHTML = `
-        <h2>${surah.name_bn || surah.name_en}</h2>
-        ${surah.meaning_bn ? `<p>"${surah.meaning_bn}"</p>` : ''}
+        <h2>${escapeHtml(surah.name_bn || surah.name_en || '')}</h2>
+        ${surah.meaning_bn ? `<p>"${escapeHtml(surah.meaning_bn)}"</p>` : ''}
         <div class="surah-info-divider"></div>
         <p class="surah-info-meta">
-            ${surah.revelation_label_bn || ''} • মোট আয়াত ${surah.ayah_count_bn}
-            ${surah.revelation_order_bn ? ` • অবতরণের ধারায়: ${surah.revelation_order_bn}` : ''}
+            ${revelationLabel ? `${escapeHtml(revelationLabel)} • ` : ''}মোট আয়াত ${escapeHtml(ayahLabel)}
+            ${orderLabel ? ` • অবতরণের ধারায়: ${escapeHtml(orderLabel)}` : ''}
         </p>
         ${surah.summary_bn ? `<p class="surah-info-details">${convertToHtml(surah.summary_bn)}</p>` : ''}
     `;
 };
 
-const renderAyahs = (container, surahNumber, ayahs) => { keyBn = formatBanglaDigits(key);
+const renderAyahs = (container, surahNumber, ayahs) => {
+    if (!container) {
+        return;
+    }
+    if (!Array.isArray(ayahs) || ayahs.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = ayahs
+        .map((ayah) => {
+            const key = `${surahNumber}:${ayah.number}`;
+            const keyBn = formatBanglaDigits(key);
             const audioMarkup = ayah.audio_url
-                ? `<a href="${ayah.audio_url}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন"><i class="bi bi-play-circle"></i></a>`
+                ? `<a href="${escapeHtml(ayah.audio_url)}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন"><i class="bi bi-play-circle"></i></a>`
                 : '';
             const translation = ayah.text_bn ? `<p class="ayah-translation">${convertToHtml(ayah.text_bn)}</p>` : '';
             const transliteration = ayah.transliteration
@@ -49,15 +76,15 @@ const renderAyahs = (container, surahNumber, ayahs) => { keyBn = formatBanglaDig
                 : '';
 
             return `
-                <article class="ayah-card" id="ayah-${ayah.number}" data-ayah-key="${key}">
+                <article class="ayah-card" id="ayah-${ayah.number}" data-ayah-key="${escapeHtml(key)}">
                     <div class="ayah-header">
                         <span class="ayah-number">${keyBn}</span>
                         <div class="ayah-actions">
                             ${audioMarkup}
-                            <button type="button" class="bookmark-btn" data-ayah="${key}" title="বুকমার্ক">
+                            <button type="button" class="bookmark-btn" data-ayah="${escapeHtml(key)}" title="বুকমার্ক">
                                 <i class="bi bi-bookmark"></i>
                             </button>
-                            <button type="button" class="share-btn" data-ayah="${key}" title="শেয়ার">
+                            <button type="button" class="share-btn" data-ayah="${escapeHtml(key)}" title="শেয়ার">
                                 <i class="bi bi-share"></i>
                             </button>
                         </div>
@@ -72,7 +99,8 @@ const renderAyahs = (container, surahNumber, ayahs) => { keyBn = formatBanglaDig
             `;
         })
         .join('');
-\n    initBookmarkButtons();
+
+    initBookmarkButtons();
 };
 
 const renderAyahSkeleton = (container) => {
@@ -97,7 +125,6 @@ const renderPagination = (meta, container) => {
     if (!container) {
         return;
     }
-
     if (!meta || meta.last_page <= 1) {
         container.innerHTML = '';
         container.classList.add('d-none');
@@ -105,10 +132,10 @@ const renderPagination = (meta, container) => {
     }
 
     const { current_page: currentPage, last_page: lastPage } = meta;
-    const buttons = [];
     const windowSize = 2;
     const start = Math.max(1, currentPage - windowSize);
     const end = Math.min(lastPage, currentPage + windowSize);
+    const buttons = [];
 
     buttons.push({ label: '‹', page: currentPage - 1, disabled: currentPage === 1 });
 
@@ -135,14 +162,27 @@ const renderPagination = (meta, container) => {
     container.innerHTML = buttons
         .map((item) => {
             const classes = ['page-btn'];
-            if (item.active) classes.push('active');
-            if (item.disabled) classes.push('disabled');
+            if (item.active) {
+                classes.push('active');
+            }
+            if (item.disabled) {
+                classes.push('disabled');
+            }
             const dataAttr = item.page ? `data-page="${item.page}"` : '';
-            return `<button type="button" class="${classes.join(' ')}" ${dataAttr} ${item.disabled ? 'disabled' : ''}>${item.label}</button>`;
+            const disabledAttr = item.disabled ? 'disabled' : '';
+            return `<button type="button" class="${classes.join(' ')}" ${dataAttr} ${disabledAttr}>${item.label}</button>`;
         })
         .join('');
 
     container.classList.remove('d-none');
+};
+
+const fetchJson = async (url) => {
+    const response = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+    return response.json();
 };
 
 const initSurahPage = () => {
@@ -159,26 +199,21 @@ const initSurahPage = () => {
 
     const endpoint = appEl.dataset.endpoint;
     const perPage = Number(appEl.dataset.perPage || 20);
-    const surahNumber = Number(appEl.dataset.surahNumber || 0);
+    const initialSurahNumber = Number(appEl.dataset.surahNumber || 0);
 
     const state = {
         page: 1,
         perPage,
         query: '',
-        loading: false,
-        surahNumber,
+        surahNumber: initialSurahNumber,
     };
 
-    const fetchSurah = async () => {
+    const loadSurah = async () => {
         if (!endpoint) {
             return;
         }
-
-        state.loading = true;
         renderAyahSkeleton(ayahContainer);
-        if (emptyEl) {
-            emptyEl.classList.add('d-none');
-        }
+        emptyEl?.classList.add('d-none');
 
         const url = new URL(endpoint, window.location.origin);
         url.searchParams.set('page', String(state.page));
@@ -188,19 +223,12 @@ const initSurahPage = () => {
         }
 
         try {
-            const response = await fetch(url.toString(), {
-                headers: { Accept: 'application/json' },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
+            const payload = await fetchJson(url.toString());
+            const surah = payload.data || {};
+            if (surah.number) {
+                state.surahNumber = surah.number;
             }
-
-            const payload = await response.json();
-            if (payload.data) {
-                renderSurahInfo(infoCard, payload.data);
-                state.surahNumber = payload.data.number || state.surahNumber;
-            }
+            renderSurahInfo(infoCard, surah);
 
             const ayahsPayload = payload.ayahs ?? {};
             const ayahs = Array.isArray(ayahsPayload.data) ? ayahsPayload.data : [];
@@ -209,9 +237,7 @@ const initSurahPage = () => {
                 if (ayahContainer) {
                     ayahContainer.innerHTML = '';
                 }
-                if (emptyEl) {
-                    emptyEl.classList.remove('d-none');
-                }
+                emptyEl?.classList.remove('d-none');
             } else {
                 renderAyahs(ayahContainer, state.surahNumber, ayahs);
             }
@@ -222,18 +248,14 @@ const initSurahPage = () => {
             if (ayahContainer) {
                 ayahContainer.innerHTML = '<p class="text-center text-danger">আয়াত লোড করতে সমস্যা হচ্ছে।</p>';
             }
-            if (paginationEl) {
-                paginationEl.innerHTML = '';
-            }
-        } finally {
-            state.loading = false;
+            paginationEl.innerHTML = '';
         }
     };
 
     const debouncedSearch = debounce((value) => {
         state.query = value.trim();
         state.page = 1;
-        fetchSurah();
+        loadSurah();
     }, 350);
 
     if (searchInput) {
@@ -253,14 +275,11 @@ const initSurahPage = () => {
                 return;
             }
             state.page = nextPage;
-            fetchSurah();
+            loadSurah();
         });
     }
 
-    fetchSurah();
+    loadSurah();
 };
 
 document.addEventListener('DOMContentLoaded', initSurahPage);
-
-
-

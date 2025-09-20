@@ -1,64 +1,77 @@
 ﻿@extends('admin.layouts.app')
 
+@section('page_title', 'Hadith Entries')
+@section('page_subtitle', 'Organise collections, edit narrations, and keep the library fresh.')
+
 @section('content')
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1">Hadith Entries</h1>
-            <span class="text-muted">Manage the hadith library shown in the app</span>
+<div
+    class="admin-card"
+    data-admin-table="hadiths"
+    data-endpoint="{{ route('admin.hadiths.index') }}"
+    data-create-endpoint="{{ route('admin.hadiths.create') }}"
+    data-store-endpoint="{{ route('admin.hadiths.store') }}"
+    data-edit-template="{{ url('admin/hadiths/__ID__/edit') }}"
+    data-update-template="{{ url('admin/hadiths/__ID__') }}"
+    data-delete-template="{{ url('admin/hadiths/__ID__') }}"
+>
+    <div class="admin-table-shell">
+        <div class="table-controls">
+            <div class="controls-left">
+                <h2 class="controls-title">Hadith Library</h2>
+                <p class="controls-description">Quickly filter by collection or status and edit narrations without page reloads.</p>
+            </div>
+            <div class="controls-right">
+                <div class="control-group">
+                    <label class="select-field" data-admin-filter="category">
+                        <span>Collection</span>
+                        <select data-admin-filter-select>
+                            <option value="">All</option>
+                        </select>
+                    </label>
+                    <label class="select-field" data-admin-filter="is_active">
+                        <span>Status</span>
+                        <select data-admin-filter-select>
+                            <option value="">All</option>
+                            <option value="1">Active</option>
+                            <option value="0">Hidden</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input type="search" placeholder="Search hadith narrations..." data-admin-search>
+                </label>
+                <button type="button" class="btn-primary" data-admin-create>
+                    <i class="bi bi-plus-lg"></i>
+                    <span>New Hadith</span>
+                </button>
+            </div>
         </div>
-        <a href="{{ route('admin.hadiths.create') }}" class="btn btn-primary">Add Hadith</a>
-    </div>
 
-    @if (session('status'))
-        <div class="alert alert-success">{{ session('status') }}</div>
-    @endif
-
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-striped mb-0 align-middle">
+        <div class="table-wrapper">
+            <table class="admin-table">
                 <thead>
                     <tr>
-                        <th style="width:60px;">#</th>
+                        <th>ID</th>
                         <th>Title</th>
-                        <th style="width:20%;">Collection</th>
-                        <th style="width:20%;">Reference</th>
-                        <th style="width:100px;">Order</th>
-                        <th style="width:100px;">Visible</th>
-                        <th class="text-end" style="width:160px;">Actions</th>
+                        <th>Collection</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($hadiths as $hadith)
-                        <tr>
-                            <td>{{ $hadith->id }}</td>
-                            <td class="text-truncate" style="max-width:360px;">{{ $hadith->title }}</td>
-                            <td>{{ $hadith->reference ?: '-' }}</td>
-                            <td>{{ $hadith->is_active ? 'Yes' : 'No' }}</td>
-                            <td class="text-end">
-                                <div class="btn-group">
-                                    <a href="{{ route('admin.hadiths.edit', $hadith) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <form action="{{ route('admin.hadiths.destroy', $hadith) }}" method="POST" onsubmit="return confirm('Delete this hadith?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-4">No hadith entries yet.</td>
-                        </tr>
-                    @endforelse
+                <tbody data-admin-tbody>
+                    <tr class="table-empty">
+                        <td colspan="6">Loading records...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
-            {{ $hadiths->links() }}
+
+        <div class="table-footer">
+            <div class="table-info" data-admin-table-info></div>
+            <nav class="pagination" data-admin-pagination></nav>
         </div>
     </div>
 </div>
 @endsection
-
-

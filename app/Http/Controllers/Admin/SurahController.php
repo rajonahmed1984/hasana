@@ -2,64 +2,139 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\HandlesAjaxResponses;
 use App\Http\Controllers\Controller;
 use App\Models\Surah;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class SurahController extends Controller
 {
-    public function index()
+    use HandlesAjaxResponses;
+
+    public function index(Request $request): View|JsonResponse
     {
-        $surahs = Surah::orderBy('number')->paginate(30);
+        $query = Surah::query();
+
+        if ($search = trim((string) $request->query('search', ''))) {
+            $query->where(function ($builder) use ($search) {
+                $builder
+                    ->where('name_en', 'like', '%' . $search . '%')
+                    ->orWhere('name_ar', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%')
+                    ->orWhere('meta->name_bn', 'like', '%' . $search . '%');
+
+                if (ctype_digit($search)) {
+                    $builder->orWhere('number', (int) $search);
+                }
+            });
+        }
+
+        if ($revelation = $request->query('revelation_type')) {
+            $query->where('revelation_type', $revelation);
+        }
+
+        $direction = strtolower((string) $request->query('direction', 'asc'));
+        if (!in_array($direction, ['asc', 'desc'], true)) {
+            $direction = 'asc';
+        }
+
+        $sort = $request->query('sort', 'number');
+        if (!in_array($sort, ['number', 'name_en', 'ayah_count'], true)) {
+            $sort = 'number';
+        }
+
+        $query->orderBy($sort, $direction)->orderBy('id');
+
+        $perPage = (int) $request->query('per_page', 30);
+        $perPage = max(5, min(100, $perPage));
+
+        $surahs = $query->paginate($perPage)->withQueryString();
+
+        if ($request->expectsJson()) {
+            return $this->paginatedResponse($surahs, fn (Surah $surah) => $this->transformSurah($surah));
+        }
 
         return view('admin.surahs.index', compact('surahs'));
     }
 
-    public function create()
+    public function create(Request $request): View|JsonResponse
     {
         $surah = new Surah();
+
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $this->transformSurah($surah)]);
+        }
 
         return view('admin.surahs.create', compact('surah'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $this->validatedData($request);
 
         $surah = Surah::create($data);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Surah created successfully. You can now add ayahs.',
+                'data' => $this->transformSurah($surah->refresh()),
+            ], 201);
+        }
 
         return redirect()
             ->route('admin.surahs.edit', $surah)
             ->with('status', 'Surah created successfully. You can now add ayahs.');
     }
 
-    public function show(Surah $surah)
+    public function show(Request $request, Surah $surah): RedirectResponse|JsonResponse
     {
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $this->transformSurah($surah)]);
+        }
+
         return redirect()->route('admin.surahs.edit', $surah);
     }
 
-    public function edit(Surah $surah)
+    public function edit(Request $request, Surah $surah): View|JsonResponse
     {
+        if ($request->expectsJson()) {
+            return response()->json(['data' => $this->transformSurah($surah)]);
+        }
+
         $surah->load('ayahs');
 
         return view('admin.surahs.edit', compact('surah'));
     }
 
-    public function update(Request $request, Surah $surah)
+    public function update(Request $request, Surah $surah): RedirectResponse|JsonResponse
     {
         $data = $this->validatedData($request, $surah->id, $surah->meta ?? []);
         $surah->update($data);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Surah updated successfully.',
+                'data' => $this->transformSurah($surah->refresh()),
+            ]);
+        }
 
         return redirect()
             ->route('admin.surahs.edit', $surah)
             ->with('status', 'Surah updated successfully.');
     }
 
-    public function destroy(Surah $surah)
+    public function destroy(Request $request, Surah $surah): RedirectResponse|JsonResponse
     {
         $surah->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Surah removed.']);
+        }
 
         return redirect()
             ->route('admin.surahs.index')
@@ -111,5 +186,29 @@ class SurahController extends Controller
         $validated['meta'] = $currentMeta;
 
         return $validated;
+    }
+
+    protected function transformSurah(Surah $surah): array
+    {
+        $meta = $surah->meta ?? [];
+
+        return [
+            'id' => $surah->id,
+            'number' => $surah->number,
+            'name_ar' => $surah->name_ar,
+            'name_en' => $surah->name_en,
+            'slug' => $surah->slug,
+            'revelation_type' => $surah->revelation_type,
+            'summary' => $surah->summary,
+            'ayah_count' => $surah->ayah_count ?? 0,
+            'meta' => [
+                'name_bn' => data_get($meta, 'name_bn'),
+                'meaning_bn' => data_get($meta, 'meaning_bn'),
+                'summary_bn' => data_get($meta, 'summary_bn'),
+                'revelation_order' => data_get($meta, 'revelation_order'),
+            ],
+            'created_at' => optional($surah->created_at)->toIso8601String(),
+            'updated_at' => optional($surah->updated_at)->toIso8601String(),
+        ];
     }
 }
