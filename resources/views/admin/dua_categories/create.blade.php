@@ -3,8 +3,8 @@
 @section('content')
 <div class="container-fluid py-4">
     <div class="mb-4">
-        <h1 class="h3 mb-1">Edit Hadith</h1>
-        <span class="text-muted">Update the selected entry</span>
+        <h1 class="h3 mb-1">Add Dua Category</h1>
+        <span class="text-muted">Organise duas into the tabs shown on the dua page</span>
     </div>
 
     @if ($errors->any())
@@ -20,13 +20,12 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.hadiths.update', $hadith) }}" method="POST">
+            <form action="{{ route('admin.dua-categories.store') }}" method="POST">
                 @csrf
-                @method('PUT')
-                @include('admin.hadiths._form')
+                @include('admin.dua_categories._form')
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">Update Hadith</button>
-                    <a href="{{ route('admin.hadiths.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                    <a href="{{ route('admin.dua-categories.index') }}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>

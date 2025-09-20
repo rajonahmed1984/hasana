@@ -5,19 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Dua extends Model
+class DuaCategory extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'dua_category_id',
-        'title',
-        'text_ar',
-        'text_bn',
-        'transliteration',
-        'reference',
+        'name',
+        'slug',
+        'description',
         'sort_order',
         'is_active',
     ];
@@ -27,9 +24,9 @@ class Dua extends Model
         'sort_order' => 'integer',
     ];
 
-    public function category(): BelongsTo
+    public function duas(): HasMany
     {
-        return $this->belongsTo(DuaCategory::class, 'dua_category_id');
+        return $this->hasMany(Dua::class)->orderBy('sort_order')->orderBy('id');
     }
 
     public function scopeActive(Builder $query): Builder
@@ -39,6 +36,6 @@ class Dua extends Model
 
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderBy('sort_order')->orderBy('id');
+        return $query->orderBy('sort_order')->orderBy('name');
     }
 }

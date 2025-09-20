@@ -36,4 +36,13 @@
         <label class="form-label">Meaning (Bangla)</label>
         <input type="text" class="form-control" name="meaning_bn" value="{{ old('meaning_bn', $surah->meta['meaning_bn'] ?? '') }}" placeholder="উদাহরণ: সূচনা">
     </div>
+    <div class="col-12">
+        <label class="form-label">Summary (English)</label>
+        <textarea class="form-control" name="summary" rows="4" placeholder="Optional short description shown on surah pages">{{ old('summary', $surah->summary) }}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label">Summary (Bangla)</label>
+        <textarea class="form-control" name="summary_bn" rows="4" placeholder="এই সূরাটি নবুয়তের প্রাথমিক যুগে অবতীর্ণ হয় এবং এটি ইসলামের মৌলিক ভিত্তি স্থাপন করে।">{{ old('summary_bn', $surah->meta['summary_bn'] ?? '') }}</textarea>
+    </div>
 </div>
+

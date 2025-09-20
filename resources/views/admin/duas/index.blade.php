@@ -21,7 +21,9 @@
                     <tr>
                         <th style="width:60px;">#</th>
                         <th>Title</th>
-                        <th style="width:25%;">Reference</th>
+                        <th style="width:20%;">Category</th>
+                        <th style="width:20%;">Reference</th>
+                        <th style="width:100px;">Order</th>
                         <th style="width:100px;">Visible</th>
                         <th class="text-end" style="width:160px;">Actions</th>
                     </tr>
@@ -58,3 +60,4 @@
     </div>
 </div>
 @endsection
+

@@ -479,7 +479,7 @@ function saveBookmarkSet(set) {
     localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify([...set]));
 }
 
-function refreshBookmarkButtons() {
+export function refreshBookmarkButtons() {
     const bookmarks = getBookmarkSet();
     document.querySelectorAll('.bookmark-btn[data-ayah]').forEach((button) => {
         setBookmarkButtonState(button, bookmarks.has(button.dataset.ayah));
@@ -495,7 +495,7 @@ function setBookmarkButtonState(button, isActive) {
     }
 }
 
-function initBookmarkButtons() {
+export function initBookmarkButtons() {
     const buttons = document.querySelectorAll('.bookmark-btn[data-ayah]');
     if (!buttons.length) {
         return;

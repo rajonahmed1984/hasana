@@ -39,7 +39,7 @@
     --arabic-font: 'Lateef', serif;
     --bengali-font: 'Hind Siliguri', 'Noto Sans Bengali', 'Baloo Da 2', sans-serif;
     --menu-width: 280px;
-    --ayah-arabic-font-size: 2rem;
+    --ayah-arabic-font-size: 1rem;
     --ayah-translation-font-size: 1rem;
 }
 /* --- Dark Mode Variables --- */
@@ -233,7 +233,96 @@ body.dark-mode .offcanvas-link.active, body.dark-mode .offcanvas-link:hover {
 .main-container {
     padding: 15px;
 }
-/* --- Greeting Card Styles (NEW) --- */
+/* --- Prayer Times Section (NEW) --- */
+.prayer-times-section {
+    background-color: var(--white-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+.prayer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--light-gray);
+}
+body.dark-mode .prayer-header {
+    border-bottom-color: var(--border-color);
+}
+.prayer-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.prayer-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+.location {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+.location i {
+    color: var(--primary-color);
+}
+.prayer-times-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+.prayer-time-card {
+    text-align: center;
+    padding: 10px 5px;
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    transition: background-color 0.3s, transform 0.3s;
+}
+.prayer-time-card p {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-light);
+}
+.prayer-time-card i {
+    font-size: 1.6rem; /* Slightly smaller to make space */
+    margin: 5px 0; /* Reduced margin */
+    color: var(--text-color);
+}
+.prayer-time-card .time {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+/* New style for end time */
+.prayer-time-card .end-time {
+    font-size: 0.6rem;
+    color: var(--text-light);
+    line-height: 1.2;
+}
+/* Style for the next upcoming prayer */
+.prayer-time-card.next-prayer {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+.prayer-time-card.next-prayer p,
+.prayer-time-card.next-prayer i,
+.prayer-time-card.next-prayer .time {
+    color: white;
+}
+/* New style for highlighted end time */
+.prayer-time-card.next-prayer .end-time {
+    color: rgba(255, 255, 255, 0.8);
+}
 /* --- Greeting & Surah Info Cards --- */
 .greeting-card-container, .surah-info-card-container {
     margin-bottom: 20px;
@@ -246,11 +335,7 @@ body.dark-mode .offcanvas-link.active, body.dark-mode .offcanvas-link:hover {
     text-align: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
-/* .greeting-text h2, .surah-info-card h2 {
-    margin: 0 0 5px 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-} */
+
 .greeting-text p, .surah-info-card p {
     margin: 0;
     font-size: 1rem;
@@ -258,8 +343,6 @@ body.dark-mode .offcanvas-link.active, body.dark-mode .offcanvas-link:hover {
 }
 .verse-of-the-day {
     margin-top: 15px;
-    /* padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2); */
 }
 .surah-info-divider {
     height: 1px;
@@ -825,3 +908,246 @@ body.translation-hidden .ayah-transliteration {
 
 
 
+/* --- Hadith & Dua Tabs --- */
+.hadis-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background-color: var(--light-gray);
+    padding: 6px;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+.hadis-tabs::-webkit-scrollbar {
+    display: none;
+}
+.tab-btn {
+    flex: 1 0 auto;
+    min-width: 140px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    font-family: var(--bengali-font);
+    border: none;
+    background-color: transparent;
+    color: var(--text-light);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.tab-btn.active {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.tab-panels {
+    display: block;
+}
+.tab-panel {
+    display: none;
+}
+.tab-panel.active {
+    display: block;
+}
+.tab-description {
+    margin: 0 0 15px;
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+.no-results {
+    text-align: center;
+    color: var(--text-light);
+    margin: 20px 0;
+    font-size: 0.95rem;
+}
+.hadis-list,
+.dua-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.hadis-card,
+.dua-card {
+    background-color: var(--white-color);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+.hadis-card {
+    border-left: 4px solid var(--primary-color);
+}
+.dua-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 12px 0;
+}
+.dua-arabic {
+    font-family: var(--arabic-font);
+    font-size: 1.8rem;
+    text-align: right;
+    direction: rtl;
+    line-height: 2;
+    margin: 0 0 15px 0;
+}
+.dua-translation {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0 0 15px 0;
+    font-style: italic;
+    color: var(--text-light);
+}
+.hadis-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin: 0 0 15px 0;
+}
+.hadis-ref,
+.dua-ref {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+}
+body.dark-mode .hadis-tabs {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+body.dark-mode .tab-btn.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+body.dark-mode .hadis-card,
+body.dark-mode .dua-card {
+    background-color: #1f1f1f;
+    border-color: var(--border-color);
+}
+
+/* --- Quran AJAX Enhancements --- */
+.loading-card {
+    pointer-events: none;
+}
+.loading-card .surah-number-bg,
+.loading-card .line {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.loading-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.loading-lines .line {
+    height: 10px;
+    border-radius: 6px;
+    width: 120px;
+}
+.loading-card .surah-card-right .line {
+    display: block;
+    height: 10px;
+    border-radius: 6px;
+    width: 80px;
+    margin-bottom: 6px;
+}
+.shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.3) 25%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.3) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.page-btn {
+    border: 1px solid var(--border-color);
+    background-color: var(--white-color);
+    color: var(--text-color);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.page-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.page-btn.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.page-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Surah Page Enhancements --- */
+.ayah-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.ayah-search {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background-color: var(--white-color);
+    font-size: 0.95rem;
+}
+
+.ayah-search:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(1, 81, 47, 0.15);
+}
+
+.ayah-card.loading-card .ayah-header .ayah-number {
+    width: 80px;
+    height: 16px;
+    border-radius: 6px;
+}
+
+.ayah-card .line {
+    height: 12px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.06);
+    margin-bottom: 10px;
+}
+
+.ayah-card.loading-card .line:nth-child(1) {
+    width: 70%;
+}
+
+.ayah-card.loading-card .line:nth-child(2) {
+    width: 90%;
+}
+
+.ayah-card.loading-card .line:nth-child(3) {
+    width: 50%;
+}
+
+body.dark-mode .ayah-search {
+    background-color: #1f1f1f;
+    color: var(--text-color);
+}

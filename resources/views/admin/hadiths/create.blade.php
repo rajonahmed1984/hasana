@@ -7,12 +7,12 @@
         <span class="text-muted">Provide the text and reference information</span>
     </div>
 
-    @if (->any())
+    @if ($errors->any())
         <div class="alert alert-danger">
             <strong>Validation failed:</strong>
             <ul class="mb-0">
-                @foreach (->all() as )
-                    <li>{{  }}</li>
+                @foreach ($errors->all() as $message)
+                    <li>{{ $message }}</li>
                 @endforeach
             </ul>
         </div>

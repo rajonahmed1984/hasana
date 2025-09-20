@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -22,7 +22,9 @@
                     @auth
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.surahs.index') }}">Surahs</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.hadiths.index') }}">Hadith</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.hadith-categories.index') }}">Hadith Collections</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.duas.index') }}">Duas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dua-categories.index') }}">Dua Categories</a></li>
                     @endauth
                 </ul>
 
@@ -60,3 +62,4 @@
     @stack('scripts')
 </body>
 </html>
+

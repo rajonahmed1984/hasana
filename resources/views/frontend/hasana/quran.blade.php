@@ -2,11 +2,6 @@
 
 @section('title', 'Hasana - কুরআন সূচি')
 
-@php
-    $digitsMap = ['0' => '০', '1' => '১', '2' => '২', '3' => '৩', '4' => '৪', '5' => '৫', '6' => '৬', '7' => '৭', '8' => '৮', '9' => '৯'];
-    $formatDigits = fn ($value) => strtr((string) $value, $digitsMap);
-@endphp
-
 @section('body')
 @include('frontend.hasana.partials.offcanvas', ['active' => 'quran'])
 
@@ -21,43 +16,37 @@
         </button>
     </div>
     <div class="header-search-container" id="header-search-container">
-        <input type="search" class="search-bar" placeholder="সূরা খুঁজুন..." data-surah-search>
+        <input type="search" class="search-bar" placeholder="সুরা খুঁজুন..." data-surah-search>
     </div>
 </header>
 
 <main class="main-container">
-    <section class="mb-4">
-        <div class="surah-list">
-            @foreach ($surahs as $surah)
-                @php
-                    $meta = $surah->meta ?? [];
-                    $nameBn = $meta['name_bn'] ?? $surah->name_en;
-                    $meaningBn = $meta['meaning_bn'] ?? ($meta['meaning'] ?? null);
-                    $meaningText = $meaningBn ? 'অর্থ: ' . $meaningBn : null;
-                    $searchText = trim(sprintf('%s %s %s %s',
-                        $surah->number,
-                        mb_strtolower($surah->name_en ?? ''),
-                        mb_strtolower($surah->name_ar ?? ''),
-                        mb_strtolower($nameBn ?? '')
-                    ));
-                @endphp
-                <a href="{{ route('hasana.surah', $surah) }}" class="surah-card" data-surah-item data-search="{{ $searchText }}">
-                    <div class="surah-card-info">
-                        <div class="surah-number-bg">{{ $formatDigits($surah->number) }}</div>
-                        <div>
-                            <p class="surah-name">{{ $nameBn }}</p>
-                            @if ($meaningText)
-                                <p class="surah-meaning">{{ $meaningText }}</p>
-                            @endif
-                        </div>
+    <section class="mb-4" id="quran-app"
+        data-endpoint="{{ route('api.hasana.surahs.index') }}"
+        data-surah-url="{{ url('surah') }}"
+        data-per-page="30">
+        <div class="surah-list" id="quran-surah-list">
+            <div class="surah-card loading-card">
+                <div class="surah-card-info">
+                    <div class="surah-number-bg shimmer"></div>
+                    <div class="loading-lines">
+                        <span class="line shimmer"></span>
+                        <span class="line shimmer"></span>
                     </div>
-                    <div class="surah-card-right">
-                        <p class="surah-arabic-name">{{ $surah->name_ar }}</p>
-                        <p class="surah-ayat-count">আয়াত {{ $formatDigits($surah->ayahs_count) }}</p>
-                    </div>
-                </a>
-            @endforeach
+                </div>
+                <div class="surah-card-right">
+                    <span class="line shimmer"></span>
+                    <span class="line shimmer"></span>
+                </div>
+            </div>
         </div>
+        <p class="no-results text-muted text-center d-none" id="quran-empty-message">
+            কোনও ফলাফল পাওয়া যায়নি।
+        </p>
+        <div class="pagination-controls" id="quran-pagination"></div>
+        <noscript>
+            <p class="text-center text-danger mt-3">এই অংশ ব্যবহারের জন্য আপনার ব্রাউজারের জাভাস্ক্রিপ্ট চালু করুন।</p>
+        </noscript>
     </section>
 </main>
 

@@ -4,17 +4,10 @@
 
 @php
     $meta = $surah->meta ?? [];
-    $digitsMap = ['0' => '০', '1' => '১', '2' => '২', '3' => '৩', '4' => '৪', '5' => '৫', '6' => '৬', '7' => '৭', '8' => '৮', '9' => '৯'];
-    $formatDigits = fn ($value) => strtr((string) $value, $digitsMap);
     $nameBn = $meta['name_bn'] ?? $surah->name_en;
     $meaningBn = $meta['meaning_bn'] ?? ($meta['meaning'] ?? null);
-    $revelationBn = match (strtolower($surah->revelation_type ?? '')) {
-        'meccan' => 'মাক্কী',
-        'medinan' => 'মাদানী',
-        default => 'অজানা',
-    };
-    $revelationOrder = $meta['revelation_order'] ?? null;
     $summaryBn = $meta['summary_bn'] ?? ($meta['summary'] ?? $surah->summary);
+    $ayahCount = $surah->ayah_count ?? $surah->ayahs()->count();
 @endphp
 
 @section('body')
@@ -25,7 +18,7 @@
         <a href="{{ url()->previous() === url()->current() ? route('hasana.quran') : url()->previous() }}" class="header-icon">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h1 class="header-title">{{ $nameBn }}</h1>
+        <h1 class="header-title" id="surah-header-title">{{ $nameBn }}</h1>
         <button class="header-icon" id="menu-toggle">
             <i class="bi bi-list"></i>
         </button>
@@ -33,64 +26,50 @@
 </header>
 
 <main class="main-container">
-    <section class="surah-info-card-container">
-        <div class="surah-info-card" id="surah-info-card">
-            <h2>{{ $nameBn }}</h2>
-            @if ($meaningBn)
-                <p>"{{ $meaningBn }}"</p>
-            @endif
-            <div class="surah-info-divider"></div>
-            <p class="surah-info-meta">
-                {{ $revelationBn }} • আয়াত {{ $formatDigits($surah->ayahs->count()) }}
-                @if ($revelationOrder)
-                    • অবতরণের ধারায়: {{ $formatDigits($revelationOrder) }}
+    <section id="surah-app"
+        data-endpoint="{{ route('api.hasana.surahs.show', $surah) }}"
+        data-surah-number="{{ $surah->number }}"
+        data-surah-slug="{{ $surah->slug }}"
+        data-per-page="20">
+        <div class="surah-info-card-container">
+            <div class="surah-info-card" id="surah-info-card">
+                <h2 id="surah-name">{{ $nameBn }}</h2>
+                @if ($meaningBn)
+                    <p id="surah-meaning">"{{ $meaningBn }}"</p>
+                @else
+                    <p id="surah-meaning" class="text-muted d-none"></p>
                 @endif
-            </p>
-            @if (!empty($summaryBn))
-                <p class="surah-info-details">{{ $summaryBn }}</p>
-            @endif
+                <div class="surah-info-divider"></div>
+                <p class="surah-info-meta" id="surah-meta">
+                    মোট আয়াত {{ $ayahCount }}
+                </p>
+                <p class="surah-info-details" id="surah-summary">
+                    {!! nl2br(e($summaryBn)) !!}
+                </p>
+            </div>
         </div>
-    </section>
 
-    <section id="ayah-container">
-        @foreach ($surah->ayahs as $ayah)
-            @php
-                $ayahKey = $surah->number . ':' . $ayah->number;
-                $translation = trim($ayah->text_bn ?? '') ?: null;
-                $pronunciation = trim($ayah->transliteration ?? '') ?: null;
-                $audioUrl = $ayah->audio_url;
-            @endphp
-            <article class="ayah-card" id="ayah-{{ $ayah->number }}" data-ayah-key="{{ $ayahKey }}">
+        <div class="ayah-toolbar">
+            <input type="search" class="ayah-search" data-ayah-search placeholder="আয়াত খুঁজুন...">
+        </div>
+
+        <div id="ayah-container" class="ayah-list">
+            <article class="ayah-card loading-card">
                 <div class="ayah-header">
-                    <span class="ayah-number">{{ $formatDigits($ayahKey) }}</span>
-                    <div class="ayah-actions">
-                        @if ($audioUrl)
-                            <a href="{{ $audioUrl }}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন">
-                                <i class="bi bi-play-circle"></i>
-                            </a>
-                        @endif
-                        <button type="button" class="bookmark-btn" data-ayah="{{ $ayahKey }}" title="বুকমার্ক">
-                            <i class="bi bi-bookmark"></i>
-                        </button>
-                        <button type="button" class="share-btn" data-ayah="{{ $ayahKey }}" title="শেয়ার">
-                            <i class="bi bi-share"></i>
-                        </button>
-                    </div>
+                    <span class="ayah-number shimmer"></span>
                 </div>
                 <div class="ayah-content">
-                    @if ($translation)
-                        <p class="ayah-translation">{!! nl2br(e($translation)) !!}</p>
-                    @endif
-                    @if ($pronunciation)
-                        <p class="ayah-transliteration text-muted">{!! nl2br(e($pronunciation)) !!}</p>
-                    @endif
-                    <p class="ayah-arabic">{!! nl2br(e($ayah->text_ar)) !!}</p>
-                    @if ($ayah->footnotes)
-                        <p class="ayah-footnotes text-muted"><small>{!! nl2br(e($ayah->footnotes)) !!}</small></p>
-                    @endif
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
                 </div>
             </article>
-        @endforeach
+        </div>
+        <p class="no-results text-muted text-center d-none" id="ayah-empty">কোনও আয়াত পাওয়া যায়নি।</p>
+        <div class="pagination-controls" id="surah-pagination"></div>
+        <noscript>
+            <p class="text-center text-danger mt-3">এই অংশ ব্যবহারের জন্য আপনার ব্রাউজারের জাভাস্ক্রিপ্ট চালু করুন।</p>
+        </noscript>
     </section>
 </main>
 
