@@ -1,5 +1,7 @@
 <?php
 
+mb_internal_encoding("UTF-8");
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
