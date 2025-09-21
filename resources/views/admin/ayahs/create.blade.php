@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Add Ayah - {{ $surah->name_en }}</h1>
-        <a href="{{ route('admin.surahs.ayahs.index', $surah) }}" class="btn btn-outline-secondary">Cancel</a>
+        <a href="{{ route('admin.surahs.ayahs.index', $surah, false) }}" class="btn btn-outline-secondary">Cancel</a>
     </div>
 
     @if ($errors->any())
@@ -20,7 +20,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.surahs.ayahs.store', $surah) }}" method="POST">
+            <form action="{{ route('admin.surahs.ayahs.store', $surah, false) }}" method="POST">
                 @csrf
                 @include('admin.ayahs._form')
 

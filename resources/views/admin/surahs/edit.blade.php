@@ -8,8 +8,8 @@
             <span class="text-muted">Manage core info and ayahs</span>
         </div>
         <div class="btn-group">
-            <a href="{{ route('admin.surahs.index') }}" class="btn btn-outline-secondary">All Surahs</a>
-            <a href="{{ route('admin.surahs.ayahs.index', $surah) }}" class="btn btn-primary">Manage Ayahs</a>
+            <a href="{{ route('admin.surahs.index', [], false) }}" class="btn btn-outline-secondary">All Surahs</a>
+            <a href="{{ route('admin.surahs.ayahs.index', $surah, false) }}" class="btn btn-primary">Manage Ayahs</a>
         </div>
     </div>
 
@@ -30,7 +30,7 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <form action="{{ route('admin.surahs.update', $surah) }}" method="POST">
+            <form action="{{ route('admin.surahs.update', $surah, false) }}" method="POST">
                 @csrf
                 @method('PUT')
                 @include('admin.surahs._form')
@@ -45,7 +45,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h2 class="h5 mb-0">Ayahs snapshot</h2>
-            <a href="{{ route('admin.surahs.ayahs.create', $surah) }}" class="btn btn-sm btn-outline-primary">Add Ayah</a>
+            <a href="{{ route('admin.surahs.ayahs.create', $surah, false) }}" class="btn btn-sm btn-outline-primary">Add Ayah</a>
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-striped mb-0">

@@ -20,12 +20,12 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.duas.store') }}" method="POST">
+            <form action="{{ route('admin.duas.store', [], false) }}" method="POST">
                 @csrf
                 @include('admin.duas._form')
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">Save Dua</button>
-                    <a href="{{ route('admin.duas.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{{ route('admin.duas.index', [], false) }}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>

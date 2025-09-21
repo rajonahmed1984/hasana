@@ -20,13 +20,13 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.dua-categories.update', $category) }}" method="POST">
+            <form action="{{ route('admin.dua-categories.update', $category, false) }}" method="POST">
                 @csrf
                 @method('PUT')
                 @include('admin.dua_categories._form')
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">Update Category</button>
-                    <a href="{{ route('admin.dua-categories.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{{ route('admin.dua-categories.index', [], false) }}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>

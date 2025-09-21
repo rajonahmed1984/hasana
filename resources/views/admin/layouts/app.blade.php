@@ -17,7 +17,7 @@
     <div class="admin-layout" data-admin-app>
         <aside class="admin-sidebar" data-admin-sidebar>
             <div class="sidebar-brand">
-                <a href="{{ route('hasana.home') }}" class="brand-link">
+                <a href="{{ route('hasana.home', [], false) }}" class="brand-link">
                     <i class="bi bi-moon-stars"></i>
                     <span>Hasana</span>
                 </a>
@@ -77,7 +77,7 @@
                             $url = '#';
 
                             if (! $disabled) {
-                                $url = $hasParams ? route($item['route'], $params) : route($item['route']);
+                                $url = $hasParams ? route($item['route'], $params, false) : route($item['route'], [], false);
                             }
                         @endphp
                         <li class="sidebar-item {{ $item['active'] ? 'active' : '' }} {{ $disabled ? 'disabled' : '' }}">
@@ -90,7 +90,7 @@
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <a href="{{ route('hasana.home') }}" class="sidebar-footer-link" target="_blank" rel="noopener">
+                <a href="{{ route('hasana.home', [], false) }}" class="sidebar-footer-link" target="_blank" rel="noopener">
                     <i class="bi bi-box-arrow-up-right"></i>
                     <span>View Frontend</span>
                 </a>
@@ -115,7 +115,7 @@
                         </div>
                         <div class="user-meta">
                             <span class="user-name">{{ Auth::user()->name ?? 'Admin' }}</span>
-                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                            <form action="{{ route('logout', [], false) }}" method="POST" class="logout-form">
                                 @csrf
                                 <button type="submit">Sign out</button>
                             </form>
@@ -136,5 +136,3 @@
     @stack('scripts')
 </body>
 </html>
-
-

@@ -7,12 +7,12 @@
 <div
     class="admin-card"
     data-admin-table="dua-categories"
-    data-endpoint="{{ route('admin.dua-categories.index') }}"
-    data-create-endpoint="{{ route('admin.dua-categories.create') }}"
-    data-store-endpoint="{{ route('admin.dua-categories.store') }}"
-    data-edit-template="{{ url('admin/dua-categories/__ID__/edit') }}"
-    data-update-template="{{ url('admin/dua-categories/__ID__') }}"
-    data-delete-template="{{ url('admin/dua-categories/__ID__') }}"
+    data-endpoint="{{ route('admin.dua-categories.index', [], false) }}"
+    data-create-endpoint="{{ route('admin.dua-categories.create', [], false) }}"
+    data-store-endpoint="{{ route('admin.dua-categories.store', [], false) }}"
+    data-edit-template="{{ route('admin.dua-categories.edit', ['dua_category' => '__ID__'], false) }}"
+    data-update-template="{{ route('admin.dua-categories.update', ['dua_category' => '__ID__'], false) }}"
+    data-delete-template="{{ route('admin.dua-categories.destroy', ['dua_category' => '__ID__'], false) }}"
 >
     <div class="admin-table-shell">
         <div class="table-controls">

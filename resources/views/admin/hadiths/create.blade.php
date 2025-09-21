@@ -20,12 +20,12 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.hadiths.store') }}" method="POST">
+            <form action="{{ route('admin.hadiths.store', [], false) }}" method="POST">
                 @csrf
                 @include('admin.hadiths._form')
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">Save Hadith</button>
-                    <a href="{{ route('admin.hadiths.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{{ route('admin.hadiths.index', [], false) }}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>

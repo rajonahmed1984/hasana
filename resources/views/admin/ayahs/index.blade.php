@@ -7,12 +7,12 @@
 <div
     class="admin-card"
     data-admin-table="ayahs"
-    data-endpoint="{{ route('admin.surahs.ayahs.index', $surah) }}"
-    data-create-endpoint="{{ route('admin.surahs.ayahs.create', $surah) }}"
-    data-store-endpoint="{{ route('admin.surahs.ayahs.store', $surah) }}"
-    data-edit-template="{{ url('admin/surahs/' . $surah->id . '/ayahs/__ID__/edit') }}"
-    data-update-template="{{ url('admin/surahs/' . $surah->id . '/ayahs/__ID__') }}"
-    data-delete-template="{{ url('admin/surahs/' . $surah->id . '/ayahs/__ID__') }}"
+    data-endpoint="{{ route('admin.surahs.ayahs.index', $surah, false) }}"
+    data-create-endpoint="{{ route('admin.surahs.ayahs.create', $surah, false) }}"
+    data-store-endpoint="{{ route('admin.surahs.ayahs.store', $surah, false) }}"
+    data-edit-template="{{ route('admin.surahs.ayahs.edit', ['surah' => $surah, 'ayah' => '__ID__'], false) }}"
+    data-update-template="{{ route('admin.surahs.ayahs.update', ['surah' => $surah, 'ayah' => '__ID__'], false) }}"
+    data-delete-template="{{ route('admin.surahs.ayahs.destroy', ['surah' => $surah, 'ayah' => '__ID__'], false) }}"
     data-extra='@json(["surah" => ["id" => $surah->id, "number" => $surah->number, "name_en" => $surah->name_en]])'
 >
     <div class="admin-table-shell">

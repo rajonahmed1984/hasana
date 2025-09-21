@@ -7,13 +7,13 @@
 <div
     class="admin-card"
     data-admin-table="surahs"
-    data-endpoint="{{ route('admin.surahs.index') }}"
-    data-create-endpoint="{{ route('admin.surahs.create') }}"
-    data-store-endpoint="{{ route('admin.surahs.store') }}"
-    data-edit-template="{{ url('admin/surahs/__ID__/edit') }}"
-    data-update-template="{{ url('admin/surahs/__ID__') }}"
-    data-delete-template="{{ url('admin/surahs/__ID__') }}"
-    data-extra='@json(["links" => ["ayahs" => url("admin/surahs/__ID__/ayahs")]])'
+    data-endpoint="{{ route('admin.surahs.index', [], false) }}"
+    data-create-endpoint="{{ route('admin.surahs.create', [], false) }}"
+    data-store-endpoint="{{ route('admin.surahs.store', [], false) }}"
+    data-edit-template="{{ route('admin.surahs.edit', ['surah' => '__ID__'], false) }}"
+    data-update-template="{{ route('admin.surahs.update', ['surah' => '__ID__'], false) }}"
+    data-delete-template="{{ route('admin.surahs.destroy', ['surah' => '__ID__'], false) }}"
+    data-extra='@json(["links" => ["ayahs" => route('admin.surahs.ayahs.index', ['surah' => '__ID__'], false)]])'
 >
     <div class="admin-table-shell">
         <div class="table-controls">
@@ -61,3 +61,7 @@
     </div>
 </div>
 @endsection
+
+
+
+

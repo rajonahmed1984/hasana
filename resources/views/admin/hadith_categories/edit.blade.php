@@ -20,13 +20,13 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.hadith-categories.update', $category) }}" method="POST">
+            <form action="{{ route('admin.hadith-categories.update', $category, false) }}" method="POST">
                 @csrf
                 @method('PUT')
                 @include('admin.hadith_categories._form')
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">Update Collection</button>
-                    <a href="{{ route('admin.hadith-categories.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{{ route('admin.hadith-categories.index', [], false) }}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>

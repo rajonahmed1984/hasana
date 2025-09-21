@@ -7,12 +7,12 @@
 <div
     class="admin-card"
     data-admin-table="hadiths"
-    data-endpoint="{{ route('admin.hadiths.index') }}"
-    data-create-endpoint="{{ route('admin.hadiths.create') }}"
-    data-store-endpoint="{{ route('admin.hadiths.store') }}"
-    data-edit-template="{{ url('admin/hadiths/__ID__/edit') }}"
-    data-update-template="{{ url('admin/hadiths/__ID__') }}"
-    data-delete-template="{{ url('admin/hadiths/__ID__') }}"
+    data-endpoint="{{ route('admin.hadiths.index', [], false) }}"
+    data-create-endpoint="{{ route('admin.hadiths.create', [], false) }}"
+    data-store-endpoint="{{ route('admin.hadiths.store', [], false) }}"
+    data-edit-template="{{ route('admin.hadiths.edit', ['hadith' => '__ID__'], false) }}"
+    data-update-template="{{ route('admin.hadiths.update', ['hadith' => '__ID__'], false) }}"
+    data-delete-template="{{ route('admin.hadiths.destroy', ['hadith' => '__ID__'], false) }}"
 >
     <div class="admin-table-shell">
         <div class="table-controls">

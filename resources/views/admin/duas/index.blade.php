@@ -7,12 +7,12 @@
 <div
     class="admin-card"
     data-admin-table="duas"
-    data-endpoint="{{ route('admin.duas.index') }}"
-    data-create-endpoint="{{ route('admin.duas.create') }}"
-    data-store-endpoint="{{ route('admin.duas.store') }}"
-    data-edit-template="{{ url('admin/duas/__ID__/edit') }}"
-    data-update-template="{{ url('admin/duas/__ID__') }}"
-    data-delete-template="{{ url('admin/duas/__ID__') }}"
+    data-endpoint="{{ route('admin.duas.index', [], false) }}"
+    data-create-endpoint="{{ route('admin.duas.create', [], false) }}"
+    data-store-endpoint="{{ route('admin.duas.store', [], false) }}"
+    data-edit-template="{{ route('admin.duas.edit', ['dua' => '__ID__'], false) }}"
+    data-update-template="{{ route('admin.duas.update', ['dua' => '__ID__'], false) }}"
+    data-delete-template="{{ route('admin.duas.destroy', ['dua' => '__ID__'], false) }}"
 >
     <div class="admin-table-shell">
         <div class="table-controls">
