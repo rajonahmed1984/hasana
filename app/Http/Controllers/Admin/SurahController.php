@@ -150,19 +150,22 @@ class SurahController extends Controller
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('surahs', 'slug')->ignore($ignoreId)],
             'revelation_type' => ['nullable', 'string', 'max:50'],
             'summary' => ['nullable', 'string'],
-            'name_bn' => ['nullable', 'string', 'max:255'],
-            'meaning_bn' => ['nullable', 'string', 'max:255'],
-            'summary_bn' => ['nullable', 'string'],
-            'revelation_order' => ['nullable', 'integer', 'min:1', 'max:250'],
+            'meta.name_bn' => ['nullable', 'string', 'max:255'],
+            'meta.meaning_bn' => ['nullable', 'string', 'max:255'],
+            'meta.summary_bn' => ['nullable', 'string'],
+            'meta.revelation_order' => ['nullable', 'integer', 'min:1', 'max:250'],
         ]);
 
         $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['name_en']);
 
+        $metaInput = $validated['meta'] ?? [];
+        unset($validated['meta']);
+
         $metaUpdates = [
-            'name_bn' => $validated['name_bn'] ?? null,
-            'meaning_bn' => $validated['meaning_bn'] ?? null,
-            'summary_bn' => $validated['summary_bn'] ?? null,
-            'revelation_order' => $validated['revelation_order'] ?? null,
+            'name_bn' => data_get($metaInput, 'name_bn'),
+            'meaning_bn' => data_get($metaInput, 'meaning_bn'),
+            'summary_bn' => data_get($metaInput, 'summary_bn'),
+            'revelation_order' => data_get($metaInput, 'revelation_order'),
         ];
 
         foreach (['name_bn', 'meaning_bn', 'summary_bn'] as $key) {
@@ -172,7 +175,6 @@ class SurahController extends Controller
             } else {
                 unset($currentMeta[$key]);
             }
-            unset($validated[$key]);
         }
 
         $order = $metaUpdates['revelation_order'];
@@ -181,7 +183,6 @@ class SurahController extends Controller
         } else {
             unset($currentMeta['revelation_order']);
         }
-        unset($validated['revelation_order']);
 
         $validated['meta'] = $currentMeta;
 

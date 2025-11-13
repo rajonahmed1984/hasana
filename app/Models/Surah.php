@@ -28,9 +28,4 @@ class Surah extends Model
     {
         return $this->hasMany(Ayah::class)->orderBy('number');
     }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
 }

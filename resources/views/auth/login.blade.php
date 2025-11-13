@@ -18,7 +18,7 @@
                     <p class="text-muted mb-0">Use your account to manage surahs and ayahs.</p>
                 </div>
 
-                <form id="loginForm" method="POST" action="{{ route('login') }}" class="p-4">
+                <form id="loginForm" method="POST" action="{{ route('admin.login.attempt') }}" class="p-4">
                     @csrf
                     <div class="form-floating mb-3">
                         <input type="email" name="email" value="{{ old('email') }}" class="form-control" id="email" placeholder="name@example.com" required>

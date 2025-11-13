@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\AyahController;
@@ -13,11 +12,12 @@ use App\Http\Controllers\Admin\DuaCategoryController;
 use App\Http\Controllers\Api\SurahController as ApiSurahController;
 use App\Http\Controllers\Api\HadithController as ApiHadithController;
 use App\Http\Controllers\Api\DuaController as ApiDuaController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
 Route::prefix('api')->name('api.')->group(function () {
     Route::get('/hasana/surahs', [ApiSurahController::class, 'index'])->name('hasana.surahs.index');
-    Route::get('/hasana/surahs/{surah}', [ApiSurahController::class, 'show'])->name('hasana.surahs.show');
+    Route::get('/hasana/surahs/{surah:slug}', [ApiSurahController::class, 'show'])->name('hasana.surahs.show');
     Route::get('/hasana/hadith/categories', [ApiHadithController::class, 'categories'])->name('hasana.hadiths.categories');
     Route::get('/hasana/hadiths', [ApiHadithController::class, 'index'])->name('hasana.hadiths.index');
     Route::get('/hasana/dua/categories', [ApiDuaController::class, 'categories'])->name('hasana.duas.categories');
@@ -29,11 +29,16 @@ Route::get('/bookmarks/data', [HasanaController::class, 'bookmarkData'])->name('
 Route::get('/settings', [HasanaController::class, 'settings'])->name('hasana.settings');
 Route::get('/about', [HasanaController::class, 'about'])->name('hasana.about');
 Route::get('/share', [HasanaController::class, 'share'])->name('hasana.share');
-Route::get('/surah/{surah}', [HasanaController::class, 'surah'])->name('hasana.surah');
+Route::get('/surah/{surah:slug}', [HasanaController::class, 'surah'])->name('hasana.surah');
 Route::get('/quran', [HasanaController::class, 'quran'])->name('hasana.quran');
 Route::get('/hadith', [HasanaController::class, 'hadiths'])->name('hasana.hadiths');
 Route::get('/duas', [HasanaController::class, 'duas'])->name('hasana.duas');
 Route::get('/umrah-guide', [HasanaController::class, 'umrah'])->name('hasana.umrah');
+
+// Admin login routes
+Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.attempt');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/clear-cache', function () {
     Artisan::call('optimize');
@@ -45,8 +50,6 @@ Route::get('/clear-cache', function () {
 
     return 'ok';
 });
-
-Auth::routes(['register' => false]);
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {

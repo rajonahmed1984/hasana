@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Middleware\SetLocale; // <-- import it
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\SetLocale; // <-- import it
+use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Auth;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,5 +21,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (TokenMismatchException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Your session has expired. Please refresh and try again.',
+                ], 419);
+            }
+
+            Auth::logout();
+
+            return redirect()
+                ->route('admin.login')
+                ->with('status', 'Your session expired. Please sign in again.');
+        });
     })->create();
