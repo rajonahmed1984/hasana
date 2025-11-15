@@ -16,12 +16,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
 Route::prefix('api')->name('api.')->group(function () {
-    Route::get('/hasana/surahs', [ApiSurahController::class, 'index'])->name('hasana.surahs.index');
-    Route::get('/hasana/surahs/{surah:slug}', [ApiSurahController::class, 'show'])->name('hasana.surahs.show');
-    Route::get('/hasana/hadith/categories', [ApiHadithController::class, 'categories'])->name('hasana.hadiths.categories');
-    Route::get('/hasana/hadiths', [ApiHadithController::class, 'index'])->name('hasana.hadiths.index');
-    Route::get('/hasana/dua/categories', [ApiDuaController::class, 'categories'])->name('hasana.duas.categories');
-    Route::get('/hasana/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
+    Route::get('/surahs', [ApiSurahController::class, 'index'])->name('hasana.surahs.index');
+    Route::get('/surahs/{surah:slug}', [ApiSurahController::class, 'show'])->name('hasana.surahs.show');
+    Route::get('/hadith/categories', [ApiHadithController::class, 'categories'])->name('hasana.hadiths.categories');
+    Route::get('/hadiths', [ApiHadithController::class, 'index'])->name('hasana.hadiths.index');
+    Route::get('/dua/categories', [ApiDuaController::class, 'categories'])->name('hasana.duas.categories');
+    Route::get('/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
 });
 Route::get('/', [HasanaController::class, 'home'])->name('hasana.home');
 Route::get('/bookmarks', [HasanaController::class, 'bookmarks'])->name('hasana.bookmarks');

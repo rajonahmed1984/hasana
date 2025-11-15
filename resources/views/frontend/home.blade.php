@@ -1,9 +1,9 @@
-﻿@extends('frontend.layouts.app')
+@extends('frontend.layouts.app')
 
 @section('title', 'Hasana')
 
 @section('body')
-@include('frontend.hasana.partials.offcanvas', ['active' => 'home'])
+@include('frontend.partials.offcanvas', ['active' => 'home'])
 
 <header class="app-header sticky-top">
     <div class="header-content">
@@ -30,31 +30,31 @@
         </div>
         <div class="prayer-times-grid">
             <div class="prayer-time-card" id="fajr">
-                <p>ফজর</p>
+                <p>???</p>
                 <i class="bi bi-brightness-alt-high"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="dhuhr">
-                <p>যোহর</p>
+                <p>????</p>
                 <i class="bi bi-brightness-high-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="asr">
-                <p>আসর</p>
+                <p>???</p>
                 <i class="bi bi-brightness-high"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="maghrib">
-                <p>মাগরিব</p>
+                <p>??????</p>
                 <i class="bi bi-sunset-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="isha">
-                <p>এশা</p>
+                <p>???</p>
                 <i class="bi bi-moon-stars-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
@@ -77,5 +77,5 @@
     @endif
 </main>
 
-@include('frontend.hasana.partials.bottom-nav', ['active' => 'home'])
+@include('frontend.partials.bottom-nav', ['active' => 'home'])
 @endsection

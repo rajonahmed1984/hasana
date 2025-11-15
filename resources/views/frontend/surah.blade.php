@@ -1,4 +1,4 @@
-﻿@extends('frontend.layouts.app')
+@extends('frontend.layouts.app')
 
 @section('title', $surah->name_en . ' - Hasana')
 
@@ -11,7 +11,7 @@
 @endphp
 
 @section('body')
-@include('frontend.hasana.partials.offcanvas', ['active' => 'quran'])
+@include('frontend.partials.offcanvas', ['active' => 'quran'])
 
 <header class="app-header sticky-top">
     <div class="header-content">
@@ -41,7 +41,7 @@
                 @endif
                 <div class="surah-info-divider"></div>
                 <p class="surah-info-meta" id="surah-meta">
-                    মোট আয়াত {{ $ayahCount }}
+                    ??? ???? {{ $ayahCount }}
                 </p>
                 <p class="surah-info-details" id="surah-summary">
                     {!! nl2br(e($summaryBn)) !!}
@@ -50,7 +50,7 @@
         </div>
 
         <div class="ayah-toolbar">
-            <input type="search" class="ayah-search" data-ayah-search placeholder="আয়াত খুঁজুন...">
+            <input type="search" class="ayah-search" data-ayah-search placeholder="???? ??????...">
         </div>
 
         <div id="ayah-container" class="ayah-list">
@@ -65,13 +65,13 @@
                 </div>
             </article>
         </div>
-        <p class="no-results text-muted text-center d-none" id="ayah-empty">কোনও আয়াত পাওয়া যায়নি।</p>
+        <p class="no-results text-muted text-center d-none" id="ayah-empty">???? ???? ????? ??????</p>
         <div class="pagination-controls" id="surah-pagination"></div>
         <noscript>
-            <p class="text-center text-danger mt-3">এই অংশ ব্যবহারের জন্য আপনার ব্রাউজারের জাভাস্ক্রিপ্ট চালু করুন।</p>
+            <p class="text-center text-danger mt-3">?? ??? ????????? ???? ????? ?????????? ????????????? ???? ?????</p>
         </noscript>
     </section>
 </main>
 
-@include('frontend.hasana.partials.bottom-nav', ['active' => 'surah'])
+@include('frontend.partials.bottom-nav', ['active' => 'surah'])
 @endsection

@@ -35,31 +35,31 @@ class HasanaController extends Controller
     {
         $verseOfDay = $this->resolveVerseOfDay();
 
-        return view('frontend.hasana.home', compact('verseOfDay'));
+        return view('frontend.home', compact('verseOfDay'));
     }
 
     public function quran(): View
     {
-        return view('frontend.hasana.quran');
+        return view('frontend.quran');
     }
 
     public function surah(Surah $surah): View
     {
-        return view('frontend.hasana.surah', compact('surah'));
+        return view('frontend.surah', compact('surah'));
     }
 
     public function hadiths(): View
     {
-        return view('frontend.hasana.hadiths');
+        return view('frontend.hadiths');
     }
 
     public function duas(): View
     {
-        return view('frontend.hasana.duas');
+        return view('frontend.duas');
     }
     public function umrah(): View
     {
-        return view('frontend.hasana.umrah');
+        return view('frontend.umrah');
     }
 
     public function bookmarks(): View
@@ -76,14 +76,14 @@ class HasanaController extends Controller
                 'name_en' => $surah->name_en,
             ]);
 
-        return view('frontend.hasana.bookmarks', [
+        return view('frontend.bookmarks', [
             'surahSummaries' => $surahs,
         ]);
     }
 
     public function settings(): View
     {
-        return view('frontend.hasana.settings', [
+        return view('frontend.settings', [
             'defaultArabicFontSize' => 28,
             'defaultTranslationFontSize' => 16,
         ]);
@@ -91,7 +91,7 @@ class HasanaController extends Controller
 
     public function about(): View
     {
-        return view('frontend.hasana.about');
+        return view('frontend.about');
     }
 
     public function share(Request $request): View
@@ -99,7 +99,7 @@ class HasanaController extends Controller
         $text = trim((string) $request->query('text', ''));
         $reference = trim((string) $request->query('ref', ''));
 
-        return view('frontend.hasana.share', [
+        return view('frontend.share', [
             'shareText' => $text,
             'shareReference' => $reference,
         ]);

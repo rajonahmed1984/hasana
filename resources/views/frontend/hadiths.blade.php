@@ -3,7 +3,7 @@
 @section('title', 'Hasana - ????? ??????')
 
 @section('body')
-@include('frontend.hasana.partials.offcanvas', ['active' => 'hadiths'])
+@include('frontend.partials.offcanvas', ['active' => 'hadiths'])
 
 <header class="app-header sticky-top">
     <div class="header-content">
@@ -52,5 +52,5 @@
     </section>
 </main>
 
-@include('frontend.hasana.partials.bottom-nav', ['active' => 'hadiths'])
+@include('frontend.partials.bottom-nav', ['active' => 'hadiths'])
 @endsection
