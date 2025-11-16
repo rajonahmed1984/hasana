@@ -15,7 +15,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite(['resources/css/admin.css'])
     @vite(['resources/js/admin/app.js'])
-
     @stack('styles')
 </head>
 
