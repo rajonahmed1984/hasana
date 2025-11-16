@@ -76,16 +76,13 @@ class SurahController extends Controller
     public function store(Request $request): RedirectResponse|JsonResponse
     {
         $data = $this->validatedData($request);
-
         $surah = Surah::create($data);
-
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => 'Surah created successfully. You can now add ayahs.',
                 'data' => $this->transformSurah($surah->refresh()),
             ], 201);
         }
-
         return redirect()
             ->route('admin.surahs.edit', $surah)
             ->with('status', 'Surah created successfully. You can now add ayahs.');
