@@ -26,7 +26,7 @@ class HasanaController extends Controller
         '9' => '৯',
     ];
 
-    public function index(): RedirectResponse
+    public function index()
     {
         return redirect()->route('hasana.home');
     }

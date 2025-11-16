@@ -10,7 +10,7 @@
         <button class="header-icon" id="menu-toggle">
             <i class="bi bi-list"></i>
         </button>
-        <img src="{{ Vite::asset('resources/images/hasana/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
+        <img src="{{ asset('resources/images/hasana/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
         <span class="header-icon-placeholder"></span>
     </div>
 </header>

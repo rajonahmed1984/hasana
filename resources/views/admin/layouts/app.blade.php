@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,10 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    @vite(['resources/js/admin.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @vite(['resources/js/admin/app.js'])
+    @vite(['resources/js/admin/app.js'])
     @stack('styles')
 </head>
+
 <body class="admin-body">
     <div class="admin-layout" data-admin-app>
         <aside class="admin-sidebar" data-admin-sidebar>
@@ -76,11 +81,14 @@
                             $disabled = ($item['disabled'] ?? false) || ($hasParams && empty($params));
                             $url = '#';
 
-                            if (! $disabled) {
-                                $url = $hasParams ? route($item['route'], $params, false) : route($item['route'], [], false);
+                            if (!$disabled) {
+                                $url = $hasParams
+                                    ? route($item['route'], $params, false)
+                                    : route($item['route'], [], false);
                             }
                         @endphp
-                        <li class="sidebar-item {{ $item['active'] ? 'active' : '' }} {{ $disabled ? 'disabled' : '' }}">
+                        <li
+                            class="sidebar-item {{ $item['active'] ? 'active' : '' }} {{ $disabled ? 'disabled' : '' }}">
                             <a href="{{ $url }}" @class(['sidebar-link', 'disabled-link' => $disabled])>
                                 <i class="bi {{ $item['icon'] }}"></i>
                                 <span>{{ $item['label'] }}</span>
@@ -90,7 +98,8 @@
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <a href="{{ route('hasana.home', [], false) }}" class="sidebar-footer-link" target="_blank" rel="noopener">
+                <a href="{{ route('hasana.home', [], false) }}" class="sidebar-footer-link" target="_blank"
+                    rel="noopener">
                     <i class="bi bi-box-arrow-up-right"></i>
                     <span>View Frontend</span>
                 </a>
@@ -135,4 +144,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

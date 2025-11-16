@@ -5,7 +5,7 @@
 <div class="offcanvas-overlay" id="offcanvas-overlay"></div>
 <aside class="offcanvas-menu" id="offcanvas-menu">
     <div class="offcanvas-header">
-        <img src="{{ Vite::asset('resources/images/hasana/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
+        <img src="{{ asset('resources/images/hasana/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
         <h2 class="offcanvas-title">Hasana</h2>
         <button class="close-btn" id="close-menu-btn">&times;</button>
     </div>

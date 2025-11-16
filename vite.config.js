@@ -9,12 +9,9 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/hasana.js',
                 'resources/js/admin.js',
-                'resources/images/hasana/logo.svg',
-                'resources/images/hasana/logo-g.svg',
+                'resources/js/admin/app.js'  // ← ADD THIS
             ],
             refresh: true,
         }),
     ],
 });
-
-
