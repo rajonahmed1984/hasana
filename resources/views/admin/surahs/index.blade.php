@@ -32,7 +32,7 @@
                 </button>
             </div>
         </div>
-
+        
         <div class="table-wrapper">
             <table class="admin-table">
                 <thead>
