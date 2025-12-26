@@ -713,3 +713,55 @@
     opacity: 0.5;
 }
 
+/* User Menu Styles */
+.user-meta {
+    position: relative;
+}
+
+.user-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-sm);
+    box-shadow: var(--admin-shadow-sm);
+    margin-top: 8px;
+    min-width: 180px;
+    z-index: 50;
+}
+
+.user-chip:hover .user-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-menu-link {
+    padding: 10px 16px;
+    color: var(--admin-text);
+    text-decoration: none;
+    font-size: 14px;
+    transition: background var(--admin-transition);
+}
+
+.user-menu-link:hover {
+    background: var(--admin-surface-soft);
+}
+
+.user-menu .logout-form button {
+    width: 100%;
+    padding: 10px 16px;
+    text-align: left;
+    color: var(--admin-danger);
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background var(--admin-transition);
+}
+
+.user-menu .logout-form button:hover {
+    background: var(--admin-surface-soft);
+}
+

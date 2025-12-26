@@ -212,12 +212,41 @@
             title: 'Ayah',
             fields: [
                 { name: 'number', label: 'Number', type: 'number', min: 1 },
+                { name: 'text_ar', label: 'Arabic', type: 'textarea' },
                 { name: 'text_bn', label: 'Bangla', type: 'textarea' },
                 { name: 'transliteration', label: 'Transliteration', type: 'textarea' },
-                { name: 'text_ar', label: 'Arabic', type: 'textarea' },
                 { name: 'audio_url', label: 'Audio URL', type: 'url' },
                 { name: 'is_active', label: 'Visible', type: 'toggle', default: true },
             ],
         },
+    },
+    users: {
+        singular: 'User',
+        columns: [
+        { header: '#', key: 'id', width: '70px', align: 'center' },
+        { header: 'Name', key: 'name' },
+        { header: 'Email', key: 'email' },
+        { header: 'Created', key: 'created_at', width: '150px' },
+        { header: 'Actions', type: 'actions', width: '150px' },
+    ],
+    actions: [
+        { type: 'edit' },
+        { type: 'delete', confirm: 'Delete this user? This action cannot be undone.' },
+    ],
+    form: {
+        title: 'User',
+        fields: [
+            { name: 'name', label: 'Name', type: 'text', required: true },
+            { name: 'email', label: 'Email', type: 'email', required: true },
+            { name: 'password', label: 'Password', type: 'password', required: true, help: 'Minimum 8 characters' },
+            { name: 'password_confirmation', label: 'Confirm Password', type: 'password', required: true },
+        ],
+    },
+    transformItem: (item) => {
+        return {
+            ...item,
+            created_at: item.created_at ? new Date(item.created_at).toLocaleDateString() : '--',
+        };
+    },
     },
 };

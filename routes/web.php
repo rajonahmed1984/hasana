@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\HadithController;
 use App\Http\Controllers\Admin\DuaController;
 use App\Http\Controllers\Admin\HadithCategoryController;
 use App\Http\Controllers\Admin\DuaCategoryController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Api\SurahController as ApiSurahController;
 use App\Http\Controllers\Api\HadithController as ApiHadithController;
 use App\Http\Controllers\Api\DuaController as ApiDuaController;
@@ -56,6 +59,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         return redirect()->route('admin.surahs.index');
     })->name('dashboard');
 
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/change-password', [ProfileController::class, 'editPassword'])->name('profile.change-password');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    
+    Route::resource('users', UserController::class)->except(['show', 'create', 'edit']);
     Route::resource('surahs', SurahController::class);
     Route::resource('hadiths', HadithController::class);
     Route::resource('duas', DuaController::class);

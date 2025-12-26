@@ -19,7 +19,7 @@
             <div class="sidebar-brand">
                 <a href="{{ route('hasana.home', [], false) }}" class="brand-link">
                     <i class="bi bi-moon-stars"></i>
-                    <span>Hasana</span>
+                    <span>{{ setting('site_name', 'Hasana') }}</span>
                 </a>
                 <button class="sidebar-close" data-admin-sidebar-close aria-label="Close navigation">
                     <i class="bi bi-x-lg"></i>
@@ -56,6 +56,18 @@
                         'icon' => 'bi-tag',
                         'route' => 'admin.dua-categories.index',
                         'active' => request()->routeIs('admin.dua-categories.*'),
+                    ],
+                    [
+                        'label' => 'Users',
+                        'icon' => 'bi-people',
+                        'route' => 'admin.users.index',
+                        'active' => request()->routeIs('admin.users.*'),
+                    ],
+                    [
+                        'label' => 'Settings',
+                        'icon' => 'bi-gear',
+                        'route' => 'admin.settings.index',
+                        'active' => request()->routeIs('admin.settings.*'),
                     ],
                 ];
             @endphp
@@ -107,10 +119,13 @@
                         </div>
                         <div class="user-meta">
                             <span class="user-name">{{ Auth::user()->name ?? 'Admin' }}</span>
-                            <form action="{{ route('logout', [], false) }}" method="POST" class="logout-form">
-                                @csrf
-                                <button type="submit">Sign out</button>
-                            </form>
+                            <div class="user-menu">
+                                <a href="{{ route('admin.profile.show') }}" class="user-menu-link">My Profile</a>
+                                <form action="{{ route('logout', [], false) }}" method="POST" class="logout-form">
+                                    @csrf
+                                    <button type="submit">Sign out</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

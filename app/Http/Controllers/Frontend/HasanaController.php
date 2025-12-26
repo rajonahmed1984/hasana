@@ -212,7 +212,9 @@ class HasanaController extends Controller
 
         return [
             'title' => 'আজকের দিনের আয়াত',
-            'text' => $ayah->text_bn ?: $ayah->text_ar,
+            'text_ar' => $ayah->text_ar,
+            'text_bn' => $ayah->text_bn,
+            'transliteration' => $ayah->transliteration,
             'reference' => $reference,
         ];
     }

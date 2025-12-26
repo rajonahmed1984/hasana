@@ -237,6 +237,7 @@ const initSurahPage = () => {
                 }
                 emptyEl?.classList.remove('d-none');
             } else {
+                emptyEl?.classList.add('d-none');
                 renderAyahs(ayahContainer, state.surahNumber, ayahs);
             }
 

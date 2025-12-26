@@ -17,7 +17,7 @@
 
 <main class="main-container">
     <div class="about-card">
-        <img src="{{ Vite::asset('resources/images/hasana/logo.svg') }}" alt="Hasana Logo" class="about-logo">
+        <img src="{{ logo_url() }}" alt="{{ setting('site_name', 'Hasana') }} Logo" class="about-logo">
         <h2>Hasana | ??????</h2>
         <p class="app-tagline">?????, ?????, ????</p>
         <p class="app-description">

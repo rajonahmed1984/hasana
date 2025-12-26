@@ -17,7 +17,7 @@ const HIJRI_MONTHS_BN = {
 };
 let hasIslamicCalendarSupport = true;
 const PRAYER_START_PREFIX_BN = 'শুরু: ';
-const PRAYER_END_PREFIX_BN = '???: ';
+const PRAYER_END_PREFIX_BN = 'শেষ: ';
 const BOOKMARK_STORAGE_KEY = 'hasana_bookmarks';
 const ARABIC_FONT_KEY = 'hasana_arabic_font_size';
 const TRANSLATION_FONT_KEY = 'hasana_translation_font_size';
@@ -239,6 +239,8 @@ function initPrayerTimes() {
             }
         }
 
+        // Only mark next-prayer (upcoming), not current-prayer (active now)
+        let nextPrayer = null;
         if (!activeEntry) {
             const fallback = prayerSchedule.reduce((closest, entry) => {
                 let diff = entry.startMinutes - minutesNow;
@@ -250,12 +252,14 @@ function initPrayerTimes() {
                 }
                 return closest;
             }, null);
-            activeEntry = fallback ? fallback.entry : prayerSchedule[0];
+            nextPrayer = fallback ? fallback.entry : prayerSchedule[0];
         }
 
         prayerSchedule.forEach(({ card }) => card.classList.remove('next-prayer', 'current-prayer'));
         if (activeEntry) {
             activeEntry.card.classList.add('current-prayer', 'next-prayer');
+        } else if (nextPrayer) {
+            nextPrayer.card.classList.add('next-prayer');
         }
     };
 

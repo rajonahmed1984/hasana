@@ -159,8 +159,13 @@ const initQuranPage = () => {
                 if (emptyEl) {
                     emptyEl.classList.remove('d-none');
                 }
-            } else if (listEl) {
-                listEl.innerHTML = items.map((item) => templateSurahCard(item, surahUrlBase)).join('');
+            } else {
+                if (emptyEl) {
+                    emptyEl.classList.add('d-none');
+                }
+                if (listEl) {
+                    listEl.innerHTML = items.map((item) => templateSurahCard(item, surahUrlBase)).join('');
+                }
             }
 
             renderPagination(payload.meta ?? null, paginationEl);

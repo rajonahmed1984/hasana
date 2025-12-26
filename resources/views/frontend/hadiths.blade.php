@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Hasana - ????? ??????')
+@section('title', 'Hasana - হাদিস শরীফ')
 
 @section('body')
 @include('frontend.partials.offcanvas', ['active' => 'hadiths'])
@@ -10,7 +10,7 @@
         <a href="{{ url()->previous() === url()->current() ? route('hasana.home') : url()->previous() }}" class="header-icon">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h1 class="header-title">????? ??????</h1>
+        <h1 class="header-title">হাদিস শরীফ</h1>
         <span class="header-icon-placeholder"></span>
     </div>
 </header>
@@ -44,10 +44,10 @@
                 </div>
             </article>
         </div>
-        <p class="no-results text-center text-muted d-none" id="hadith-empty">????? ?????? ???? ????? ???? ?????</p>
+        <p class="no-results text-center text-muted d-none" id="hadith-empty">কোনো হাদিস পাওয়া যায়নি</p>
         <div class="pagination-controls d-none" id="hadith-pagination"></div>
         <noscript>
-            <p class="text-center text-danger mt-3">?? ??? ????????? ???? ????? ??????? ????</p>
+            <p class="text-center text-danger mt-3">জাভাস্ক্রিপ্ট সক্রিয় করুন যাতে পূর্ণ কার্যকারিতা পাওয়া যায়</p>
         </noscript>
     </section>
 </main>

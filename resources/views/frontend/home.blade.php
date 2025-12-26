@@ -10,7 +10,7 @@
         <button class="header-icon" id="menu-toggle">
             <i class="bi bi-list"></i>
         </button>
-        <img src="{{ asset('resources/images/hasana/logo.svg') }}" alt="Hasana" class="offcanvas-logo">
+        <img src="{{ logo_url() }}" alt="{{ setting('site_name', 'Hasana') }}" class="offcanvas-logo">
         <span class="header-icon-placeholder"></span>
     </div>
 </header>
@@ -30,31 +30,31 @@
         </div>
         <div class="prayer-times-grid">
             <div class="prayer-time-card" id="fajr">
-                <p>???</p>
+                <p>ফজর</p>
                 <i class="bi bi-brightness-alt-high"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="dhuhr">
-                <p>????</p>
+                <p>যোহর</p>
                 <i class="bi bi-brightness-high-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="asr">
-                <p>???</p>
+                <p>আসর</p>
                 <i class="bi bi-brightness-high"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="maghrib">
-                <p>??????</p>
+                <p>মাগরিব</p>
                 <i class="bi bi-sunset-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
             </div>
             <div class="prayer-time-card" id="isha">
-                <p>???</p>
+                <p>ইশা</p>
                 <i class="bi bi-moon-stars-fill"></i>
                 <p class="time">--:--</p>
                 <p class="end-time">--:--</p>
@@ -69,7 +69,13 @@
                     <h2 id="greeting-title">{{ $verseOfDay['title'] }}</h2>
                 </div>
                 <div class="verse-of-the-day">
-                    <p id="verse-text">{{ $verseOfDay['text'] }}</p>
+                    <p id="verse-text-ar" class="arabic-text">{{ $verseOfDay['text_ar'] }}</p>
+                    @if(!empty($verseOfDay['text_bn']))
+                        <p id="verse-text-bn" class="translation-text">{{ $verseOfDay['text_bn'] }}</p>
+                    @endif
+                    @if(!empty($verseOfDay['transliteration']))
+                        <p id="verse-transliteration" class="transliteration-text">{{ $verseOfDay['transliteration'] }}</p>
+                    @endif
                     <p id="verse-reference">{{ $verseOfDay['reference'] }}</p>
                 </div>
             </div>
