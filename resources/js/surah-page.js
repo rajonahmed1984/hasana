@@ -43,7 +43,7 @@ const renderSurahInfo = (cardEl, surah) => {
         <div class="surah-info-divider"></div>
         <p class="surah-info-meta">
             ${revelationLabel ? `${escapeHtml(revelationLabel)} • ` : ''}মোট আয়াত ${escapeHtml(ayahLabel)}
-            ${orderLabel ? ` • অবতরণের ধারায়: ${escapeHtml(orderLabel)}` : ''}
+            ${orderLabel ? ` • অবতীর্ণের ক্রম: ${escapeHtml(orderLabel)}` : ''}
         </p>
         ${surah.summary_bn ? `<p class="surah-info-details">${convertToHtml(surah.summary_bn)}</p>` : ''}
     `;
@@ -88,9 +88,9 @@ const renderAyahs = (container, surahNumber, ayahs) => {
                         </div>
                     </div>
                     <div class="ayah-content">
+                        <p class="ayah-arabic">${convertToHtml(ayah.text_ar)}</p>
                         ${translation}
                         ${transliteration}
-                        <p class="ayah-arabic">${convertToHtml(ayah.text_ar)}</p>
                         ${footnotes}
                     </div>
                 </article>

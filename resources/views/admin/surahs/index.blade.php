@@ -38,17 +38,16 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Arabic</th>
-                        <th>English</th>
                         <th>Bangla</th>
+                        <th>Arabic</th>
+                        <th>Meaning (Bangla)</th>
                         <th>Ayahs</th>
-                        <th>Revelation</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody data-admin-tbody>
                     <tr class="table-empty">
-                        <td colspan="7">Loading records...</td>
+                        <td colspan="6">Loading records...</td>
                     </tr>
                 </tbody>
             </table>

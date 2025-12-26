@@ -41,7 +41,7 @@
                 @endif
                 <div class="surah-info-divider"></div>
                 <p class="surah-info-meta" id="surah-meta">
-                    ??? ???? {{ $ayahCount }}
+                    অবতীর্ণের ক্রম: {{ $surah->revelation_order ?? '' }} • মোট আয়াত {{ $ayahCount }}
                 </p>
                 <p class="surah-info-details" id="surah-summary">
                     {!! nl2br(e($summaryBn)) !!}
@@ -50,7 +50,7 @@
         </div>
 
         <div class="ayah-toolbar">
-            <input type="search" class="ayah-search" data-ayah-search placeholder="???? ??????...">
+            <input type="search" class="ayah-search" data-ayah-search placeholder="আয়াত-অনুসন্ধান করুন...">
         </div>
 
         <div id="ayah-container" class="ayah-list">
@@ -65,10 +65,10 @@
                 </div>
             </article>
         </div>
-        <p class="no-results text-muted text-center d-none" id="ayah-empty">???? ???? ????? ??????</p>
+        <p class="no-results text-muted text-center d-none" id="ayah-empty">কোন আয়াত পাওয়া যায়নি</p>
         <div class="pagination-controls" id="surah-pagination"></div>
         <noscript>
-            <p class="text-center text-danger mt-3">?? ??? ????????? ???? ????? ?????????? ????????????? ???? ?????</p>
+            <p class="text-center text-danger mt-3">জাভাস্ক্রিপ্ট সক্রিয় করুন যাতে পূর্ণ কার্যকারিতা পাওয়া যায়</p>
         </noscript>
     </section>
 </main>

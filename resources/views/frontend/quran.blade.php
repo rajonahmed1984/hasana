@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Hasana - ????? ????')
+@section('title', 'Hasana - আল কুরআন')
 
 @section('body')
 @include('frontend.partials.offcanvas', ['active' => 'quran'])
@@ -10,13 +10,13 @@
         <a href="{{ route('hasana.home') }}" class="header-icon">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
-        <h1 class="header-title">????? ????</h1>
+        <h1 class="header-title">আল কুরআন</h1>
         <button class="header-icon" id="search-toggle">
             <i class="bi bi-search"></i>
         </button>
     </div>
     <div class="header-search-container" id="header-search-container">
-        <input type="search" class="search-bar" placeholder="???? ??????..." data-surah-search>
+        <input type="search" class="search-bar" placeholder="সূরা খুঁজুন (যেমন: ফাতিহা, fatiha)..." data-surah-search>
     </div>
 </header>
 
@@ -41,11 +41,11 @@
             </div>
         </div>
         <p class="no-results text-muted text-center d-none" id="quran-empty-message">
-            ???? ????? ????? ??????
+            কোনো সূরা পাওয়া যায়নি
         </p>
         <div class="pagination-controls" id="quran-pagination"></div>
         <noscript>
-            <p class="text-center text-danger mt-3">?? ??? ????????? ???? ????? ?????????? ????????????? ???? ?????</p>
+            <p class="text-center text-danger mt-3">জাভাস্ক্রিপ্ট সক্রিয় করুন যাতে পূর্ণ কার্যকারিতা পাওয়া যায়</p>
         </noscript>
     </section>
 </main>

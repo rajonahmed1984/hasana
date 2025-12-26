@@ -29,39 +29,31 @@
                 $navItems = [
                     [
                         'label' => 'Surahs',
-                        'icon' => 'bi-journal-richtext',
+                        'icon' => 'bi-book',
                         'route' => 'admin.surahs.index',
                         'active' => request()->routeIs('admin.surahs.*'),
                     ],
                     [
-                        'label' => 'Ayahs',
-                        'icon' => 'bi-collection-play',
-                        'route' => 'admin.surahs.ayahs.index',
-                        'active' => request()->routeIs('admin.surahs.ayahs.*'),
-                        'params' => isset($surah) ? ['surah' => $surah] : null,
-                        'disabled' => !isset($surah),
-                    ],
-                    [
                         'label' => 'Hadith',
-                        'icon' => 'bi-bookmark-heart',
+                        'icon' => 'bi-file-earmark-text',
                         'route' => 'admin.hadiths.index',
                         'active' => request()->routeIs('admin.hadiths.*'),
                     ],
                     [
                         'label' => 'Hadith Collections',
-                        'icon' => 'bi-folder2-open',
+                        'icon' => 'bi-folder',
                         'route' => 'admin.hadith-categories.index',
                         'active' => request()->routeIs('admin.hadith-categories.*'),
                     ],
                     [
                         'label' => 'Duas',
-                        'icon' => 'bi-hands',
+                        'icon' => 'bi-heart',
                         'route' => 'admin.duas.index',
                         'active' => request()->routeIs('admin.duas.*'),
                     ],
                     [
                         'label' => 'Dua Categories',
-                        'icon' => 'bi-grid-1x2',
+                        'icon' => 'bi-tag',
                         'route' => 'admin.dua-categories.index',
                         'active' => request()->routeIs('admin.dua-categories.*'),
                     ],
@@ -73,7 +65,7 @@
                         @php
                             $hasParams = array_key_exists('params', $item);
                             $params = $hasParams ? $item['params'] : null;
-                            $disabled = ($item['disabled'] ?? false) || ($hasParams && empty($params));
+                            $disabled = ($item['disabled'] ?? false);
                             $url = '#';
 
                             if (! $disabled) {

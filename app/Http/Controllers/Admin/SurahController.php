@@ -143,7 +143,7 @@ class SurahController extends Controller
         $validated = $request->validate([
             'number' => ['required', 'integer', 'min:1', 'max:250', Rule::unique('surahs', 'number')->ignore($ignoreId)],
             'name_ar' => ['required', 'string', 'max:255'],
-            'name_en' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('surahs', 'slug')->ignore($ignoreId)],
             'revelation_type' => ['nullable', 'string', 'max:50'],
             'summary' => ['nullable', 'string'],
@@ -152,6 +152,11 @@ class SurahController extends Controller
             'meta.summary_bn' => ['nullable', 'string'],
             'meta.revelation_order' => ['nullable', 'integer', 'min:1', 'max:250'],
         ]);
+
+        // Auto-generate name_en from name_ar if not provided
+        if (empty($validated['name_en'])) {
+            $validated['name_en'] = $validated['name_ar'];
+        }
 
         $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['name_en']);
 

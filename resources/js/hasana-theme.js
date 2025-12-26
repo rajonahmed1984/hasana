@@ -647,6 +647,13 @@ function renderBookmarkList() {
                 const content = document.createElement('div');
                 content.className = 'ayah-content';
 
+                if (item.text_ar) {
+                    const arabic = document.createElement('p');
+                    arabic.className = 'ayah-arabic';
+                    arabic.innerHTML = formatWithBreaks(item.text_ar);
+                    content.appendChild(arabic);
+                }
+
                 if (item.text_bn) {
                     const translation = document.createElement('p');
                     translation.className = 'ayah-translation';
@@ -659,13 +666,6 @@ function renderBookmarkList() {
                     transliteration.className = 'ayah-transliteration text-muted';
                     transliteration.innerHTML = formatWithBreaks(item.transliteration);
                     content.appendChild(transliteration);
-                }
-
-                if (item.text_ar) {
-                    const arabic = document.createElement('p');
-                    arabic.className = 'ayah-arabic';
-                    arabic.innerHTML = formatWithBreaks(item.text_ar);
-                    content.appendChild(arabic);
                 }
 
                 if (item.footnotes) {

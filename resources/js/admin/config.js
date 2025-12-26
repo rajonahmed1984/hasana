@@ -3,11 +3,10 @@
         singular: 'Surah',
         columns: [
             { header: '#', key: 'number', width: '70px', align: 'center' },
-            { header: 'Arabic', key: 'name_ar' },
-            { header: 'English', key: 'name_en' },
             { header: 'Bangla', key: 'meta.name_bn', fallback: '--' },
+            { header: 'Arabic', key: 'name_ar' },
+            { header: 'Meaning (Bangla)', key: 'meta.meaning_bn', fallback: '--' },
             { header: 'Ayahs', key: 'ayah_count', width: '90px', align: 'center' },
-            { header: 'Revelation', key: 'revelation_type', fallback: '--', width: '120px', align: 'center' },
             { header: 'Actions', type: 'actions', width: '200px' },
         ],
         actions: [
@@ -20,7 +19,6 @@
             fields: [
                 { name: 'number', label: 'Number', type: 'number', required: true, min: 1 },
                 { name: 'name_ar', label: 'Name (Arabic)', type: 'text', required: true },
-                { name: 'name_en', label: 'Name (English)', type: 'text', required: true },
                 { name: 'meta.name_bn', label: 'Name (Bangla)', type: 'text' },
                 { name: 'slug', label: 'Slug', type: 'text', help: 'Auto-generated if left blank.' },
                 {
@@ -29,11 +27,10 @@
                     type: 'select',
                     options: [
                         { value: '', label: 'Auto detect' },
-                        { value: 'Meccan', label: 'Meccan' },
-                        { value: 'Medinan', label: 'Medinan' },
+                        { value: 'meccan', label: 'Meccan' },
+                        { value: 'medinan', label: 'Medinan' },
                     ],
                 },
-                { name: 'summary', label: 'Summary (English)', type: 'textarea' },
                 { name: 'meta.summary_bn', label: 'Summary (Bangla)', type: 'textarea' },
                 { name: 'meta.meaning_bn', label: 'Meaning (Bangla)', type: 'text' },
                 { name: 'meta.revelation_order', label: 'Revelation Order', type: 'number', min: 1 },
@@ -219,7 +216,6 @@
                 { name: 'transliteration', label: 'Transliteration', type: 'textarea' },
                 { name: 'text_ar', label: 'Arabic', type: 'textarea' },
                 { name: 'audio_url', label: 'Audio URL', type: 'url' },
-                { name: 'footnotes', label: 'Footnotes', type: 'textarea' },
                 { name: 'is_active', label: 'Visible', type: 'toggle', default: true },
             ],
         },

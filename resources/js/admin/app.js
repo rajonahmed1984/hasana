@@ -91,6 +91,8 @@ async function fetchJson(url, options = {}) {
         config.body = JSON.stringify(config.body);
     }
 
+    console.log('fetchJson:', { url, method: config.method, hasCsrf: !!csrfToken, body: config.body });
+
     const response = await fetch(url, config);
     if (!response.ok) {
         let message = `Request failed with status ${response.status}`;
@@ -500,21 +502,34 @@ class AdminTable {
             meta,
             submitText,
             onSubmit: async (payload, helpers) => {
+                // For surahs, ensure name_en is set (auto-generate from name_ar if not provided)
+                if (this.resource === 'surahs' && !payload.name_en && payload.name_ar) {
+                    payload.name_en = payload.name_ar;
+                }
+
+                console.log('Submitting payload:', payload);
+                console.log('Resource:', this.resource);
+
                 let url = isEdit
                     ? this.updateTemplate.replace('__ID__', originalItem.id)
                     : this.storeEndpoint;
                 url = url.replace('__ID__', originalItem?.id ?? '');
                 const method = isEdit ? 'PUT' : 'POST';
 
+                console.log('URL:', url, 'Method:', method);
+
                 try {
                     const response = await fetchJson(url, { method, body: payload });
+                    console.log('Response:', response);
                     helpers.setSubmitting(false);
                     helpers.close();
                     showToast(response?.message || `${this.config.singular || 'Record'} saved`);
                     this.load(isEdit ? this.params.page : 1);
                 } catch (error) {
+                    console.error('Error:', error);
                     helpers.setSubmitting(false);
                     if (error.validation) {
+                        console.error('Validation errors:', error.validation);
                         helpers.setErrors(error.validation);
                     } else {
                         showToast(error.message || 'Unable to save record.', true);
@@ -561,6 +576,7 @@ function createPaginationButton(label, disabled, handler) {
 }
 
 function createFormModal({ title, fields = [], values = {}, meta = {}, submitText = 'Save', onSubmit }) {
+    console.log('createFormModal called with:', { title, fields: fields.length, submitText });
     const root = document.getElementById('admin-dialog-root') || document.body;
     const overlay = document.createElement('div');
     overlay.className = 'admin-dialog-overlay active';
@@ -592,8 +608,17 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
     submitBtn.type = 'submit';
     submitBtn.className = 'btn-primary';
     submitBtn.textContent = submitText;
+    
+    // Add click event logging
+    submitBtn.addEventListener('click', (e) => {
+        console.log('Submit button clicked!', e);
+    });
+    
     actions.append(cancelBtn, submitBtn);
-    dialog.appendChild(actions);
+    // IMPORTANT: Append actions inside the form so submitBtn is inside form
+    form.appendChild(actions);
+
+    console.log('Modal created, submitBtn type:', submitBtn.type, 'form:', form);
 
     const fieldMap = new Map();
 
@@ -718,6 +743,7 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
     });
 
     form.addEventListener('submit', async (event) => {
+        console.log('Form submit event triggered!');
         event.preventDefault();
         helpers.setErrors(null);
         helpers.setSubmitting(true);
@@ -736,6 +762,8 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
             }
             setNestedValue(payload, field.name, value);
         });
+
+        console.log('Payload constructed:', payload);
 
         try {
             await onSubmit(payload, helpers);
