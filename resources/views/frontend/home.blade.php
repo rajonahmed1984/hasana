@@ -128,7 +128,7 @@
         <h3 class="section-title">বৈশিষ্ট্য সমূহ</h3>
         <div class="feature-list">
             <div class="feature-item">
-                <i class="fa-solid fa-clock"></i>
+                <i class="bi bi-clock"></i>
                 <div class="feature-content">
                     <h4>নামাজের সময়সূচী</h4>
                     <p>প্রতিদিন সঠিক সময়ে নামাজের তথ্য পান</p>
