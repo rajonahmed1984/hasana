@@ -63,7 +63,7 @@ const renderAyahs = (container, surahNumber, ayahs) => {
             const key = `${surahNumber}:${ayah.number}`;
             const keyBn = formatBanglaDigits(key);
             const audioMarkup = ayah.audio_url
-                ? `<a href="${escapeHtml(ayah.audio_url)}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন"><i class="bi bi-play-circle"></i></a>`
+                ? `<a href="${escapeHtml(ayah.audio_url)}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন"><i class="fa-solid fa-circle-play"></i></a>`
                 : '';
             const translation = ayah.text_bn ? `<p class="ayah-translation">${convertToHtml(ayah.text_bn)}</p>` : '';
             const transliteration = ayah.transliteration
@@ -80,10 +80,10 @@ const renderAyahs = (container, surahNumber, ayahs) => {
                         <div class="ayah-actions">
                             ${audioMarkup}
                             <button type="button" class="bookmark-btn" data-ayah="${escapeHtml(key)}" title="বুকমার্ক">
-                                <i class="bi bi-bookmark"></i>
+                                <i class="fa-regular fa-bookmark"></i>
                             </button>
                             <button type="button" class="share-btn" data-ayah="${escapeHtml(key)}" title="শেয়ার">
-                                <i class="bi bi-share"></i>
+                                <i class="fa-solid fa-share-nodes"></i>
                             </button>
                         </div>
                     </div>
@@ -282,3 +282,4 @@ const initSurahPage = () => {
 };
 
 document.addEventListener('DOMContentLoaded', initSurahPage);
+

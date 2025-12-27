@@ -18,7 +18,7 @@ use App\Http\Controllers\Api\DuaController as ApiDuaController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
-Route::prefix('api')->name('api.')->group(function () {
+Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(function () {
     Route::get('/surahs', [ApiSurahController::class, 'index'])->name('hasana.surahs.index');
     Route::get('/surahs/{surah:slug}', [ApiSurahController::class, 'show'])->name('hasana.surahs.show');
     Route::get('/hadith/categories', [ApiHadithController::class, 'categories'])->name('hasana.hadiths.categories');
@@ -38,12 +38,15 @@ Route::get('/hadith', [HasanaController::class, 'hadiths'])->name('hasana.hadith
 Route::get('/duas', [HasanaController::class, 'duas'])->name('hasana.duas');
 Route::get('/umrah-guide', [HasanaController::class, 'umrah'])->name('hasana.umrah');
 
-// Admin login routes
-Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.attempt');
+// Admin login routes with rate limiting
+Route::middleware(['throttle:5,1'])->group(function () {
+    Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.attempt');
+});
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/clear-cache', function () {
+// Protect clear-cache route - admin only
+Route::middleware('auth')->get('/clear-cache', function () {
     Artisan::call('optimize');
     Artisan::call('view:clear');
     Artisan::call('cache:clear');

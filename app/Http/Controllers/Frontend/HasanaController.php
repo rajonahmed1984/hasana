@@ -98,11 +98,65 @@ class HasanaController extends Controller
     {
         $text = trim((string) $request->query('text', ''));
         $reference = trim((string) $request->query('ref', ''));
+        $translationBn = trim((string) $request->query('bn', ''));
+        $transliteration = trim((string) $request->query('trans', ''));
+
+        if (($translationBn === '' || $transliteration === '') && $reference !== '') {
+            [$surahNo, $ayahNo] = $this->tryExtractReferenceNumbers($reference);
+            if ($surahNo !== null && $ayahNo !== null) {
+                $surah = Surah::query()->where('number', $surahNo)->first();
+                if ($surah) {
+                    $ayah = Ayah::query()
+                        ->where('surah_id', $surah->id)
+                        ->where('number', $ayahNo)
+                        ->first();
+                    if ($ayah) {
+                        if ($translationBn === '' && !empty($ayah->text_bn)) {
+                            $translationBn = $ayah->text_bn;
+                        }
+                        if ($transliteration === '' && !empty($ayah->transliteration)) {
+                            $transliteration = $ayah->transliteration;
+                        }
+                    }
+                }
+            }
+        }
 
         return view('frontend.share', [
             'shareText' => $text,
             'shareReference' => $reference,
+            'shareTranslationBn' => $translationBn,
+            'shareTransliteration' => $transliteration,
         ]);
+    }
+
+    private function tryExtractReferenceNumbers(string $reference): array
+    {
+        // Extract content inside parentheses like "(...:...)"
+        if (!preg_match('/\(([^\)]*)\)/u', $reference, $m)) {
+            return [null, null];
+        }
+        $inside = trim($m[1] ?? '');
+        if ($inside === '') {
+            return [null, null];
+        }
+        // Find two number-like parts separated by ':'
+        $parts = preg_split('/\s*:\s*/u', $inside);
+        if (count($parts) !== 2) {
+            return [null, null];
+        }
+        $s = $this->banglaToAsciiDigits($parts[0]);
+        $a = $this->banglaToAsciiDigits($parts[1]);
+        if (!ctype_digit($s) || !ctype_digit($a)) {
+            return [null, null];
+        }
+        return [intval($s, 10), intval($a, 10)];
+    }
+
+    private function banglaToAsciiDigits(string $value): string
+    {
+        $map = array_flip(self::BANGLA_DIGITS);
+        return strtr($value, $map);
     }
 
     public function bookmarkData(Request $request): JsonResponse

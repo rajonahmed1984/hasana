@@ -1,4 +1,4 @@
-@extends('frontend.layouts.app')
+﻿@extends('frontend.layouts.app')
 
 @section('title', $surah->name_en . ' - Hasana')
 
@@ -16,11 +16,11 @@
 <header class="app-header sticky-top">
     <div class="header-content">
         <a href="{{ url()->previous() === url()->current() ? route('hasana.quran') : url()->previous() }}" class="header-icon">
-            <i class="bi bi-arrow-left"></i>
+            <i class="fa-solid fa-arrow-left"></i>
         </a>
         <h1 class="header-title" id="surah-header-title">{{ $nameBn }}</h1>
         <button class="header-icon" id="menu-toggle">
-            <i class="bi bi-list"></i>
+            <i class="fa-solid fa-bars"></i>
         </button>
     </div>
 </header>
@@ -33,19 +33,24 @@
         data-per-page="20">
         <div class="surah-info-card-container">
             <div class="surah-info-card" id="surah-info-card">
+                <div class="surah-header-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
                 <h2 id="surah-name">{{ $nameBn }}</h2>
                 @if ($meaningBn)
-                    <p id="surah-meaning">"{{ $meaningBn }}"</p>
+                    <p id="surah-meaning" class="surah-meaning-text">"অর্থ: {{ $meaningBn }}"</p>
                 @else
-                    <p id="surah-meaning" class="text-muted d-none"></p>
+                    <p id="surah-meaning" class="surah-meaning-text hidden"></p>
                 @endif
                 <div class="surah-info-divider"></div>
                 <p class="surah-info-meta" id="surah-meta">
-                    অবতীর্ণের ক্রম: {{ $surah->revelation_order ?? '' }} • মোট আয়াত {{ $ayahCount }}
+                    <i class="fa-solid fa-book-open"></i> অবতীর্ণের ক্রম: {{ $surah->revelation_order ?? '' }} • মোট আয়াত: {{ $ayahCount }}
                 </p>
+                @if($summaryBn)
                 <p class="surah-info-details" id="surah-summary">
                     {!! nl2br(e($summaryBn)) !!}
                 </p>
+                @endif
             </div>
         </div>
 
@@ -64,8 +69,27 @@
                     <p class="line shimmer"></p>
                 </div>
             </article>
+            <article class="ayah-card loading-card">
+                <div class="ayah-header">
+                    <span class="ayah-number shimmer"></span>
+                </div>
+                <div class="ayah-content">
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                </div>
+            </article>
+            <article class="ayah-card loading-card">
+                <div class="ayah-header">
+                    <span class="ayah-number shimmer"></span>
+                </div>
+                <div class="ayah-content">
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                    <p class="line shimmer"></p>
+                </div>
+            </article>
         </div>
-        <p class="no-results text-muted text-center d-none" id="ayah-empty">কোন আয়াত পাওয়া যায়নি</p>
+        <p class="no-results hidden" id="ayah-empty">কোন আয়াত পাওয়া যায়নি</p>
         <div class="pagination-controls" id="surah-pagination"></div>
         <noscript>
             <p class="text-center text-danger mt-3">জাভাস্ক্রিপ্ট সক্রিয় করুন যাতে পূর্ণ কার্যকারিতা পাওয়া যায়</p>
@@ -75,3 +99,5 @@
 
 @include('frontend.partials.bottom-nav', ['active' => 'surah'])
 @endsection
+
+

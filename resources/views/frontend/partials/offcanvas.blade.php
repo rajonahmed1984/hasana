@@ -11,16 +11,16 @@
     </div>
     <nav class="offcanvas-nav">
         <a href="{{ route('hasana.home') }}" class="offcanvas-link {{ $activeMenu === 'home' ? 'active' : '' }}">
-            <i class="bi bi-house-fill"></i> হোম
+            <i class="fa-solid fa-house"></i> হোম
         </a>
         <a href="{{ route('hasana.bookmarks') }}" class="offcanvas-link {{ $activeMenu === 'bookmarks' ? 'active' : '' }}">
-            <i class="bi bi-bookmark-fill"></i> বুকমার্কস
+            <i class="fa-solid fa-bookmark"></i> বুকমার্কস
         </a>
         <a href="{{ route('hasana.settings') }}" class="offcanvas-link {{ $activeMenu === 'settings' ? 'active' : '' }}">
-            <i class="bi bi-gear-fill"></i> সেটিংস
+            <i class="fa-solid fa-gear"></i> সেটিংস
         </a>
         <a href="{{ route('hasana.about') }}" class="offcanvas-link {{ $activeMenu === 'about' ? 'active' : '' }}">
-            <i class="bi bi-info-circle-fill"></i> অ্যাপ সম্পর্কে
+            <i class="fa-solid fa-circle-info"></i> অ্যাপ সম্পর্কে
         </a>
     </nav>
     <div class="offcanvas-footer">
@@ -31,3 +31,4 @@
         </label>
     </div>
 </aside>
+

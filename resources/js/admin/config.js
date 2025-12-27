@@ -11,7 +11,7 @@
         ],
         actions: [
             { type: 'edit' },
-            { type: 'link', label: 'Ayahs', icon: 'bi bi-collection', path: 'links.ayahs' },
+            { type: 'link', label: 'Ayahs', icon: 'fa-solid fa-layer-group', path: 'links.ayahs' },
             { type: 'delete', confirm: 'Delete this surah? Ayahs attached to it will also be removed.' },
         ],
         form: {

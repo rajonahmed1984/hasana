@@ -494,8 +494,9 @@ function setBookmarkButtonState(button, isActive) {
     button.classList.toggle('active', isActive);
     const icon = button.querySelector('i');
     if (icon) {
-        icon.classList.toggle('bi-bookmark-fill', isActive);
-        icon.classList.toggle('bi-bookmark', !isActive);
+        icon.classList.add('fa-bookmark');
+        icon.classList.toggle('fa-solid', isActive);
+        icon.classList.toggle('fa-regular', !isActive);
     }
 }
 
@@ -632,7 +633,7 @@ function renderBookmarkList() {
                 }
                 shareBtn.dataset.shareReference = referenceLabel;
                 const shareIcon = document.createElement('i');
-                shareIcon.className = 'bi bi-share';
+                shareIcon.className = 'fa-solid fa-share-nodes';
                 shareBtn.appendChild(shareIcon);
                 actions.appendChild(shareBtn);
 
@@ -641,7 +642,7 @@ function renderBookmarkList() {
                 removeBtn.className = 'remove-bookmark-btn';
                 removeBtn.dataset.ayah = item.key;
                 const removeIcon = document.createElement('i');
-                removeIcon.className = 'bi bi-trash3';
+                removeIcon.className = 'fa-solid fa-trash';
                 removeBtn.appendChild(removeIcon);
                 actions.appendChild(removeBtn);
 
@@ -757,17 +758,41 @@ function initShareButtons() {
         event.preventDefault();
         const shareBase = button.dataset.shareBase || getShareBaseUrl();
         const ayahKey = button.dataset.ayah || '';
-        let shareText = button.dataset.shareText || extractShareText(button);
+        // Prefer extracting both Arabic and Bangla separately from the card
+        const card = button.closest('.ayah-card');
+        const arabicNode = card ? card.querySelector('.ayah-arabic') : null;
+        const banglaNode = card ? card.querySelector('.ayah-translation') : null;
+        const translitNode = card ? card.querySelector('.ayah-transliteration') : null;
+
+        const arabicText = (arabicNode && arabicNode.textContent.trim())
+            ? arabicNode.textContent.trim()
+            : (button.dataset.shareText && /[\u0600-\u06FF]/.test(button.dataset.shareText) ? button.dataset.shareText : '');
+        const banglaText = (banglaNode && banglaNode.textContent.trim())
+            ? banglaNode.textContent.trim()
+            : (button.dataset.shareText && /[\u0980-\u09FF]/.test(button.dataset.shareText) ? button.dataset.shareText : '');
+        const translitText = (translitNode && translitNode.textContent.trim())
+            ? translitNode.textContent.trim()
+            : '';
+
         const shareReference = button.dataset.shareReference || extractShareReference(button, ayahKey);
 
-        if (!shareText && !shareReference) {
+        if (!arabicText && !banglaText && !shareReference) {
             showToast('শেয়ার করার জন্য তথ্য পাওয়া যায়নি');
             return;
         }
 
         const url = new URL(shareBase, window.location.origin);
-        if (shareText) {
-            url.searchParams.set('text', shareText);
+        if (arabicText) {
+            url.searchParams.set('text', arabicText);
+        } else if (banglaText) {
+            // fallback if only bangla present
+            url.searchParams.set('text', banglaText);
+        }
+        if (banglaText) {
+            url.searchParams.set('bn', banglaText);
+        }
+        if (translitText) {
+            url.searchParams.set('trans', translitText);
         }
         if (shareReference) {
             url.searchParams.set('ref', shareReference);

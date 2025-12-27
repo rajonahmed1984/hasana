@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\LogSuspiciousActivity;
 use App\Http\Middleware\SetLocale; // <-- import it
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register globally for all web routes
         $middleware->web(append: [
             SetLocale::class,
+            SecurityHeaders::class,
+            LogSuspiciousActivity::class,
         ]);
 
         // Redirect guests to the admin login so Laravel's default auth helpers work.

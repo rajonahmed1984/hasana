@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 
 @section('page_title', 'Users')
 @section('page_subtitle', 'Manage admin users and their access.')
@@ -20,11 +20,11 @@
             </div>
             <div class="controls-right">
                 <label class="search-field">
-                    <i class="bi bi-search"></i>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="search" placeholder="Search users..." data-admin-search>
                 </label>
                 <button type="button" class="btn-primary" data-admin-create>
-                    <i class="bi bi-plus-lg"></i>
+                    <i class="fa-solid fa-plus"></i>
                     <span>New User</span>
                 </button>
             </div>
@@ -53,3 +53,4 @@
     </div>
 </div>
 @endsection
+

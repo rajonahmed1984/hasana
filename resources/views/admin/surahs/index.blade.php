@@ -23,11 +23,11 @@
             </div>
             <div class="controls-right">
                 <label class="search-field">
-                    <i class="bi bi-search"></i>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="search" placeholder="Search surahs..." data-admin-search>
                 </label>
                 <button type="button" class="btn-primary" data-admin-create>
-                    <i class="bi bi-plus-lg"></i>
+                    <i class="fa-solid fa-plus"></i>
                     <span>New Surah</span>
                 </button>
             </div>
@@ -60,6 +60,7 @@
     </div>
 </div>
 @endsection
+
 
 
 

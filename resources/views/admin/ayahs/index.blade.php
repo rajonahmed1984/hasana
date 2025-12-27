@@ -23,7 +23,7 @@
             </div>
             <div class="controls-right">
                 <label class="search-field">
-                    <i class="bi bi-search"></i>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="search" placeholder="Search ayahs..." data-admin-search>
                 </label>
                 <label class="select-field" data-admin-filter="is_active">
@@ -35,11 +35,11 @@
                     </select>
                 </label>
                 <button type="button" class="btn-primary" data-admin-create>
-                    <i class="bi bi-plus-lg"></i>
+                    <i class="fa-solid fa-plus"></i>
                     <span>New Ayah</span>
                 </button>
                 <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn-secondary">
-                    <i class="bi bi-arrow-left"></i>
+                    <i class="fa-solid fa-arrow-left"></i>
                     <span>Back to Surah</span>
                 </a>
             </div>
@@ -72,3 +72,4 @@
     </div>
 </div>
 @endsection
+

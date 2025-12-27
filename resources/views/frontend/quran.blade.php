@@ -1,4 +1,4 @@
-@extends('frontend.layouts.app')
+﻿@extends('frontend.layouts.app')
 
 @section('title', 'Hasana - আল কুরআন')
 
@@ -12,7 +12,7 @@
         </a>
         <h1 class="header-title">আল কুরআন</h1>
         <button class="header-icon" id="search-toggle">
-            <i class="bi bi-search"></i>
+            <i class="fa-solid fa-magnifying-glass"></i>
         </button>
     </div>
     <div class="header-search-container" id="header-search-container">
@@ -21,7 +21,19 @@
 </header>
 
 <main class="main-container">
-    <section class="mb-4" id="quran-app"
+    <!-- Quran Info Card -->
+    <section class="quran-info-card">
+        <div class="quran-info-content">
+            <i class="fa-solid fa-quran"></i>
+            <div>
+                <h3>পবিত্র কুরআন শরীফ</h3>
+                <p>১১৪টি সূরা • ৬,২৩৬টি আয়াত</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Surah List -->
+    <section class="quran-section" id="quran-app"
         data-endpoint="{{ route('api.hasana.surahs.index') }}"
         data-surah-url="{{ url('surah') }}"
         data-per-page="30">
@@ -39,8 +51,34 @@
                     <span class="line shimmer"></span>
                 </div>
             </div>
+            <div class="surah-card loading-card">
+                <div class="surah-card-info">
+                    <div class="surah-number-bg shimmer"></div>
+                    <div class="loading-lines">
+                        <span class="line shimmer"></span>
+                        <span class="line shimmer"></span>
+                    </div>
+                </div>
+                <div class="surah-card-right">
+                    <span class="line shimmer"></span>
+                    <span class="line shimmer"></span>
+                </div>
+            </div>
+            <div class="surah-card loading-card">
+                <div class="surah-card-info">
+                    <div class="surah-number-bg shimmer"></div>
+                    <div class="loading-lines">
+                        <span class="line shimmer"></span>
+                        <span class="line shimmer"></span>
+                    </div>
+                </div>
+                <div class="surah-card-right">
+                    <span class="line shimmer"></span>
+                    <span class="line shimmer"></span>
+                </div>
+            </div>
         </div>
-        <p class="no-results text-muted text-center d-none" id="quran-empty-message">
+        <p class="no-results hidden" id="quran-empty-message">
             কোনো সূরা পাওয়া যায়নি
         </p>
         <div class="pagination-controls" id="quran-pagination"></div>
@@ -52,3 +90,5 @@
 
 @include('frontend.partials.bottom-nav', ['active' => 'quran'])
 @endsection
+
+

@@ -363,7 +363,7 @@ class AdminTable {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'btn-muted';
-                button.innerHTML = '<i class="bi bi-pencil"></i><span>Edit</span>';
+                button.innerHTML = '<i class="fa-solid fa-pen"></i><span>Edit</span>';
                 button.addEventListener('click', () => this.openEdit(item));
                 wrapper.appendChild(button);
                 return;
@@ -376,7 +376,7 @@ class AdminTable {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'btn-muted danger';
-                button.innerHTML = '<i class="bi bi-trash"></i><span>Delete</span>';
+                button.innerHTML = '<i class="fa-solid fa-trash"></i><span>Delete</span>';
                 button.addEventListener('click', () => this.deleteItem(item, action.confirm));
                 wrapper.appendChild(button);
                 return;
@@ -390,7 +390,7 @@ class AdminTable {
                 const anchor = document.createElement('a');
                 anchor.className = 'btn-secondary';
                 anchor.href = url;
-                const icon = action.icon || 'bi bi-arrow-up-right';
+                const icon = action.icon || 'fa-solid fa-arrow-up-right-from-square';
                 const label = action.label || 'Open';
                 anchor.innerHTML = `<i class="${icon}"></i><span>${label}</span>`;
                 if (action.target) {
@@ -777,3 +777,4 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
     root.appendChild(overlay);
     return helpers;
 }
+
