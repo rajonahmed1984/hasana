@@ -7,14 +7,14 @@
     <div class="offcanvas-header">
         <img src="{{ logo_url() }}" alt="{{ setting('site_name', 'Hasana') }}" class="offcanvas-logo">
         <h2 class="offcanvas-title">Hasana</h2>
-        <button class="close-btn" id="close-menu-btn">&times;</button>
+        <button class="close-btn" id="close-menu-btn"><i class="bi bi-x"></i></button>
     </div>
     <nav class="offcanvas-nav">
         <a href="{{ route('hasana.home') }}" class="offcanvas-link {{ $activeMenu === 'home' ? 'active' : '' }}">
             <i class="fa-solid fa-house"></i> হোম
         </a>
         <a href="{{ route('hasana.bookmarks') }}" class="offcanvas-link {{ $activeMenu === 'bookmarks' ? 'active' : '' }}">
-            <i class="fa-solid fa-bookmark"></i> বুকমার্কস
+            <i class="bi bi-bookmark"></i> বুকমার্কস
         </a>
         <a href="{{ route('hasana.settings') }}" class="offcanvas-link {{ $activeMenu === 'settings' ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i> সেটিংস
@@ -31,4 +31,5 @@
         </label>
     </div>
 </aside>
+
 

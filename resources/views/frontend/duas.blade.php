@@ -8,7 +8,7 @@
 <header class="app-header sticky-top">
     <div class="header-content">
         <a href="{{ url()->previous() === url()->current() ? route('hasana.home') : url()->previous() }}" class="header-icon">
-            <i class="fa-solid fa-arrow-left"></i>
+            <i class="bi bi-arrow-left"></i>
         </a>
         <h1 class="header-title">প্রয়োজনীয় দোয়াসমূহ</h1>
         <span class="header-icon-placeholder"></span>

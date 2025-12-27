@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @vite(['resources/js/admin.js'])
     @stack('styles')
 </head>
@@ -105,7 +106,7 @@
             <header class="admin-topbar">
                 <div class="topbar-left">
                     <button class="sidebar-toggle" data-admin-sidebar-toggle aria-label="Open navigation">
-                        <i class="fa-solid fa-bars"></i>
+                        <i class="bi bi-list"></i>
                     </button>
                     <div class="topbar-page-meta">
                         <h1 class="page-title">@yield('page_title', 'Dashboard')</h1>

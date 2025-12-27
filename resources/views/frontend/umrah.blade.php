@@ -8,7 +8,7 @@
 <header class="app-header sticky-top">
     <div class="header-content">
         <a href="{{ url()->previous() === url()->current() ? route('hasana.home') : url()->previous() }}" class="header-icon">
-            <i class="fa-solid fa-arrow-left"></i>
+            <i class="bi bi-arrow-left"></i>
         </a>
         <h1 class="header-title">উমরাহ গাইড</h1>
         <span class="header-icon-placeholder"></span>
@@ -19,7 +19,7 @@
     <!-- Umrah Info Card -->
     <section class="umrah-info-card">
         <div class="umrah-info-content">
-            <i class="fa-solid fa-compass"></i>
+            <i class="fa-solid fa-kaaba"></i>
             <div>
                 <h3>উমরাহ পালনের নির্দেশনা</h3>
                 <p>ধাপে ধাপে উমরাহ সম্পাদনের সম্পূর্ণ গাইড</p>

@@ -8,7 +8,7 @@
 <header class="app-header sticky-top">
     <div class="header-content">
         <a href="{{ route('hasana.home') }}" class="header-icon">
-            <i class="fa-solid fa-arrow-left"></i>
+            <i class="bi bi-arrow-left"></i>
         </a>
         <h1 class="header-title">আল কুরআন</h1>
         <button class="header-icon" id="search-toggle">

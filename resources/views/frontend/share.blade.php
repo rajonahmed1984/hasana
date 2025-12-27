@@ -7,7 +7,7 @@
 <header class="app-header sticky-top">
     <div class="header-content">
         <a href="javascript:history.back()" class="header-icon">
-            <i class="fa-solid fa-arrow-left"></i>
+            <i class="bi bi-arrow-left"></i>
         </a>
         <h1 class="header-title">শেয়ার</h1>
         <span class="header-icon-placeholder"></span>

@@ -239,27 +239,9 @@ function initPrayerTimes() {
             }
         }
 
-        // Only mark next-prayer (upcoming), not current-prayer (active now)
-        let nextPrayer = null;
-        if (!activeEntry) {
-            const fallback = prayerSchedule.reduce((closest, entry) => {
-                let diff = entry.startMinutes - minutesNow;
-                if (diff < 0) {
-                    diff += 1440;
-                }
-                if (!closest || diff < closest.diff) {
-                    return { entry, diff };
-                }
-                return closest;
-            }, null);
-            nextPrayer = fallback ? fallback.entry : prayerSchedule[0];
-        }
-
         prayerSchedule.forEach(({ card }) => card.classList.remove('next-prayer', 'current-prayer'));
         if (activeEntry) {
-            activeEntry.card.classList.add('current-prayer', 'next-prayer');
-        } else if (nextPrayer) {
-            nextPrayer.card.classList.add('next-prayer');
+            activeEntry.card.classList.add('current-prayer');
         }
     };
 
@@ -494,9 +476,10 @@ function setBookmarkButtonState(button, isActive) {
     button.classList.toggle('active', isActive);
     const icon = button.querySelector('i');
     if (icon) {
-        icon.classList.add('fa-bookmark');
-        icon.classList.toggle('fa-solid', isActive);
-        icon.classList.toggle('fa-regular', !isActive);
+        icon.classList.remove('fa-solid', 'fa-regular', 'fa-bookmark');
+        icon.classList.add('bi');
+        icon.classList.toggle('bi-bookmark-fill', isActive);
+        icon.classList.toggle('bi-bookmark', !isActive);
     }
 }
 
@@ -633,7 +616,7 @@ function renderBookmarkList() {
                 }
                 shareBtn.dataset.shareReference = referenceLabel;
                 const shareIcon = document.createElement('i');
-                shareIcon.className = 'fa-solid fa-share-nodes';
+                shareIcon.className = 'bi bi-share';
                 shareBtn.appendChild(shareIcon);
                 actions.appendChild(shareBtn);
 

@@ -16,11 +16,11 @@
 <header class="app-header sticky-top">
     <div class="header-content">
         <a href="{{ url()->previous() === url()->current() ? route('hasana.quran') : url()->previous() }}" class="header-icon">
-            <i class="fa-solid fa-arrow-left"></i>
+            <i class="bi bi-arrow-left"></i>
         </a>
         <h1 class="header-title" id="surah-header-title">{{ $nameBn }}</h1>
         <button class="header-icon" id="menu-toggle">
-            <i class="fa-solid fa-bars"></i>
+            <i class="bi bi-list"></i>
         </button>
     </div>
 </header>

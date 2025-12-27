@@ -39,7 +39,7 @@
                     <span>New Ayah</span>
                 </button>
                 <a href="{{ route('admin.surahs.edit', $surah) }}" class="btn-secondary">
-                    <i class="fa-solid fa-arrow-left"></i>
+                    <i class="bi bi-arrow-left"></i>
                     <span>Back to Surah</span>
                 </a>
             </div>

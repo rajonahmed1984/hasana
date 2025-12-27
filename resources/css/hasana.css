@@ -45,6 +45,7 @@
 
 /* --- Utilities --- */
 .hidden { display: none !important; }
+.text-center { text-align: center; }
 
 /* --- Dark Mode Variables --- */
 body.dark-mode {
@@ -55,14 +56,16 @@ body.dark-mode {
     --border-color: #333333;
 }
 /* --- General Body & Reset --- */
+html,
 body {
     margin: 0;
     padding: 0;
+}
+body {
     font-family: var(--bengali-font);
     background-color: var(--bg-color);
     color: var(--text-color);
-    /* Add padding to prevent content from hiding behind fixed nav/header */
-    padding-top: 60px; /* Height of header */
+    padding-top: 0;
     padding-bottom: 70px; /* Height of bottom nav */
 }
 h2 {
@@ -74,7 +77,7 @@ h2 {
     background-color: var(--primary-color);
     color: var(--white-color);
     padding: 10px 15px;
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
@@ -199,7 +202,7 @@ body.dark-mode .offcanvas-link.active, body.dark-mode .offcanvas-link:hover {
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     color: #ffffff;
     padding: 0;
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
@@ -235,7 +238,20 @@ body.dark-mode .offcanvas-link.active, body.dark-mode .offcanvas-link:hover {
 
 /* --- Main Container --- */
 .main-container {
-    padding: 15px;
+    padding: 15px;    
+}
+.main-container.text-center {
+    text-align: center;
+}
+.about-card,
+.credits-card {
+    max-width: 520px;
+    margin: 0 auto 20px;
+    text-align: center;
+}
+.about-logo {
+    display: block;
+    margin: 0 auto 12px;
 }
 /* --- Prayer Times Section (NEW) --- */
 .prayer-times-section {
@@ -312,19 +328,19 @@ body.dark-mode .prayer-header {
     color: var(--text-light);
     line-height: 1.2;
 }
-/* Style for the next upcoming prayer */
-.prayer-time-card.next-prayer {
+/* Style for the current prayer */
+.prayer-time-card.current-prayer {
     background-color: var(--primary-color);
     color: white;
     transform: scale(1.05);
 }
-.prayer-time-card.next-prayer p,
-.prayer-time-card.next-prayer i,
-.prayer-time-card.next-prayer .time {
+.prayer-time-card.current-prayer p,
+.prayer-time-card.current-prayer i,
+.prayer-time-card.current-prayer .time {
     color: white;
 }
 /* New style for highlighted end time */
-.prayer-time-card.next-prayer .end-time {
+.prayer-time-card.current-prayer .end-time {
     color: rgba(255, 255, 255, 0.8);
 }
 /* --- Greeting & Surah Info Cards --- */
@@ -379,7 +395,7 @@ body.dark-mode .greeting-card, body.dark-mode .surah-info-card {
     padding: 0 15px 10px 15px;
 }
 body.search-active {
-    padding-top: 115px; /* Adjust body padding when search is open */
+    padding-top: 0;
 }
 .header-search-container .search-bar {
     width: 100%;
