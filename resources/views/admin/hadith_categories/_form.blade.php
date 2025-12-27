@@ -1,6 +1,6 @@
 ﻿<div class="row g-3">
     <div class="col-md-6">
-        <label class="form-label">Collection Name<span class="text-danger">*</span></label>
+        <label class="form-label">Categorie Name<span class="text-danger">*</span></label>
         <input type="text" name="name" class="form-control" value="{{ old('name', $category->name) }}" required>
     </div>
     <div class="col-md-6">
@@ -17,8 +17,8 @@
     </div>
     <div class="col-md-2 d-flex align-items-end">
         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" name="is_active" value="1" id="collection-active" {{ old('is_active', $category->is_active ?? true) ? 'checked' : '' }}>
-            <label class="form-check-label" for="collection-active">Active</label>
+            <input class="form-check-input" type="checkbox" role="switch" name="is_active" value="1" id="Categorie-active" {{ old('is_active', $category->is_active ?? true) ? 'checked' : '' }}>
+            <label class="form-check-label" for="Categorie-active">Active</label>
         </div>
     </div>
 </div>

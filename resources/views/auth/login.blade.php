@@ -13,7 +13,7 @@
         <div class="auth-card card shadow-lg border-0">
             <div class="card-body">
                 <div class="auth-header text-center">
-                    <img src="{{ asset('assets/logo.svg') }}" alt="Hasana" class="logo mb-3">
+                    <img src="{{ asset('images/logo.svg') }}" alt="{{ setting('site_name', 'Hasana') }} Logo" class="logo mb-3" style="width: 160px; height: auto; margin-bottom: 16px;">
                     <h1 class="h4 mb-1">Sign in to Hasana Admin</h1>
                     <p class="text-muted mb-0">Use your account to manage surahs and ayahs.</p>
                 </div>

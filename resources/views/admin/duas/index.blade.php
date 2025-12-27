@@ -38,7 +38,7 @@
                     </label>
                 </div>
                 <label class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="bi bi-search"></i>
                     <input type="search" placeholder="Search duas..." data-admin-search>
                 </label>
                 <button type="button" class="btn-primary" data-admin-create>

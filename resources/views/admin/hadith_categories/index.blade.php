@@ -1,7 +1,7 @@
 ﻿@extends('admin.layouts.app')
 
-@section('page_title', 'Hadith Collections')
-@section('page_subtitle', 'Curate collections that group narrations into meaningful categories.')
+@section('page_title', 'Hadith Categories')
+@section('page_subtitle', 'Curate Categories that group narrations into meaningful categories.')
 
 @section('content')
 <div
@@ -17,13 +17,13 @@
     <div class="admin-table-shell">
         <div class="table-controls">
             <div class="controls-left">
-                <h2 class="controls-title">Hadith Collections</h2>
+                <h2 class="controls-title">Hadith Categories</h2>
                 <p class="controls-description">Manage category names, descriptions, and visibility to keep the library organised.</p>
             </div>
             <div class="controls-right">
                 <label class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" placeholder="Search collections..." data-admin-search>
+                    <i class="bi bi-search"></i>
+                    <input type="search" placeholder="Search Categories..." data-admin-search>
                 </label>
                 <label class="select-field" data-admin-filter="is_active">
                     <span>Status</span>
@@ -67,4 +67,3 @@
     </div>
 </div>
 @endsection
-

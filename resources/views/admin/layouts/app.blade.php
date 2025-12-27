@@ -41,7 +41,7 @@
                         'active' => request()->routeIs('admin.hadiths.*'),
                     ],
                     [
-                        'label' => 'Hadith Collections',
+                        'label' => 'Hadith Categories',
                         'icon' => 'fa-solid fa-folder-open',
                         'route' => 'admin.hadith-categories.index',
                         'active' => request()->routeIs('admin.hadith-categories.*'),

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid py-4">
     <div class="mb-4">
-        <h1 class="h3 mb-1">Edit Hadith Collection</h1>
+        <h1 class="h3 mb-1">Edit Hadith Categorie</h1>
         <span class="text-muted">Update the grouping used on the hadith page</span>
     </div>
 
@@ -25,7 +25,7 @@
                 @method('PUT')
                 @include('admin.hadith_categories._form')
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">Update Collection</button>
+                    <button type="submit" class="btn btn-primary">Update Categorie</button>
                     <a href="{{ route('admin.hadith-categories.index', [], false) }}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>

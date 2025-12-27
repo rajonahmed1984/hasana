@@ -12,7 +12,7 @@
         </a>
         <h1 class="header-title">আল কুরআন</h1>
         <button class="header-icon" id="search-toggle">
-            <i class="fa-solid fa-magnifying-glass"></i>
+            <i class="bi bi-search"></i>
         </button>
     </div>
     <div class="header-search-container" id="header-search-container">

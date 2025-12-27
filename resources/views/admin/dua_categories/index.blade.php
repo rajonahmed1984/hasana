@@ -22,7 +22,7 @@
             </div>
             <div class="controls-right">
                 <label class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="bi bi-search"></i>
                     <input type="search" placeholder="Search categories..." data-admin-search>
                 </label>
                 <label class="select-field" data-admin-filter="is_active">
