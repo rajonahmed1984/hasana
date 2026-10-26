@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়</title>
+    
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
+
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#125e54">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="হাসানা">
+
+    <!-- Google Fonts: Amiri (Arabic) & Hind Siliguri (Bengali) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Early Theme Detection -->
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('hasana-theme') || 
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: #f8f7f2;
+            color: #14302b;
+            font-family: 'Hind Siliguri', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html.dark, html[data-theme='dark'], html[data-theme='dark'] body {
+            background-color: #0d1715;
+            color: #e4ebe9;
+        }
+
+        /* Native-style boot splash screen */
+        .hs-splash-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 70% 20%, #177a6d, #0d3b34);
+            color: #ffffff;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+        }
+        .hs-splash-arabic {
+            font-family: 'Amiri', serif;
+            font-size: 5rem;
+            color: #dfab3b;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .hs-splash-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+        .hs-splash-subtitle {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            margin-top: 0.25rem;
+        }
+        .hs-splash-loader {
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            margin-top: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .hs-splash-bar {
+            width: 40%;
+            height: 100%;
+            background: #dfab3b;
+            border-radius: 9999px;
+            animation: hs-indeterminate 1.4s infinite ease-in-out;
+        }
+        @keyframes hs-indeterminate {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+    </style>
+
+    @viteReactRefresh
+    @vite(['resources/css/app.css', 'resources/js/app/main.jsx'])
+</head>
+<body>
+    <div id="root">
+        <!-- Native-like initial splash while React loads -->
+        <div class="hs-splash-screen" aria-label="হাসানা লোড হচ্ছে...">
+            <div class="hs-splash-arabic">حسنة</div>
+            <h1 class="hs-splash-title">হাসানা</h1>
+            <p class="hs-splash-subtitle">পবিত্র কুরআন, হাদিস ও দোয়া</p>
+            <div class="hs-splash-loader">
+                <div class="hs-splash-bar"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -12,6 +12,9 @@ class SurahSummaryResource extends JsonResource
         $meta = $this->meta ?? [];
         $nameBn = $meta['name_bn'] ?? $this->name_en;
         $meaningBn = $meta['meaning_bn'] ?? ($meta['meaning'] ?? null);
+        $translatorBn = $meta['translator_bn'] ?? null;
+
+        $ayahCount = ($this->ayahs_count ?? 0) > 0 ? $this->ayahs_count : ($this->ayah_count ?: 0);
 
         return [
             'id' => $this->id,
@@ -22,8 +25,9 @@ class SurahSummaryResource extends JsonResource
             'name_bn' => $nameBn,
             'name_ar' => $this->name_ar,
             'meaning_bn' => $meaningBn,
-            'ayah_count' => $this->ayahs_count ?? $this->ayah_count,
-            'ayah_count_bn' => self::convertDigits($this->ayahs_count ?? $this->ayah_count),
+            'translator_bn' => $translatorBn,
+            'ayah_count' => $ayahCount,
+            'ayah_count_bn' => self::convertDigits($ayahCount),
             'meta' => $meta,
         ];
     }

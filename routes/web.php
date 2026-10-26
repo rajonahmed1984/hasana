@@ -26,17 +26,18 @@ Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(functio
     Route::get('/dua/categories', [ApiDuaController::class, 'categories'])->name('hasana.duas.categories');
     Route::get('/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
 });
-Route::get('/', [HasanaController::class, 'home'])->name('hasana.home');
-Route::get('/bookmarks', [HasanaController::class, 'bookmarks'])->name('hasana.bookmarks');
+Route::view('/', 'spa')->name('hasana.home');
+Route::view('/quran', 'spa')->name('hasana.quran');
+Route::get('/surah/{surah:slug}', fn() => view('spa'))->name('hasana.surah');
+Route::view('/hadith', 'spa')->name('hasana.hadiths');
+Route::view('/duas', 'spa')->name('hasana.duas');
+Route::view('/umrah', 'spa')->name('hasana.umrah.short');
+Route::view('/umrah-guide', 'spa')->name('hasana.umrah');
+Route::view('/bookmarks', 'spa')->name('hasana.bookmarks');
 Route::get('/bookmarks/data', [HasanaController::class, 'bookmarkData'])->name('hasana.bookmarks.data');
-Route::get('/settings', [HasanaController::class, 'settings'])->name('hasana.settings');
-Route::get('/about', [HasanaController::class, 'about'])->name('hasana.about');
+Route::view('/settings', 'spa')->name('hasana.settings');
+Route::view('/about', 'spa')->name('hasana.about');
 Route::get('/share', [HasanaController::class, 'share'])->name('hasana.share');
-Route::get('/surah/{surah:slug}', [HasanaController::class, 'surah'])->name('hasana.surah');
-Route::get('/quran', [HasanaController::class, 'quran'])->name('hasana.quran');
-Route::get('/hadith', [HasanaController::class, 'hadiths'])->name('hasana.hadiths');
-Route::get('/duas', [HasanaController::class, 'duas'])->name('hasana.duas');
-Route::get('/umrah-guide', [HasanaController::class, 'umrah'])->name('hasana.umrah');
 
 // Admin login routes with rate limiting
 Route::middleware(['throttle:5,1'])->group(function () {

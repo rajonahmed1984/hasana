@@ -1,4 +1,4 @@
-﻿@extends('frontend.layouts.app')
+@extends('frontend.layouts.app')
 
 @section('title', $surah->name_en . ' - Hasana')
 
@@ -8,6 +8,7 @@
     $meaningBn = $meta['meaning_bn'] ?? ($meta['meaning'] ?? null);
     $summaryBn = $meta['summary_bn'] ?? ($meta['summary'] ?? $surah->summary);
     $ayahCount = $surah->ayah_count ?? $surah->ayahs()->count();
+    $translatorBn = $meta['translator_bn'] ?? null;
 @endphp
 
 @section('body')
@@ -46,6 +47,13 @@
                 <p class="surah-info-meta" id="surah-meta">
                     <i class="fa-solid fa-book-open"></i> অবতীর্ণের ক্রম: {{ $surah->revelation_order ?? '' }} • মোট আয়াত: {{ $ayahCount }}
                 </p>
+                @if($translatorBn)
+                <p class="surah-info-translator" id="surah-translator">
+                    <i class="fa-solid fa-feather-pointed"></i> অনুবাদক: {{ $translatorBn }}
+                </p>
+                @else
+                <p class="surah-info-translator hidden" id="surah-translator"></p>
+                @endif
                 @if($summaryBn)
                 <p class="surah-info-details" id="surah-summary">
                     {!! nl2br(e($summaryBn)) !!}

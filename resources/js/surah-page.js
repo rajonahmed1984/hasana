@@ -1,4 +1,4 @@
-﻿import { initBookmarkButtons } from './hasana-theme.js';
+import { initBookmarkButtons } from './hasana-theme.js';
 const digitsMapBn = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
 const escapeHtml = (value) => String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -36,16 +36,21 @@ const renderSurahInfo = (cardEl, surah) => {
     const ayahLabel = surah.ayah_count_bn || surah.ayah_count || '';
     const revelationLabel = surah.revelation_label_bn || surah.revelation_label || '';
     const orderLabel = surah.revelation_order_bn || surah.revelation_order || '';
+    const translator = surah.translator_bn || (surah.meta && surah.meta.translator_bn) || '';
 
     cardEl.innerHTML = `
-        <h2>${escapeHtml(surah.name_bn || surah.name_en || '')}</h2>
-        ${surah.meaning_bn ? `<p>"${escapeHtml(surah.meaning_bn)}"</p>` : ''}
+        <div class="surah-header-icon">
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <h2 id="surah-name">${escapeHtml(surah.name_bn || surah.name_en || '')}</h2>
+        ${surah.meaning_bn ? `<p id="surah-meaning" class="surah-meaning-text">"অর্থ: ${escapeHtml(surah.meaning_bn)}"</p>` : ''}
         <div class="surah-info-divider"></div>
-        <p class="surah-info-meta">
-            ${revelationLabel ? `${escapeHtml(revelationLabel)} • ` : ''}মোট আয়াত ${escapeHtml(ayahLabel)}
+        <p class="surah-info-meta" id="surah-meta">
+            <i class="fa-solid fa-book-open"></i> ${revelationLabel ? `${escapeHtml(revelationLabel)} • ` : ''}মোট আয়াত: ${escapeHtml(ayahLabel)}
             ${orderLabel ? ` • অবতীর্ণের ক্রম: ${escapeHtml(orderLabel)}` : ''}
         </p>
-        ${surah.summary_bn ? `<p class="surah-info-details">${convertToHtml(surah.summary_bn)}</p>` : ''}
+        ${translator ? `<p class="surah-info-translator" id="surah-translator"><i class="fa-solid fa-feather-pointed"></i> অনুবাদক: ${escapeHtml(translator)}</p>` : ''}
+        ${surah.summary_bn ? `<p class="surah-info-details" id="surah-summary">${convertToHtml(surah.summary_bn)}</p>` : ''}
     `;
 };
 
@@ -65,8 +70,9 @@ const renderAyahs = (container, surahNumber, ayahs) => {
             const audioMarkup = ayah.audio_url
                 ? `<a href="${escapeHtml(ayah.audio_url)}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন"><i class="bi bi-play-circle"></i></a>`
                 : '';
-            const translation = ayah.text_bn ? `<p class="ayah-translation">${convertToHtml(ayah.text_bn)}</p>` : '';
-            const transliteration = ayah.transliteration
+            const textBn = ayah.text_bn || ayah.transliteration || '';
+            const translation = textBn ? `<p class="ayah-translation">${convertToHtml(textBn)}</p>` : '';
+            const transliteration = (ayah.transliteration && ayah.text_bn && ayah.transliteration !== ayah.text_bn)
                 ? `<p class="ayah-transliteration text-muted">${convertToHtml(ayah.transliteration)}</p>`
                 : '';
             const footnotes = ayah.footnotes

@@ -384,6 +384,24 @@ body.dark-mode .prayer-header {
     font-size: 0.9rem;
     font-weight: 500;
 }
+.surah-info-card .surah-info-translator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    padding: 5px 14px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    margin-top: 10px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.surah-info-card .surah-info-translator i {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
 .surah-info-card .surah-info-details {
     font-size: 0.9rem;
     opacity: 0.8;

@@ -14,6 +14,7 @@ class SurahDetailResource extends JsonResource
         $meaningBn = $meta['meaning_bn'] ?? ($meta['meaning'] ?? null);
         $summaryBn = $meta['summary_bn'] ?? ($meta['summary'] ?? $this->summary);
         $revelationOrder = $meta['revelation_order'] ?? null;
+        $translatorBn = $meta['translator_bn'] ?? null;
 
         return [
             'id' => $this->id,
@@ -25,12 +26,13 @@ class SurahDetailResource extends JsonResource
             'name_ar' => $this->name_ar,
             'meaning_bn' => $meaningBn,
             'summary_bn' => $summaryBn,
+            'translator_bn' => $translatorBn,
             'revelation_type' => $this->revelation_type,
             'revelation_label_bn' => $this->revelationLabelBn(),
             'revelation_order' => $revelationOrder ?? $this->revelation_order,
             'revelation_order_bn' => $revelationOrder ? self::convertDigits($revelationOrder) : null,
-            'ayah_count' => $this->ayahs_count ?? $this->ayah_count,
-            'ayah_count_bn' => self::convertDigits($this->ayahs_count ?? $this->ayah_count),
+            'ayah_count' => ($this->ayahs_count ?? 0) > 0 ? $this->ayahs_count : ($this->ayah_count ?: 0),
+            'ayah_count_bn' => self::convertDigits(($this->ayahs_count ?? 0) > 0 ? $this->ayahs_count : ($this->ayah_count ?: 0)),
             'meta' => $meta,
         ];
     }

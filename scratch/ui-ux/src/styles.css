@@ -1,0 +1,41 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-sans: "Hind Siliguri", sans-serif;
+  --font-arabic: "Amiri", serif;
+  --radius-lg: var(--radius);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-gold: var(--gold);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+}
+:root {
+  --radius: 1rem;
+  --background: oklch(0.97 0.015 85);
+  --foreground: oklch(0.25 0.05 165);
+  --card: oklch(0.99 0.01 85);
+  --primary: oklch(0.38 0.08 165);
+  --primary-foreground: oklch(0.97 0.02 85);
+  --gold: oklch(0.75 0.13 80);
+  --muted: oklch(0.93 0.02 85);
+  --muted-foreground: oklch(0.48 0.04 165);
+  --border: oklch(0.88 0.03 85);
+  --hero: radial-gradient(circle at 70% 20%, oklch(0.48 0.09 165), oklch(0.26 0.06 170));
+}
+@layer base {
+  * { border-color: var(--color-border); }
+  body { background: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); }
+}
+@utility bg-hero { background: var(--hero); }
+@utility pattern {
+  background-image: radial-gradient(circle, color-mix(in oklab, var(--gold) 25%, transparent) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+@utility font-arabic { font-family: var(--font-arabic); }

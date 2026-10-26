@@ -4,7 +4,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "cap:sync": "npx cap sync",
+        "cap:open:android": "npx cap open android",
+        "cap:open:ios": "npx cap open ios"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
@@ -16,5 +19,20 @@
         "sass": "^1.56.1",
         "tailwindcss": "^4.0.0",
         "vite": "^7.0.4"
+    },
+    "dependencies": {
+        "@capacitor/android": "^8.5.3",
+        "@capacitor/app": "^8.1.2",
+        "@capacitor/cli": "^8.5.3",
+        "@capacitor/core": "^8.5.3",
+        "@capacitor/haptics": "^8.0.2",
+        "@capacitor/ios": "^8.5.3",
+        "@capacitor/share": "^8.0.3",
+        "@capacitor/splash-screen": "^8.0.2",
+        "@vitejs/plugin-react": "^5.2.0",
+        "lucide-react": "^1.61.0",
+        "react": "^19.3.1",
+        "react-dom": "^19.3.1",
+        "react-router-dom": "^7.18.4"
     }
 }
