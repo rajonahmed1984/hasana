@@ -69,7 +69,7 @@ class AyahController extends Controller
             );
         }
 
-        return view('admin.ayahs.index', compact('surah', 'ayahs'));
+        return view('admin.spa');
     }
 
     public function create(Request $request, Surah $surah): View|JsonResponse
@@ -85,7 +85,7 @@ class AyahController extends Controller
             ]);
         }
 
-        return view('admin.ayahs.create', compact('surah', 'ayah'));
+        return view('admin.spa');
     }
 
     public function store(Request $request, Surah $surah): RedirectResponse|JsonResponse
@@ -121,7 +121,7 @@ class AyahController extends Controller
             ]);
         }
 
-        return view('admin.ayahs.edit', compact('surah', 'ayah'));
+        return view('admin.spa');
     }
 
     public function update(Request $request, Surah $surah, Ayah $ayah): RedirectResponse|JsonResponse

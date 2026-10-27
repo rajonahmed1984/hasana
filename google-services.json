@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1021648500578",
+    "project_id": "apptimatic-f509c",
+    "storage_bucket": "apptimatic-f509c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021648500578:android:ac8cecc83012c449a05e3b",
+        "android_client_info": {
+          "package_name": "com.hasanaa.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfKF39sjZkrMExahRp8eMY86dKwsmGRC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -33,5 +33,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(SurahSeeder::class);
         $this->call(AyahSeeder::class);
+        $this->call(HadithSeeder::class);
+        $this->call(DuaSeeder::class);
     }
 }

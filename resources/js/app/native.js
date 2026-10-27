@@ -62,10 +62,10 @@ export const initNativeAppHandlers = (navigate) => {
 
     try {
         CapApp.addListener('backButton', ({ canGoBack }) => {
-            if (canGoBack) {
+            if (canGoBack && window.location.pathname !== '/') {
                 window.history.back();
             } else {
-                CapApp.exitApp();
+                window.dispatchEvent(new CustomEvent('hasana-request-exit'));
             }
         });
     } catch {

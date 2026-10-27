@@ -1,7 +1,7 @@
 {
-  "appId": "com.hasana.app",
+  "appId": "com.hasanaa.app",
   "appName": "Hasana",
-  "webDir": "public",
+  "webDir": "www",
   "backgroundColor": "#125e54",
   "bundledWebRuntime": false,
   "server": {

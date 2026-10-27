@@ -1,4 +1,4 @@
-﻿@extends('frontend.layouts.app')
+@extends('frontend.layouts.app')
 
 @section('title', 'Hasana - অ্যাপ সম্পর্কে')
 
@@ -18,7 +18,7 @@
 <main class="main-container">
     <div class="text-center">
         <div class="about-card">
-            <img src="{{ asset('images/logo.svg') }}" alt="{{ setting('site_name', 'Hasana') }} Logo" class="about-logo" style="width: 160px; height: auto; margin-bottom: 16px;">
+            <img src="{{ logo_url() }}" alt="{{ setting('site_name', 'Hasana') }} Logo" class="about-logo" style="width: 160px; height: auto; margin-bottom: 16px;">
             <h2>Hasana | হাসানা</h2>
             <p class="app-tagline">কুরআন, হাদিস, দোয়া</p>
             <p class="app-description">

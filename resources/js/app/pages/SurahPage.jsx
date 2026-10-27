@@ -2,20 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
     ArrowLeft, 
-    Play, 
-    Pause, 
     Bookmark, 
     Share2, 
     Loader2, 
     Feather, 
     Check, 
-    Volume2,
     ChevronLeft,
     ChevronRight
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
-import { hapticImpact, nativeShare } from '../native';
+import { ShareCardModal } from '../components/ShareCardModal';
+import { hapticImpact } from '../native';
 
 export function SurahPage() {
     const { slug } = useParams();
@@ -23,7 +21,6 @@ export function SurahPage() {
     const [ayahs, setAyahs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [playingAyah, setPlayingAyah] = useState(null);
     const [bookmarks, setBookmarks] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem('hasana-bookmarks') || '[]');
@@ -32,8 +29,8 @@ export function SurahPage() {
         }
     });
     const [copiedAyah, setCopiedAyah] = useState(null);
-
-    const audioRef = useRef(null);
+    const [shareCardData, setShareCardData] = useState(null);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const textSettings = useArabicSettings();
 
     useEffect(() => {
@@ -73,27 +70,21 @@ export function SurahPage() {
         }
     }, [slug]);
 
-    const togglePlayAyah = (ayah) => {
-        hapticImpact();
-        if (playingAyah === ayah.number) {
-            if (audioRef.current) {
-                audioRef.current.pause();
+    useEffect(() => {
+        if (!loading && ayahs.length > 0 && window.location.hash) {
+            const targetId = window.location.hash.substring(1);
+            const el = document.getElementById(targetId);
+            if (el) {
+                setTimeout(() => {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.classList.add('ring-2', 'ring-gold', 'bg-primary/5');
+                    setTimeout(() => {
+                        el.classList.remove('ring-2', 'ring-gold', 'bg-primary/5');
+                    }, 2500);
+                }, 150);
             }
-            setPlayingAyah(null);
-        } else {
-            if (audioRef.current) {
-                audioRef.current.pause();
-            }
-            const audioUrl = ayah.audio_url || 
-                `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.id || ayah.number}.mp3`;
-            const newAudio = new Audio(audioUrl);
-            newAudio.onended = () => setPlayingAyah(null);
-            newAudio.onerror = () => setPlayingAyah(null);
-            newAudio.play();
-            audioRef.current = newAudio;
-            setPlayingAyah(ayah.number);
         }
-    };
+    }, [loading, ayahs]);
 
     const toggleBookmark = (ayah) => {
         hapticImpact();
@@ -115,6 +106,7 @@ export function SurahPage() {
                     ayahNumberBn: ayah.number_bn || ayah.number,
                     text_ar: ayah.text_ar,
                     text_bn: ayah.text_bn,
+                    transliteration: ayah.transliteration || '',
                     timestamp: Date.now(),
                 },
             ];
@@ -128,19 +120,18 @@ export function SurahPage() {
         }
     };
 
-    const handleShare = async (ayah) => {
+    const handleShare = (ayah) => {
         hapticImpact();
-        const key = `${surahData.number}:${ayah.number}`;
-        const result = await nativeShare({
+        setShareCardData({
+            type: 'ayah',
             title: `সূরা ${surahData.name_bn || surahData.name_en} — আয়াত ${ayah.number_bn || ayah.number}`,
-            text: `${ayah.text_ar}\n\n${ayah.text_bn}\n\n— সূরা ${surahData.name_bn || surahData.name_en} (${surahData.number}:${ayah.number})`,
-            url: window.location.href,
+            reference: `সূরা ${surahData.name_bn || surahData.name_en} (${surahData.number_bn || surahData.number}:${ayah.number_bn || ayah.number})`,
+            text_ar: ayah.text_ar,
+            text_bn: ayah.text_bn,
+            transliteration: ayah.transliteration || '',
+            url: `${window.location.origin}/surah/${surahData.slug}#ayah-${ayah.number}`,
         });
-
-        if (result === 'copied') {
-            setCopiedAyah(key);
-            setTimeout(() => setCopiedAyah(null), 2500);
-        }
+        setIsShareModalOpen(true);
     };
 
     if (loading) {
@@ -253,7 +244,6 @@ export function SurahPage() {
                 {ayahs.map((ayah) => {
                     const key = `${surahData.number}:${ayah.number}`;
                     const isBookmarked = bookmarks.some((b) => b.key === key);
-                    const isThisPlaying = playingAyah === ayah.number;
                     const isCopied = copiedAyah === key;
 
                     return (
@@ -269,25 +259,12 @@ export function SurahPage() {
                                 </span>
 
                                 <div className="flex items-center gap-1.5">
-                                    <button
-                                        type="button"
-                                        aria-label="অডিও শুনুন"
-                                        onClick={() => togglePlayAyah(ayah)}
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition ${
-                                            isThisPlaying
-                                                ? 'bg-gold text-primary shadow-sm animate-pulse'
-                                                : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                                        }`}
-                                        title={isThisPlaying ? 'থামান' : 'তেলাওয়াত শুনুন'}
-                                    >
-                                        {isThisPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-                                    </button>
 
                                     <button
                                         type="button"
                                         aria-label="বুকমার্ক"
                                         onClick={() => toggleBookmark(ayah)}
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition ${
+                                        className={`native-press w-8 h-8 rounded-full flex items-center justify-center transition ${
                                             isBookmarked
                                                 ? 'bg-primary text-gold shadow-sm'
                                                 : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
@@ -301,7 +278,7 @@ export function SurahPage() {
                                         type="button"
                                         aria-label="শেয়ার করুন"
                                         onClick={() => handleShare(ayah)}
-                                        className="w-8 h-8 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary flex items-center justify-center transition"
+                                        className="native-press w-8 h-8 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary flex items-center justify-center transition"
                                         title="আয়াত শেয়ার করুন"
                                     >
                                         {isCopied ? <Check className="w-4 h-4 text-green-600" /> : <Share2 className="w-4 h-4" />}
@@ -335,6 +312,13 @@ export function SurahPage() {
                     );
                 })}
             </div>
+
+            {/* Islamic Photo Card Creator Modal */}
+            <ShareCardModal 
+                isOpen={isShareModalOpen} 
+                onClose={() => setIsShareModalOpen(false)} 
+                data={shareCardData} 
+            />
         </Layout>
     );
 }

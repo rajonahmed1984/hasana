@@ -1,82 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { Bookmark, Share2, Loader2, Heart, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Bookmark, Share2, Loader2, Check, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
 import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
-import { hapticImpact, nativeShare } from '../native';
+import { ShareCardModal } from '../components/ShareCardModal';
+import { hapticImpact } from '../native';
 
 const curatedDuas = [
     {
         id: 'd1',
         title: 'ঘুমানোর দোয়া',
-        text_ar: 'بِسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
-        transliteration: 'বিসমিকাল্লাহুম্মা আমূতু ওয়া আহ্ইয়া',
-        text_bn: 'হে আল্লাহ, আপনার নামেই আমি মৃত্যুবরণ করি (ঘুমাই) এবং আপনার নামেই জীবিত হই (জাগ্রত হই)।',
+        text_ar: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
+        transliteration: 'বিসমিকাল্লাহুম্মা আমূতু ওয়া আহইয়া',
+        text_bn: 'হে আল্লাহ! আপনার নাম নিয়েই আমি মৃত্যুবরণ করছি (ঘুমাচ্ছি) এবং আপনার নামেই জীবিত (জাগ্রত) হব।',
         reference: 'সহীহ বুখারী, হাদিস নং ৬৩২৪',
         category: 'দৈনন্দিন দোয়া',
+        category_slug: 'daily-life-duas',
     },
     {
         id: 'd2',
-        title: 'ঘুম থেকে উঠার দোয়া',
+        title: 'ঘুম থেকে জাগ্রত হওয়ার দোয়া',
         text_ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
-        transliteration: 'আলহামদু লিল্লাহিল্লাযী আহ্ইয়ানা বা’দা মা আমাতানা ওয়া ইলাইহিন নুশূর',
-        text_bn: 'সকল প্রশংসা আল্লাহর, যিনি মৃত্যুর পর আমাদের পুনরায় জীবন দান করলেন এবং তাঁর নিকটেই সকলের পুনরুত্থান।',
+        transliteration: 'আলহামদু লিল্লাহিল্লাযী আহ্ইয়ানা বা\'দা মা আমাতানা ওয়া ইলাইহিন নুশূর',
+        text_bn: 'সমস্ত প্রশংসা সেই আল্লাহর জন্য যিনি মৃত্যুর (ঘুমের) পর আমাদের পুনরায় জীবন দান করলেন এবং তাঁর কাছেই সকলের পুনরুত্থান।',
         reference: 'সহীহ বুখারী, হাদিস নং ৬৩১২',
         category: 'দৈনন্দিন দোয়া',
+        category_slug: 'daily-life-duas',
     },
     {
         id: 'd3',
         title: 'খাবার শুরুর দোয়া',
         text_ar: 'بِسْمِ اللَّهِ وَعَلَى بَرَكَةِ اللَّهِ',
-        transliteration: 'বিসমিল্লাহি ওয়া ‘আলা বারাকাতিল্লাহ',
-        text_bn: 'আল্লাহর নামে এবং আল্লাহর বরকতের সাথে খাওয়া শুরু করছি।',
+        transliteration: 'বিসমিল্লাহি ওয়া \'আলা বারাকাতিল্লাহ',
+        text_bn: 'আল্লাহর নামে এবং আল্লাহর বরকতের ওপর ভরসা করে খাওয়া শুরু করছি।',
         reference: 'মুস্তাদরাক হাকিম, হাদিস নং ৭১১১',
         category: 'দৈনন্দিন দোয়া',
+        category_slug: 'daily-life-duas',
     },
     {
         id: 'd4',
-        title: 'খাবার শেষের দোয়া',
+        title: 'খাবার শেষে দোয়া',
         text_ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
-        transliteration: 'আলহামদু লিল্লাহিল্লাযী আত’আমানা ওয়া সাকানা ওয়া জা’আলানা মুসলিমীন',
-        text_bn: 'সকল প্রশংসা আল্লাহর, যিনি আমাদের পানাহার করিয়েছেন এবং মুসলিম বানিয়েছেন।',
-        reference: 'আবু দাউদ, হাদিস নং ৩৮৫০',
+        transliteration: 'আলহামদু লিল্লাহিল্লাযী আত\'আমানা ওয়া সাক্বানা ওয়া জা\'আলানা মুসলিমীন',
+        text_bn: 'সমস্ত প্রশংসা আল্লাহর জন্য যিনি আমাদের আহার করালেন, পান করালেন এবং মুসলিম হিসেবে সৃষ্টি করলেন।',
+        reference: 'সুনানে আবু দাউদ, হাদিস নং ৩৮৫০',
         category: 'দৈনন্দিন দোয়া',
+        category_slug: 'daily-life-duas',
     },
     {
         id: 'd5',
-        title: 'দুনিয়া ও আখিরাতের সার্বিক কল্যাণ',
+        title: 'দুনিয়া ও আখিরাতের সার্বিক কল্যাণের শ্রেষ্ঠ দোয়া',
         text_ar: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
-        transliteration: 'রাব্বানা আতিনা ফিদ-দুনইয়া হাসানাতাও ওয়া ফিল-আখিরাতি হাসানাতাও ওয়া কিনা আযাবান নার',
-        text_bn: 'হে আমাদের পালনকর্তা! আমাদের দুনিয়াতেও কল্যাণ দান করুন এবং আখিরাতেও কল্যাণ দান করুন এবং আমাদের জাহান্নামের আযাব থেকে রক্ষা করুন।',
+        transliteration: 'রাব্বানা আতিনা ফিদ-দুনইয়া হাসানাতাও ওয়া ফিল-আখিরাতি হাসানাতাও ওয়া ক্বিনা \'আযাবান নার',
+        text_bn: 'হে আমাদের প্রতিপালক! আমাদের দুনিয়াতেও কল্যাণ দান করুন এবং আখিরাতেও কল্যাণ দান করুন, আর আমাদেরকে জাহান্নামের ভয়াবহ আযাব থেকে রক্ষা করুন।',
         reference: 'সূরা আল-বাকারা, ২:২০১',
-        category: 'কুরআনী দোয়া',
+        category: 'কুরআনী দোয়া ও মোনাজাত',
+        category_slug: 'quranic-duas',
     },
     {
         id: 'd6',
-        title: 'হেদায়েত ও তাকওয়া লাভের দোয়া',
-        text_ar: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى',
-        transliteration: 'আল্লাহুম্মা ইন্নি আসআলুকাল হুদা ওয়াত-তুকা ওয়াল ‘আফাফা ওয়াল গিনা',
-        text_bn: 'হে আল্লাহ! আমি আপনার নিকট প্রার্থনা করি সুপথ, তাকওয়া, পবিত্রতা ও প্রাচুর্য।',
-        reference: 'সহীহ মুসলিম, হাদিস নং ২৭২৫',
-        category: 'মাগফিরাত ও ক্ষমা',
+        title: 'কঠিন কাজ সহজ ও অন্তরের জড়তা মুক্তির দোয়া',
+        text_ar: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',
+        transliteration: 'রাব্বিশ রাহলী সাদরী, ওয়া ইয়াসসির লী আমরী, ওয়াহলুল \'উকদাতাম মিল লিসানী, ইয়াফক্বাহূ ক্বওলী',
+        text_bn: 'হে আমার রব! আমার বক্ষ প্রশস্ত করে দিন, আমার কাজ সহজ করে দিন এবং আমার জিহ্বার জড়তা দূর করে দিন যেন মানুষ আমার কথা বুঝতে পারে।',
+        reference: 'সূরা ত্বা-হা, ২০:২৫-২৮',
+        category: 'কুরআনী দোয়া ও মোনাজাত',
+        category_slug: 'quranic-duas',
     },
     {
         id: 'd7',
-        title: 'কঠিন কাজ সহজ ও অন্তর প্রশান্তির দোয়া',
-        text_ar: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي',
-        transliteration: 'রাব্বিশ রাহলি সাদরি, ওয়া ইয়াসসির লি আমরি',
-        text_bn: 'হে আমার পালনকর্তা! আমার বক্ষ প্রশস্ত করে দিন এবং আমার কাজকে সহজ করে দিন।',
-        reference: 'সূরা ত্বা-হা, ২০:২৫-২৬',
-        category: 'কুরআনী দোয়া',
+        title: 'দোয়ায়ে ইউনুস (বিপদ ও দুশ্চিন্তা মুক্তির শ্রেষ্ঠ দোয়া)',
+        text_ar: 'لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ',
+        transliteration: 'লা ইলাহা ইল্লা আনতা সুবহানাকা ইন্নী কুনতু মিনায যালিমীন',
+        text_bn: 'আপনি ব্যতীত কোনো সত্য উপাস্য নেই, আপনি পরম পবিত্র। নিশ্চয়ই আমি অত্যাচারীদের অন্তর্ভুক্ত হয়ে গেছি।',
+        reference: 'সূরা আল-আম্বিয়া, ২১:৮৭; তিরমিযী, হাদিস নং ৩৫০৫',
+        category: 'বিপদ-আপদ ও দুশ্চিন্তা মুক্তি',
+        category_slug: 'distress-and-protection',
     },
 ];
 
 export function DuasPage() {
     const [duas, setDuas] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [totalCount, setTotalCount] = useState(0);
     const [activeCategory, setActiveCategory] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedQuery, setDebouncedQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [copiedId, setCopiedId] = useState(null);
+    const [shareCardData, setShareCardData] = useState(null);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [bookmarks, setBookmarks] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem('hasana-dua-bookmarks') || '[]');
@@ -85,41 +98,107 @@ export function DuasPage() {
         }
     });
 
+    const tabsContainerRef = useRef(null);
     const textSettings = useArabicSettings();
 
+    // Scroll tabs smoothly left / right
+    const scrollTabs = (direction) => {
+        hapticImpact();
+        if (tabsContainerRef.current) {
+            const offset = direction === 'left' ? -200 : 200;
+            tabsContainerRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+        }
+    };
+
+    // Auto-center tab on click
+    const handleTabClick = (e, slug) => {
+        hapticImpact();
+        setActiveCategory(slug);
+        if (e && e.currentTarget) {
+            e.currentTarget.scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest',
+            });
+        }
+    };
+
+    // Debounce search query
     useEffect(() => {
-        const fetchDuas = async () => {
+        const timer = setTimeout(() => {
+            setDebouncedQuery(searchQuery.trim());
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Fetch categories on mount
+    useEffect(() => {
+        const fetchCategories = async () => {
             try {
-                const res = await fetch('/api/duas?per_page=50');
+                const res = await fetch('/api/dua/categories');
                 if (res.ok) {
                     const json = await res.json();
-                    const apiDuas = (json.data || []).map((d) => ({
-                        id: d.id,
-                        title: d.title,
-                        text_ar: d.arabic_text || d.text_ar || '',
-                        transliteration: d.transliteration || '',
-                        text_bn: d.bangla_meaning || d.text_bn || d.meaning || '',
-                        reference: d.reference || '',
-                        category: d.category?.name || 'দোয়া',
-                    }));
-                    const combined = [...apiDuas, ...curatedDuas];
-                    setDuas(combined);
-                    const cats = Array.from(new Set(combined.map((d) => d.category).filter(Boolean)));
+                    const cats = json.data || [];
                     setCategories(cats);
-                } else {
-                    setDuas(curatedDuas);
-                    setCategories(Array.from(new Set(curatedDuas.map((d) => d.category))));
+                    const total = cats.reduce((acc, c) => acc + (c.items_count || 0), 0);
+                    setTotalCount(total);
                 }
-            } catch {
-                setDuas(curatedDuas);
-                setCategories(Array.from(new Set(curatedDuas.map((d) => d.category))));
-            } finally {
-                setLoading(false);
+            } catch (err) {
+                console.error('Failed to load dua categories:', err);
             }
         };
 
-        fetchDuas();
+        fetchCategories();
     }, []);
+
+    // Fetch duas when category or search changes
+    const fetchDuas = useCallback(async (catSlug, query) => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams();
+            if (catSlug && catSlug !== 'all') {
+                params.append('category', catSlug);
+            }
+            if (query) {
+                params.append('query', query);
+            }
+            params.append('per_page', '250');
+
+            const res = await fetch(`/api/duas?${params.toString()}`);
+            if (res.ok) {
+                const json = await res.json();
+                const fetched = (json.data || []).map((d) => ({
+                    id: d.id,
+                    title: d.title || 'দোয়া',
+                    text_ar: d.arabic_text || d.text_ar || '',
+                    transliteration: d.transliteration || '',
+                    text_bn: d.bangla_meaning || d.text_bn || d.meaning || '',
+                    reference: d.reference || '',
+                    category: d.category?.name || 'দোয়া',
+                    category_slug: d.category?.slug || '',
+                }));
+
+                if (fetched.length > 0) {
+                    setDuas(fetched);
+                } else if (catSlug === 'all' && !query) {
+                    setDuas(curatedDuas);
+                } else {
+                    setDuas([]);
+                }
+            } else {
+                setDuas(curatedDuas);
+            }
+        } catch (err) {
+            console.error('Failed to fetch duas:', err);
+            setDuas(curatedDuas);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchDuas(activeCategory, debouncedQuery);
+    }, [activeCategory, debouncedQuery, fetchDuas]);
 
     const toggleBookmark = (dua) => {
         hapticImpact();
@@ -135,22 +214,36 @@ export function DuasPage() {
         }
     };
 
-    const handleShare = async (dua) => {
+    const handleShare = (dua) => {
         hapticImpact();
-        const result = await nativeShare({
+        setShareCardData({
+            type: 'dua',
             title: `দোয়া: ${dua.title}`,
-            text: `${dua.text_ar}\n\nউচ্চারণ: ${dua.transliteration}\n\nঅর্থ: ${dua.text_bn}\n\n— ${dua.reference || 'হাসানা অ্যাপ'}`,
-            url: window.location.href,
+            reference: dua.reference ? `রেফারেন্স: ${dua.reference}` : (dua.category ? `${dua.category} • হাসানা` : 'হাসানা ইসলামিক অ্যাপ'),
+            text_ar: dua.text_ar || '',
+            text_bn: dua.text_bn || '',
+            transliteration: dua.transliteration || '',
+            url: `${window.location.origin}/duas`,
         });
-        if (result === 'copied') {
-            setCopiedId(dua.id);
-            setTimeout(() => setCopiedId(null), 2000);
-        }
+        setIsShareModalOpen(true);
     };
 
-    const filteredDuas = activeCategory === 'all'
-        ? duas
-        : duas.filter((d) => d.category === activeCategory);
+    const activeCatObj = useMemo(() => {
+        if (activeCategory === 'all') return null;
+        return categories.find((c) => c.slug === activeCategory);
+    }, [categories, activeCategory]);
+
+    const filteredDuas = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!q) return duas;
+        return duas.filter((d) =>
+            (d.title && d.title.toLowerCase().includes(q)) ||
+            (d.text_bn && d.text_bn.toLowerCase().includes(q)) ||
+            (d.transliteration && d.transliteration.toLowerCase().includes(q)) ||
+            (d.text_ar && d.text_ar.includes(q)) ||
+            (d.reference && d.reference.toLowerCase().includes(q))
+        );
+    }, [duas, searchQuery]);
 
     return (
         <Layout>
@@ -162,35 +255,92 @@ export function DuasPage() {
 
             <TextSettingsBar settings={textSettings} />
 
-            {/* Category Filter Pills */}
+            {/* Search Box */}
             <div className="mx-auto max-w-6xl px-4 mt-6">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <div className="relative">
+                    <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="দোয়ার নাম, উচ্চারণ, অর্থ বা রেফারেন্স দিয়ে অনুসন্ধান করুন..."
+                        className="w-full pl-11 pr-10 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition shadow-xs"
+                    />
+                    {searchQuery && (
+                        <button
+                            type="button"
+                            onClick={() => setSearchQuery('')}
+                            aria-label="অনুসন্ধান মুছুন"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full transition"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Category Filter Tabs with Smooth Scrolling */}
+            <div className="mx-auto max-w-6xl px-4 mt-4">
+                <div className="relative flex items-center">
+                    {/* Left Scroll Arrow */}
                     <button
                         type="button"
-                        onClick={() => { hapticImpact(); setActiveCategory('all'); }}
-                        className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
-                            activeCategory === 'all'
-                                ? 'bg-primary text-gold shadow-sm'
-                                : 'bg-muted text-muted-foreground hover:text-foreground'
-                        }`}
+                        onClick={() => scrollTabs('left')}
+                        aria-label="বামে স্ক্রোল করুন"
+                        className="hidden sm:flex shrink-0 w-8 h-8 rounded-full bg-card border border-border shadow-sm items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition z-10 mr-1.5"
                     >
-                        সকল দোয়া ({duas.length})
+                        <ChevronLeft className="w-4 h-4" />
                     </button>
-                    {categories.map((cat) => (
+
+                    {/* Scrollable Tabs Row */}
+                    <div
+                        ref={tabsContainerRef}
+                        className="flex items-center gap-2 overflow-x-auto py-1.5 scrollbar-none scroll-smooth flex-1"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
                         <button
-                            key={cat}
                             type="button"
-                            onClick={() => { hapticImpact(); setActiveCategory(cat); }}
-                            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
-                                activeCategory === cat
+                            onClick={(e) => handleTabClick(e, 'all')}
+                            className={`native-press px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+                                activeCategory === 'all'
                                     ? 'bg-primary text-gold shadow-sm'
                                     : 'bg-muted text-muted-foreground hover:text-foreground'
                             }`}
                         >
-                            {cat}
+                            সকল দোয়া ({totalCount ? totalCount.toLocaleString('bn-BD') : duas.length.toLocaleString('bn-BD')})
                         </button>
-                    ))}
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.slug}
+                                type="button"
+                                onClick={(e) => handleTabClick(e, cat.slug)}
+                                className={`native-press px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition ${
+                                    activeCategory === cat.slug
+                                        ? 'bg-primary text-gold shadow-sm'
+                                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                                }`}
+                            >
+                                {cat.name} ({cat.items_count?.toLocaleString('bn-BD') || 0})
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Right Scroll Arrow */}
+                    <button
+                        type="button"
+                        onClick={() => scrollTabs('right')}
+                        aria-label="ডানে স্ক্রোল করুন"
+                        className="hidden sm:flex shrink-0 w-8 h-8 rounded-full bg-card border border-border shadow-sm items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition z-10 ml-1.5"
+                    >
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
                 </div>
+
+                {activeCatObj?.description && (
+                    <p className="text-xs text-muted-foreground mt-2 px-1">
+                        {activeCatObj.description}
+                    </p>
+                )}
             </div>
 
             {/* Duas Grid */}
@@ -199,6 +349,20 @@ export function DuasPage() {
                     <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                         <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
                         <p className="text-sm">দোয়া লোড হচ্ছে...</p>
+                    </div>
+                ) : filteredDuas.length === 0 ? (
+                    <div className="text-center py-16 px-4 bg-card rounded-2xl border border-border">
+                        <p className="text-base font-semibold text-foreground mb-1">কোনো দোয়া পাওয়া যায়নি</p>
+                        <p className="text-xs text-muted-foreground mb-4">
+                            অনুসন্ধানের শব্দ পরিবর্তন করে চেষ্টা করুন অথবা অন্য ক্যাটাগরি নির্বাচন করুন
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
+                            className="px-4 py-1.5 text-xs font-semibold rounded-full bg-primary text-gold hover:opacity-90 transition"
+                        >
+                            সকল দোয়া দেখুন
+                        </button>
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-2 gap-5">
@@ -227,7 +391,7 @@ export function DuasPage() {
                                                     type="button"
                                                     aria-label="বুকমার্ক"
                                                     onClick={() => toggleBookmark(item)}
-                                                    className={`w-7 h-7 rounded-full flex items-center justify-center transition ${
+                                                    className={`native-press w-7 h-7 rounded-full flex items-center justify-center transition ${
                                                         isBookmarked
                                                             ? 'bg-primary text-gold'
                                                             : 'bg-muted text-muted-foreground hover:text-primary'
@@ -240,7 +404,7 @@ export function DuasPage() {
                                                     type="button"
                                                     aria-label="শেয়ার করুন"
                                                     onClick={() => handleShare(item)}
-                                                    className="w-7 h-7 rounded-full bg-muted text-muted-foreground hover:text-primary flex items-center justify-center transition"
+                                                    className="native-press w-7 h-7 rounded-full bg-muted text-muted-foreground hover:text-primary flex items-center justify-center transition"
                                                     title="শেয়ার করুন"
                                                 >
                                                     {isCopied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Share2 className="w-3.5 h-3.5" />}
@@ -282,6 +446,13 @@ export function DuasPage() {
                     </div>
                 )}
             </div>
+
+            {/* Islamic Photo Card Creator Modal */}
+            <ShareCardModal 
+                isOpen={isShareModalOpen} 
+                onClose={() => setIsShareModalOpen(false)} 
+                data={shareCardData} 
+            />
         </Layout>
     );
 }

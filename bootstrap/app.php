@@ -24,6 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
             LogSuspiciousActivity::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
+
         // Redirect guests to the admin login so Laravel's default auth helpers work.
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
     })

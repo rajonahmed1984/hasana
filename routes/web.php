@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AyahController;
 use App\Http\Controllers\Admin\SurahController;
 use App\Http\Controllers\Admin\HadithController;
@@ -12,13 +13,19 @@ use App\Http\Controllers\Admin\DuaCategoryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\SurahController as ApiSurahController;
 use App\Http\Controllers\Api\HadithController as ApiHadithController;
 use App\Http\Controllers\Api\DuaController as ApiDuaController;
+use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
 Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(function () {
+    Route::post('/analytics/track', [AnalyticsController::class, 'track'])->name('analytics.track');
+    Route::post('/notifications/register-token', [ApiNotificationController::class, 'registerToken'])->name('notifications.register');
+    Route::get('/notifications/prayer-schedule', [ApiNotificationController::class, 'getPrayerSchedule'])->name('notifications.schedule');
+    Route::get('/notifications/daily-ayah', [ApiNotificationController::class, 'getDailyAyah'])->name('notifications.daily_ayah');
     Route::get('/surahs', [ApiSurahController::class, 'index'])->name('hasana.surahs.index');
     Route::get('/surahs/{surah:slug}', [ApiSurahController::class, 'show'])->name('hasana.surahs.show');
     Route::get('/hadith/categories', [ApiHadithController::class, 'categories'])->name('hasana.hadiths.categories');
@@ -59,9 +66,7 @@ Route::middleware('auth')->get('/clear-cache', function () {
 });
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        return redirect()->route('admin.surahs.index');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -80,6 +85,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('hadith-categories', HadithCategoryController::class)->except(['show']);
     Route::resource('dua-categories', DuaCategoryController::class)->except(['show']);
     Route::resource('surahs.ayahs', AyahController::class)->except(['show']);
+
+    // Catch-all fallback for Admin SPA routes
+    Route::get('/{any}', fn() => view('admin.spa'))->where('any', '.*')->name('spa');
 });
 
 

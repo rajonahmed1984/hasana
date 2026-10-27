@@ -10,16 +10,22 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
-    public function show()
+    public function show(Request $request)
     {
         $user = Auth::user();
-        return view('admin.profile.show', compact('user'));
+        if ($request->expectsJson()) {
+            return response()->json(['user' => $user]);
+        }
+        return view('admin.spa');
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
         $user = Auth::user();
-        return view('admin.profile.edit', compact('user'));
+        if ($request->expectsJson()) {
+            return response()->json(['user' => $user]);
+        }
+        return view('admin.spa');
     }
 
     public function update(Request $request)
@@ -33,13 +39,20 @@ class ProfileController extends Controller
 
         $user->update($validated);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Profile updated successfully!',
+                'user' => $user->refresh(),
+            ]);
+        }
+
         return redirect()->route('admin.profile.show')
             ->with('success', 'Profile updated successfully!');
     }
 
-    public function editPassword()
+    public function editPassword(Request $request)
     {
-        return view('admin.profile.change-password');
+        return view('admin.spa');
     }
 
     public function updatePassword(Request $request)
@@ -52,6 +65,12 @@ class ProfileController extends Controller
         Auth::user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Password changed successfully!',
+            ]);
+        }
 
         return redirect()->route('admin.profile.show')
             ->with('success', 'Password changed successfully!');

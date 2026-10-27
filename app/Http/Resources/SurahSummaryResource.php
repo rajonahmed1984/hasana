@@ -26,6 +26,8 @@ class SurahSummaryResource extends JsonResource
             'name_ar' => $this->name_ar,
             'meaning_bn' => $meaningBn,
             'translator_bn' => $translatorBn,
+            'revelation_type' => $this->revelation_type,
+            'revelation_type_bn' => $this->revelation_type === 'meccan' ? 'মাক্কী' : ($this->revelation_type === 'medinan' ? 'মাদানী' : ''),
             'ayah_count' => $ayahCount,
             'ayah_count_bn' => self::convertDigits($ayahCount),
             'meta' => $meta,

@@ -59,7 +59,7 @@ class SurahController extends Controller
             return $this->paginatedResponse($surahs, fn (Surah $surah) => $this->transformSurah($surah));
         }
 
-        return view('admin.surahs.index', compact('surahs'));
+        return view('admin.spa');
     }
 
     public function create(Request $request): View|JsonResponse
@@ -70,7 +70,7 @@ class SurahController extends Controller
             return response()->json(['data' => $this->transformSurah($surah)]);
         }
 
-        return view('admin.surahs.create', compact('surah'));
+        return view('admin.spa');
     }
 
     public function store(Request $request): RedirectResponse|JsonResponse
@@ -105,7 +105,7 @@ class SurahController extends Controller
 
         $surah->load('ayahs');
 
-        return view('admin.surahs.edit', compact('surah'));
+        return view('admin.spa');
     }
 
     public function update(Request $request, Surah $surah): RedirectResponse|JsonResponse

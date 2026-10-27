@@ -6,6 +6,53 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়</title>
     
+    <!-- Primary SEO Meta Tags -->
+    <meta name="title" content="হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়">
+    <meta name="description" content="হাসানা (Hasana) — আপনার প্রাত্যহিক ইসলামিক জীবনধারা ও উমরাহ সহায়িকা। নির্ভুল নামাজের সময়সূচী, আল-কুরআন বাংলা অনুবাদ ও অডিও, হাদিস সম্ভার, মাসনুন দোয়া এবং ডিজিটাল তাওয়াফ কাউন্টার।">
+    <meta name="keywords" content="Hasana, হাসানা, কুরআন, আল-কুরআন, হাদিস, দোয়া, নামাজের সময়, আজান, উমরাহ গাইড, তাওয়াফ কাউন্টার, তাসবিহ, ইসলামিক অ্যাপ, Quran Bangla, Prayer Times">
+    <meta name="author" content="Apptimatic">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://hasanaa.com">
+
+    <!-- Open Graph / Facebook / WhatsApp Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hasanaa.com/">
+    <meta property="og:site_name" content="Hasana (হাসানা)">
+    <meta property="og:title" content="হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়">
+    <meta property="og:description" content="নির্ভুল নামাজের সময়সূচী, আল-কুরআন বাংলা অনুবাদ, সহিহ হাদিস, দৈনন্দিন দোয়া ও পূর্ণাঙ্গ ডিজিটাল উমরাহ সহায়িকা।">
+    <meta property="og:image" content="{{ asset('images/og-share-hasana.jpg') }}">
+    <meta property="og:image:secure_url" content="{{ asset('images/og-share-hasana.jpg') }}">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="500">
+    <meta property="og:image:alt" content="Hasana Islamic App">
+    <meta property="og:locale" content="bn_BD">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://hasanaa.com/">
+    <meta name="twitter:title" content="হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়">
+    <meta name="twitter:description" content="নির্ভুল নামাজের সময়সূচী, আল-কুরআন বাংলা অনুবাদ, সহিহ হাদিস, দৈনন্দিন দোয়া ও পূর্ণাঙ্গ ডিজিটাল উমরাহ সহায়িকা।">
+    <meta name="twitter:image" content="{{ asset('images/og-share-hasana.jpg') }}">
+
+    <!-- Structured Data (JSON-LD) for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Hasana (হাসানা)",
+      "url": "https://hasanaa.com",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "All",
+      "description": "হাসানা — আল কুরআন, হাদিস, দোয়া, নামাজের সময়সূচী ও ডিজিটাল উমরাহ সহায়িকা।",
+      "image": "{{ asset('images/og-share-hasana.jpg') }}",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BDT"
+      }
+    }
+    </script>
+    
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
 

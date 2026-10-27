@@ -9,6 +9,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app/main.jsx',
+                'resources/js/admin/main.jsx',
                 'resources/js/hasana.js',
                 'resources/js/admin.js',
                 'resources/js/admin/app.js'

@@ -28,4 +28,9 @@ class Surah extends Model
     {
         return $this->hasMany(Ayah::class)->orderBy('number');
     }
+
+    public function getNameBnAttribute(): string
+    {
+        return $this->meta['name_bn'] ?? $this->name_en ?? '';
+    }
 }

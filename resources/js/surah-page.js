@@ -67,9 +67,6 @@ const renderAyahs = (container, surahNumber, ayahs) => {
         .map((ayah) => {
             const key = `${surahNumber}:${ayah.number}`;
             const keyBn = formatBanglaDigits(key);
-            const audioMarkup = ayah.audio_url
-                ? `<a href="${escapeHtml(ayah.audio_url)}" target="_blank" rel="noopener" class="play-btn" title="অডিও শুনুন"><i class="bi bi-play-circle"></i></a>`
-                : '';
             const textBn = ayah.text_bn || ayah.transliteration || '';
             const translation = textBn ? `<p class="ayah-translation">${convertToHtml(textBn)}</p>` : '';
             const transliteration = (ayah.transliteration && ayah.text_bn && ayah.transliteration !== ayah.text_bn)
@@ -84,7 +81,6 @@ const renderAyahs = (container, surahNumber, ayahs) => {
                     <div class="ayah-header">
                         <span class="ayah-number">${keyBn}</span>
                         <div class="ayah-actions">
-                            ${audioMarkup}
                             <button type="button" class="bookmark-btn" data-ayah="${escapeHtml(key)}" title="বুকমার্ক">
                                 <i class="bi bi-bookmark"></i>
                             </button>

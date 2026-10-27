@@ -1,4 +1,4 @@
-﻿import { adminResourceConfigs } from './config';
+import { adminResourceConfigs } from './config';
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 let toastTimer = null;
@@ -16,12 +16,26 @@ function initSidebar() {
 
     const toggle = document.querySelector('[data-admin-sidebar-toggle]');
     const close = document.querySelector('[data-admin-sidebar-close]');
+    const backdrop = document.querySelector('[data-admin-sidebar-backdrop]');
 
-    toggle?.addEventListener('click', () => sidebar.classList.add('active'));
-    close?.addEventListener('click', () => sidebar.classList.remove('active'));
+    const openSidebar = () => {
+        sidebar.classList.add('active');
+        backdrop?.classList.add('active');
+        document.body.style.overflow = window.innerWidth <= 992 ? 'hidden' : '';
+    };
+
+    const closeSidebar = () => {
+        sidebar.classList.remove('active');
+        backdrop?.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    toggle?.addEventListener('click', openSidebar);
+    close?.addEventListener('click', closeSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
 
     sidebar.querySelectorAll('.sidebar-link').forEach((link) => {
-        link.addEventListener('click', () => sidebar.classList.remove('active'));
+        link.addEventListener('click', closeSidebar);
     });
 }
 
@@ -491,12 +505,34 @@ class AdminTable {
 
     openForm(mode, values, meta = {}, originalItem = null) {
         const isEdit = mode === 'edit';
-        const title = `${isEdit ? 'Edit' : 'Create'} ${this.config.singular || 'record'}`;
-        const submitText = isEdit ? 'Update' : 'Create';
-        const fields = this.config.form?.fields || [];
+        const singular = this.config.singular || 'তথ্য';
+        const title = isEdit ? `${singular} সম্পাদনা` : `নতুন ${singular} যোগ করুন`;
+        const submitText = isEdit ? 'আপডেট সংরক্ষণ' : 'তৈরি করুন';
+        
+        let fields = this.config.form?.fields || [];
+        if (this.resource === 'users' && isEdit) {
+            fields = fields.map(f => {
+                if (f.name === 'password' || f.name === 'password_confirmation') {
+                    return { ...f, required: false, help: 'পাসওয়ার্ড অপরিবর্তিত রাখতে চাইলে খালি রাখুন।' };
+                }
+                return f;
+            });
+        }
+
+        const resourceIcons = {
+            surahs: 'fa-solid fa-book-quran',
+            hadiths: 'fa-solid fa-book-open-reader',
+            duas: 'fa-solid fa-hands-praying',
+            'hadith-categories': 'fa-solid fa-folder-tree',
+            'dua-categories': 'fa-solid fa-folder-tree',
+            ayahs: 'fa-solid fa-align-right',
+            users: 'fa-solid fa-user-shield',
+        };
+        const icon = resourceIcons[this.resource] || (isEdit ? 'fa-solid fa-pen-to-square' : 'fa-solid fa-plus');
 
         createFormModal({
             title,
+            icon,
             fields,
             values,
             meta,
@@ -523,7 +559,7 @@ class AdminTable {
                     console.log('Response:', response);
                     helpers.setSubmitting(false);
                     helpers.close();
-                    showToast(response?.message || `${this.config.singular || 'Record'} saved`);
+                    showToast(response?.message || `${this.config.singular || 'তথ্য'} সংরক্ষণ করা হয়েছে`);
                     this.load(isEdit ? this.params.page : 1);
                 } catch (error) {
                     console.error('Error:', error);
@@ -532,7 +568,7 @@ class AdminTable {
                         console.error('Validation errors:', error.validation);
                         helpers.setErrors(error.validation);
                     } else {
-                        showToast(error.message || 'Unable to save record.', true);
+                        showToast(error.message || 'সংরক্ষণ ব্যর্থ হয়েছে।', true);
                     }
                 }
             },
@@ -543,22 +579,28 @@ class AdminTable {
         if (!this.deleteTemplate) {
             return;
         }
-        const promptMessage = confirmMessage || `Delete this ${this.config.singular || 'record'}?`;
-        if (!window.confirm(promptMessage)) {
+        const promptMessage = confirmMessage || `আপনি কি নিশ্চিতভাবে এই ${this.config.singular || 'তথ্যটি'} মুছে ফেলতে চান?`;
+        const confirmed = await createConfirmModal({
+            title: `${this.config.singular || 'আইটেম'} মুছে ফেলা`,
+            message: promptMessage,
+            confirmText: 'হ্যাঁ, ডিলিট করুন',
+            cancelText: 'বাতিল'
+        });
+        if (!confirmed) {
             return;
         }
 
         const url = this.deleteTemplate.replace('__ID__', item.id);
         try {
             const response = await fetchJson(url, { method: 'DELETE' });
-            showToast(response?.message || `${this.config.singular || 'Record'} removed`);
+            showToast(response?.message || `${this.config.singular || 'তথ্য'} মুছে ফেলা হয়েছে`);
             if (this.lastMeta && this.lastMeta.from === this.lastMeta.to && this.params.page > 1) {
                 this.params.page = Math.max(1, this.params.page - 1);
             }
             this.load(this.params.page);
         } catch (error) {
             console.error(error);
-            showToast(error.message || 'Delete failed.', true);
+            showToast(error.message || 'ডিলিট ব্যর্থ হয়েছে।', true);
         }
     }
 }
@@ -575,9 +617,63 @@ function createPaginationButton(label, disabled, handler) {
     return button;
 }
 
-function createFormModal({ title, fields = [], values = {}, meta = {}, submitText = 'Save', onSubmit }) {
+function createConfirmModal({ title = 'নিশ্চিতকরণ', message = 'আপনি কি নিশ্চিত?', confirmText = 'মুছে ফেলুন', cancelText = 'বাতিল' }) {
+    return new Promise((resolve) => {
+        const root = document.getElementById('admin-dialog-root') || document.body;
+        const overlay = document.createElement('div');
+        overlay.className = 'admin-dialog-overlay active';
+
+        const dialog = document.createElement('div');
+        dialog.className = 'admin-dialog admin-dialog-confirm';
+
+        dialog.innerHTML = `
+            <div class="admin-dialog-header admin-dialog-header-danger">
+                <div class="dialog-title-box">
+                    <div class="dialog-header-icon danger">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="admin-dialog-title">${title}</h3>
+                </div>
+                <button type="button" class="admin-dialog-close" data-action="cancel" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="admin-dialog-body" style="padding: 24px;">
+                <p class="confirm-message" style="font-size: 15px; color: var(--admin-text); line-height: 1.6; margin: 0;">${message}</p>
+            </div>
+            <div class="admin-dialog-footer">
+                <button type="button" class="btn-secondary" data-action="cancel">
+                    <i class="fa-solid fa-xmark"></i> ${cancelText}
+                </button>
+                <button type="button" class="btn-danger" data-action="confirm">
+                    <i class="fa-solid fa-trash-can"></i> ${confirmText}
+                </button>
+            </div>
+        `;
+
+        const close = (result) => {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.remove();
+                resolve(result);
+            }, 200);
+        };
+
+        dialog.querySelectorAll('[data-action="cancel"]').forEach(btn => btn.addEventListener('click', () => close(false)));
+        dialog.querySelector('[data-action="confirm"]').addEventListener('click', () => close(true));
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) close(false);
+        });
+
+        overlay.appendChild(dialog);
+        root.appendChild(overlay);
+    });
+}
+
+function createFormModal({ title, icon = 'fa-solid fa-pen-fancy', fields = [], values = {}, meta = {}, submitText = 'Save', onSubmit }) {
     console.log('createFormModal called with:', { title, fields: fields.length, submitText });
     const root = document.getElementById('admin-dialog-root') || document.body;
+    
     const overlay = document.createElement('div');
     overlay.className = 'admin-dialog-overlay active';
 
@@ -585,49 +681,91 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
     dialog.className = 'admin-dialog';
     overlay.appendChild(dialog);
 
-    const header = document.createElement('header');
-    const heading = document.createElement('h3');
-    heading.textContent = title;
-    header.appendChild(heading);
-    dialog.appendChild(header);
-
-    const body = document.createElement('div');
-    body.className = 'dialog-body';
-    const form = document.createElement('form');
-    form.className = 'form-grid';
-    body.appendChild(form);
-    dialog.appendChild(body);
-
-    const actions = document.createElement('div');
-    actions.className = 'form-actions';
-    const cancelBtn = document.createElement('button');
-    cancelBtn.type = 'button';
-    cancelBtn.className = 'btn-muted';
-    cancelBtn.textContent = 'Cancel';
-    const submitBtn = document.createElement('button');
-    submitBtn.type = 'submit';
-    submitBtn.className = 'btn-primary';
-    submitBtn.textContent = submitText;
-    
-    // Add click event logging
-    submitBtn.addEventListener('click', (e) => {
-        console.log('Submit button clicked!', e);
-    });
-    
-    actions.append(cancelBtn, submitBtn);
-    // IMPORTANT: Append actions inside the form so submitBtn is inside form
-    form.appendChild(actions);
-
-    console.log('Modal created, submitBtn type:', submitBtn.type, 'form:', form);
-
     const fieldMap = new Map();
 
+    const helpers = {
+        setErrors: (errors) => {
+            fieldMap.forEach(({ errorEl, input }) => {
+                errorEl.textContent = '';
+                input.classList.remove('is-invalid');
+            });
+            if (!errors) {
+                return;
+            }
+            Object.entries(errors).forEach(([key, messages]) => {
+                const entry = fieldMap.get(key);
+                if (entry) {
+                    entry.input.classList.add('is-invalid');
+                    entry.errorEl.textContent = Array.isArray(messages) ? messages.join(', ') : String(messages);
+                }
+            });
+        },
+        setSubmitting: (state) => {
+            submitBtn.disabled = Boolean(state);
+            cancelBtn.disabled = Boolean(state);
+            if (state) {
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> অপেক্ষা করুন...';
+            } else {
+                submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${submitText}`;
+            }
+        },
+        close: () => {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.remove(), 200);
+        },
+    };
+
+    // 1. Header with Islamic styling and close button
+    const header = document.createElement('div');
+    header.className = 'admin-dialog-header';
+
+    const titleBox = document.createElement('div');
+    titleBox.className = 'dialog-title-box';
+
+    const iconBox = document.createElement('div');
+    iconBox.className = 'dialog-header-icon';
+    iconBox.innerHTML = `<i class="${icon}"></i>`;
+
+    const heading = document.createElement('h3');
+    heading.className = 'admin-dialog-title';
+    heading.textContent = title;
+
+    titleBox.append(iconBox, heading);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'admin-dialog-close';
+    closeBtn.setAttribute('aria-label', 'Close modal');
+    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    closeBtn.addEventListener('click', () => helpers.close());
+
+    header.append(titleBox, closeBtn);
+    dialog.appendChild(header);
+
+    // 2. Form container
+    const form = document.createElement('form');
+    form.className = 'admin-dialog-form';
+
+    // 3. Scrollable Dialog Body
+    const body = document.createElement('div');
+    body.className = 'admin-dialog-body form-grid';
+    form.appendChild(body);
+
+    // Build fields
     fields.forEach((field) => {
         const wrapper = document.createElement('div');
-        wrapper.className = 'form-field';
+        wrapper.className = 'form-group';
 
         const label = document.createElement('label');
+        label.className = 'form-label';
         label.textContent = field.label || field.name;
+        if (field.required) {
+            const reqStar = document.createElement('span');
+            reqStar.className = 'text-danger';
+            reqStar.style.color = 'var(--admin-danger)';
+            reqStar.textContent = ' *';
+            label.appendChild(reqStar);
+        }
         wrapper.appendChild(label);
 
         const path = field.name;
@@ -636,13 +774,16 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
         let input;
         if (field.type === 'textarea') {
             input = document.createElement('textarea');
+            input.className = 'form-control';
+            input.rows = field.rows || 3;
             input.value = initialValue ?? '';
         } else if (field.type === 'select') {
             input = document.createElement('select');
+            input.className = 'form-control form-select';
             if (field.allowNull) {
                 const option = document.createElement('option');
                 option.value = '';
-                option.textContent = field.nullLabel || 'Select option';
+                option.textContent = field.nullLabel || 'বাছাই করুন...';
                 input.appendChild(option);
             }
             if (Array.isArray(field.options)) {
@@ -665,11 +806,22 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
             }
             input.value = initialValue === null || initialValue === undefined ? '' : String(initialValue);
         } else if (field.type === 'toggle') {
+            wrapper.className = 'form-group form-group-toggle';
+            const toggleLabel = document.createElement('label');
+            toggleLabel.className = 'toggle-switch';
+
             input = document.createElement('input');
             input.type = 'checkbox';
             input.checked = Boolean(initialValue);
+
+            const slider = document.createElement('span');
+            slider.className = 'toggle-slider';
+
+            toggleLabel.append(input, slider);
+            wrapper.appendChild(toggleLabel);
         } else {
             input = document.createElement('input');
+            input.className = 'form-control';
             input.type = field.type || 'text';
             if (field.min !== undefined) {
                 input.min = field.min;
@@ -697,7 +849,7 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
         wrapper.appendChild(input);
 
         if (field.help) {
-            const helper = document.createElement('div');
+            const helper = document.createElement('small');
             helper.className = 'form-helper';
             helper.textContent = field.help;
             wrapper.appendChild(helper);
@@ -707,35 +859,29 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
         errorEl.className = 'form-error';
         wrapper.appendChild(errorEl);
 
-        form.appendChild(wrapper);
+        body.appendChild(wrapper);
         fieldMap.set(path, { input, field, errorEl });
     });
 
-    const helpers = {
-        setErrors: (errors) => {
-            fieldMap.forEach(({ errorEl }) => {
-                errorEl.textContent = '';
-            });
-            if (!errors) {
-                return;
-            }
-            Object.entries(errors).forEach(([key, messages]) => {
-                const entry = fieldMap.get(key);
-                if (entry) {
-                    entry.errorEl.textContent = Array.isArray(messages) ? messages.join(', ') : String(messages);
-                }
-            });
-        },
-        setSubmitting: (state) => {
-            submitBtn.disabled = Boolean(state);
-            cancelBtn.disabled = Boolean(state);
-        },
-        close: () => {
-            overlay.remove();
-        },
-    };
+    // 4. Footer with action buttons AT THE BOTTOM
+    const footer = document.createElement('div');
+    footer.className = 'admin-dialog-footer';
 
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'btn-secondary';
+    cancelBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> বাতিল';
     cancelBtn.addEventListener('click', () => helpers.close());
+
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.className = 'btn-primary';
+    submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${submitText}`;
+
+    footer.append(cancelBtn, submitBtn);
+    form.appendChild(footer);
+    dialog.appendChild(form);
+
     overlay.addEventListener('click', (event) => {
         if (event.target === overlay) {
             helpers.close();
@@ -743,7 +889,6 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
     });
 
     form.addEventListener('submit', async (event) => {
-        console.log('Form submit event triggered!');
         event.preventDefault();
         helpers.setErrors(null);
         helpers.setSubmitting(true);
@@ -769,7 +914,7 @@ function createFormModal({ title, fields = [], values = {}, meta = {}, submitTex
             await onSubmit(payload, helpers);
         } catch (error) {
             console.error(error);
-            showToast(error.message || 'Unable to save.', true);
+            showToast(error.message || 'সংরক্ষণ সম্পন্ন করা যায়নি।', true);
             helpers.setSubmitting(false);
         }
     });

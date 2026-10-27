@@ -10,10 +10,16 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $users = User::orderBy('created_at', 'desc')->get();
-        return view('admin.users.index', compact('users'));
+        if ($request->expectsJson()) {
+            return response()->json([
+                'users' => $users,
+                'currentUser' => auth()->user(),
+            ]);
+        }
+        return view('admin.spa');
     }
 
     public function store(Request $request)

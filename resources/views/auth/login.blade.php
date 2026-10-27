@@ -13,7 +13,7 @@
         <div class="auth-card card shadow-lg border-0">
             <div class="card-body">
                 <div class="auth-header text-center">
-                    <img src="{{ asset('images/logo.svg') }}" alt="{{ setting('site_name', 'Hasana') }} Logo" class="logo mb-3" style="width: 160px; height: auto; margin-bottom: 16px;">
+                    <img src="{{ logo_url() }}" alt="{{ setting('site_name', 'Hasana') }} Logo" class="logo mb-3" style="width: 160px; height: auto; margin-bottom: 16px;">
                     <h1 class="h4 mb-1">Sign in to Hasana Admin</h1>
                     <p class="text-muted mb-0">Use your account to manage surahs and ayahs.</p>
                 </div>
@@ -30,9 +30,12 @@
                         @enderror
                     </div>
 
-                    <div class="form-floating mb-4">
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+                    <div class="form-floating mb-4 position-relative">
+                        <input type="password" name="password" class="form-control pe-5" id="password" placeholder="Password" required>
                         <label for="password">Password</label>
+                        <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Show password" tabindex="-1">
+                            <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+                        </button>
                         @error('password')
                             <span class="invalid-feedback d-block" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -59,5 +62,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+            if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+                togglePasswordBtn.addEventListener('click', function () {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    
+                    if (isPassword) {
+                        togglePasswordIcon.classList.remove('fa-eye');
+                        togglePasswordIcon.classList.add('fa-eye-slash');
+                        togglePasswordBtn.setAttribute('aria-label', 'Hide password');
+                    } else {
+                        togglePasswordIcon.classList.remove('fa-eye-slash');
+                        togglePasswordIcon.classList.add('fa-eye');
+                        togglePasswordBtn.setAttribute('aria-label', 'Show password');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

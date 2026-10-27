@@ -78,7 +78,7 @@ class DuaController extends Controller
             );
         }
 
-        return view('admin.duas.index', compact('duas', 'categories'));
+        return view('admin.spa');
     }
 
     public function create(Request $request): View|JsonResponse
@@ -95,7 +95,7 @@ class DuaController extends Controller
             ]);
         }
 
-        return view('admin.duas.create', compact('dua', 'categories'));
+        return view('admin.spa');
     }
 
     public function store(Request $request): RedirectResponse|JsonResponse
@@ -131,7 +131,7 @@ class DuaController extends Controller
             ]);
         }
 
-        return view('admin.duas.edit', compact('dua', 'categories'));
+        return view('admin.spa');
     }
 
     public function update(Request $request, Dua $dua): RedirectResponse|JsonResponse

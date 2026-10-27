@@ -17,8 +17,17 @@ if (!function_exists('logo_url')) {
     {
         $logo = setting('logo');
         if (!empty($logo)) {
-            return asset($logo);
+            if (str_starts_with($logo, 'http://') || str_starts_with($logo, 'https://')) {
+                return $logo;
+            }
+            $cleanPath = ltrim($logo, '/\\');
+            if (file_exists(public_path($cleanPath))) {
+                return asset($cleanPath) . '?v=' . filemtime(public_path($cleanPath));
+            }
         }
-        return Vite::asset('resources/images/hasana/logo.svg');
+        if (file_exists(public_path('images/logo.svg'))) {
+            return asset('images/logo.svg') . '?v=' . filemtime(public_path('images/logo.svg'));
+        }
+        return asset('favicon.png');
     }
 }

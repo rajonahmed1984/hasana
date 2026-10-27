@@ -22,3 +22,17 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Android build outputs & local config
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties
+/android/.idea/
+/android/*.iml
+/android/app/*.iml
+
+# Temporary & build archives
+scratch/
+temp.ps1
+*.zip

@@ -1,4 +1,4 @@
-﻿@php
+@php
     $activeMenu = $active ?? '';
 @endphp
 
@@ -21,6 +21,9 @@
         </a>
         <a href="{{ route('hasana.about') }}" class="offcanvas-link {{ $activeMenu === 'about' ? 'active' : '' }}">
             <i class="fa-solid fa-circle-info"></i> অ্যাপ সম্পর্কে
+        </a>
+        <a href="https://www.facebook.com/page.hasana" target="_blank" rel="noopener noreferrer" class="offcanvas-link" style="color: #1877F2;">
+            <i class="fa-brands fa-facebook"></i> ফেসবুক পেজ
         </a>
     </nav>
     <div class="offcanvas-footer">

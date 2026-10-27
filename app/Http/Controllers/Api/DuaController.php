@@ -42,7 +42,7 @@ class DuaController extends Controller
     public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 12);
-        $perPage = max(5, min($perPage, 100));
+        $perPage = max(5, min($perPage, 250));
 
         $query = Dua::query()
             ->with('category:id,name,slug')

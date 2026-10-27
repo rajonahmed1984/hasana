@@ -67,7 +67,7 @@ class HadithCategoryController extends Controller
             );
         }
 
-        return view('admin.hadith_categories.index', compact('categories'));
+        return view('admin.spa');
     }
 
     public function create(Request $request): View|JsonResponse
@@ -78,7 +78,7 @@ class HadithCategoryController extends Controller
             return response()->json(['data' => $this->transformCategory($category)]);
         }
 
-        return view('admin.hadith_categories.create', compact('category'));
+        return view('admin.spa');
     }
 
     public function store(Request $request): RedirectResponse|JsonResponse
@@ -106,7 +106,7 @@ class HadithCategoryController extends Controller
             return response()->json(['data' => $this->transformCategory($hadithCategory)]);
         }
 
-        return view('admin.hadith_categories.edit', ['category' => $hadithCategory]);
+        return view('admin.spa');
     }
 
     public function update(Request $request, HadithCategory $hadithCategory): RedirectResponse|JsonResponse
