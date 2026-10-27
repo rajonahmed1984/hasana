@@ -6,6 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়</title>
     
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="5kgUXQeMYAaew7nh4HwINoLZMegSDH7cx66jQxFWVWw">
+
     <!-- Primary SEO Meta Tags -->
     <meta name="title" content="হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়">
     <meta name="description" content="হাসানা (Hasana) — আপনার প্রাত্যহিক ইসলামিক জীবনধারা ও উমরাহ সহায়িকা। নির্ভুল নামাজের সময়সূচী, আল-কুরআন বাংলা অনুবাদ ও অডিও, হাদিস সম্ভার, মাসনুন দোয়া এবং ডিজিটাল তাওয়াফ কাউন্টার।">

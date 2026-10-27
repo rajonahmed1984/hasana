@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        <meta name="google-site-verification" content="5kgUXQeMYAaew7nh4HwINoLZMegSDH7cx66jQxFWVWw">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
