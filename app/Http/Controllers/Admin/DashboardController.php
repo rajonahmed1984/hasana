@@ -262,7 +262,7 @@ class DashboardController extends Controller
 
     private function banglaDigits($number): string
     {
-        $bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        $bn = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         $en = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         return str_replace($en, $bn, (string)$number);
     }

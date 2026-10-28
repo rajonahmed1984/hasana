@@ -104,7 +104,7 @@ export function QuranPage() {
             <PageHero 
                 ar="القرآن الكريم" 
                 title="আল-কুরআন" 
-                sub="পবিত্র কুরআন শরীফ — ১১৪টি সূরা ও ৩০ পারার সহজ ও সুন্দর বাংলা অনুবাদ"
+                sub="পবিত্র কুরআন শরীফ — 114টি সূরা ও 30 পারার সহজ ও সুন্দর বাংলা অনুবাদ"
             >
                 {/* Search Bar inside Hero */}
                 <div className="mt-6 mx-auto max-w-xl">
@@ -116,8 +116,8 @@ export function QuranPage() {
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder={
                                 viewMode === 'surah'
-                                    ? "সূরা খুঁজুন (যেমন: ফাতিহা, fatiha, ১, মাক্কী)..."
-                                    : "পারা খুঁজুন (যেমন: ১, আম্মা, আলিফ লাম মীম)..."
+                                    ? "সূরা খুঁজুন (যেমন: ফাতিহা, fatiha, 1, মাক্কী)..."
+                                    : "পারা খুঁজুন (যেমন: 1, আম্মা, আলিফ লাম মীম)..."
                             }
                             className="w-full pl-12 pr-4 py-3 rounded-full bg-card/95 text-foreground placeholder:text-muted-foreground border border-gold/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-gold backdrop-blur-md text-sm md:text-base"
                         />
@@ -151,7 +151,7 @@ export function QuranPage() {
                             }`}
                         >
                             <Layers className="w-4 h-4" />
-                            পারা অনুসারে (৩০ পারা)
+                            পারা অনুসারে (30 পারা)
                         </button>
                     </div>
                 </div>
@@ -204,7 +204,7 @@ export function QuranPage() {
                 {/* Sub-header for Para Mode */}
                 {viewMode === 'para' && (
                     <div className="flex items-center justify-between pb-3 border-b border-border text-xs text-muted-foreground">
-                        <span>পবিত্র কুরআনের সম্পূর্ণ ৩০ পারা (Juz) সূচিপত্র</span>
+                        <span>পবিত্র কুরআনের সম্পূর্ণ 30 পারা (Juz) সূচিপত্র</span>
                         <span>প্রদর্শন: <strong className="text-primary">{filteredParas.length}টি</strong> পারা</span>
                     </div>
                 )}

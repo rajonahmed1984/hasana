@@ -1,6 +1,7 @@
 // Firebase Project: apptimatic-f509c
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
+import { savePushToken } from './deviceRegistration';
 
 export const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBfKF39sjZkrMExahRp8eMY86dKwsmGRC8",
@@ -38,33 +39,6 @@ export const getFirebaseMessaging = async () => {
 };
 
 /**
- * Register FCM device token with Hasana backend API
- */
-export const syncTokenWithBackend = async (token) => {
-    if (!token) return;
-    try {
-        const response = await fetch('/api/notifications/register-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-            },
-            body: JSON.stringify({
-                token,
-                platform: 'web'
-            })
-        });
-        const data = await response.json();
-        if (data.success) {
-            localStorage.setItem('hasana-fcm-synced', 'true');
-        }
-    } catch (err) {
-        console.warn('[Firebase] Failed to sync token with backend:', err);
-    }
-};
-
-/**
  * Request notification permission and retrieve FCM device token
  */
 export const requestNotificationPermission = async () => {
@@ -89,7 +63,7 @@ export const requestNotificationPermission = async () => {
         let swRegistration = null;
         if ('serviceWorker' in navigator) {
             try {
-                swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                swRegistration = await navigator.serviceWorker.register('/sw.js');
                 await navigator.serviceWorker.ready;
             } catch (swErr) {
                 console.warn('[Firebase] Service Worker registration note:', swErr);
@@ -102,19 +76,18 @@ export const requestNotificationPermission = async () => {
         if (messaging) {
             try {
                 token = await getToken(messaging, {
+                    vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY || undefined,
                     serviceWorkerRegistration: swRegistration || undefined
                 });
 
+                // The caller syncs it to the backend together with the notification preferences
                 if (token) {
-                    localStorage.setItem('hasana-fcm-token', token);
-                    await syncTokenWithBackend(token);
+                    savePushToken(token);
                 }
             } catch (tokenErr) {
                 console.warn('[Firebase] FCM token retrieval note:', tokenErr);
             }
         }
-
-        localStorage.setItem('hasana-namaz-notifications', 'enabled');
 
         return {
             success: true,

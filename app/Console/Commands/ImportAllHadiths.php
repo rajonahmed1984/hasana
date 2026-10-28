@@ -41,7 +41,7 @@ class ImportAllHadiths extends Command
         $this->info('===========================================================');
 
         // 1. Create or ensure all topic categories exist
-        $this->info('১/৪: বিষয়ভিত্তিক ক্যাটাগরিসমূহ প্রস্তুত করা হচ্ছে...');
+        $this->info('1/4: বিষয়ভিত্তিক ক্যাটাগরিসমূহ প্রস্তুত করা হচ্ছে...');
         $categoryMap = $this->setupCategories();
 
         $cacheDir = storage_path('app/hadith_cache');
@@ -237,7 +237,7 @@ class ImportAllHadiths extends Command
         if (preg_match('/(?:হতে|থেকে)\s+বর্ণিত/u', $text, $matches, PREG_OFFSET_CAPTURE)) {
             $offset = $matches[0][1];
             $before = mb_substr($text, 0, $offset + 25);
-            // Remove initial hadith numbers like "৫৩৭৩."
+            // Remove initial hadith numbers like "5373."
             $cleanNarrator = preg_replace('/^\s*[\(\[0-9০-৯\.\-—\s\)]+/u', '', $before);
             $cleanNarrator = trim(strip_tags($cleanNarrator));
             if (mb_strlen($cleanNarrator) > 8 && mb_strlen($cleanNarrator) < 80) {

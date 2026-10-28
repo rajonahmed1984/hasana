@@ -13,12 +13,14 @@ import {
     Info, 
     Share2,
     ExternalLink,
-    LogOut
+    LogOut,
+    WifiOff
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from './IslamicIcons';
 import { hapticImpact } from '../native';
 import { trackPageView } from '../services/analytics';
 import { useModal } from '../context/ModalContext';
+import { useCloseOnBack } from '../services/backHandler';
 
 const navItems = [
     { to: '/', label: 'হোম', icon: Home },
@@ -31,12 +33,24 @@ const navItems = [
 export function Layout({ children }) {
     const { confirmExit } = useModal();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    useCloseOnBack(sidebarOpen, () => setSidebarOpen(false));
     const [isDark, setIsDark] = useState(() => {
         return document.documentElement.getAttribute('data-theme') === 'dark' ||
             localStorage.getItem('hasana-theme') === 'dark';
     });
 
     const location = useLocation();
+    const [isOffline, setIsOffline] = useState(() => typeof navigator !== 'undefined' && !navigator.onLine);
+
+    useEffect(() => {
+        const update = () => setIsOffline(!navigator.onLine);
+        window.addEventListener('online', update);
+        window.addEventListener('offline', update);
+        return () => {
+            window.removeEventListener('online', update);
+            window.removeEventListener('offline', update);
+        };
+    }, []);
 
     useEffect(() => {
         setSidebarOpen(false);
@@ -128,6 +142,14 @@ export function Layout({ children }) {
                 </div>
             </header>
 
+            {/* Offline notice */}
+            {isOffline && (
+                <div className="bg-amber-500/15 border-b border-amber-500/30 text-amber-800 dark:text-amber-300 px-4 py-2 text-xs font-semibold flex items-center justify-center gap-2" role="status">
+                    <WifiOff className="w-3.5 h-3.5 shrink-0" />
+                    <span>আপনি অফলাইনে আছেন — ডাউনলোড করা কুরআন, হাদিস ও দোয়া পড়তে পারবেন</span>
+                </div>
+            )}
+
             {/* Main Content with native page motion */}
             <main key={location.pathname} className="flex-1 w-full animate-page-enter">
                 {children}
@@ -172,11 +194,6 @@ export function Layout({ children }) {
                                 }`}>
                                     {label}
                                 </span>
-
-                                {/* Micro Active Indicator Dot */}
-                                {isActive && (
-                                    <div className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_8px_#dfab3b] animate-scale-in" />
-                                )}
                             </div>
                         )}
                     </NavLink>
@@ -203,7 +220,7 @@ export function Layout({ children }) {
                     </a>
                 </div>
 
-                <p className="text-primary-foreground/75 text-xs">© ২০২৬ হাসানা — ইসলামিক অ্যাপ্লিকেশন • সর্বস্বত্ব সংরক্ষিত</p>
+                <p className="text-primary-foreground/75 text-xs">© 2026 হাসানা — ইসলামিক অ্যাপ্লিকেশন • সর্বস্বত্ব সংরক্ষিত</p>
             </footer>
 
             {/* Offcanvas Drawer Menu */}
@@ -312,7 +329,7 @@ export function Layout({ children }) {
                         {/* Drawer Footer */}
                         <div className="p-4 border-t border-border bg-muted/30 space-y-2">
                             <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span>ভার্সন: ২.৪ (নেটিভ স্পা)</span>
+                                <span>ভার্সন: 2.4 (নেটিভ স্পা)</span>
                                 <button
                                     onClick={toggleTheme}
                                     className="flex items-center gap-1.5 font-medium text-primary hover:underline"

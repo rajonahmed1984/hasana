@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Moon, Sun, ShieldCheck, RefreshCw, Code2, ExternalLink, Bell, BellRing, BellOff, Check, Send, Sparkles, BookOpen, LogOut } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
+import { OfflineDownloadsCard } from '../components/OfflineDownloadsCard';
 import { hapticImpact } from '../native';
 import { 
     isPrayerNotificationEnabled, 
@@ -13,7 +14,8 @@ import {
     PRAYER_SCHEDULE,
     isDailyAyahNotificationEnabled,
     setDailyAyahNotificationEnabled,
-    sendTestDailyAyahNotification
+    sendTestDailyAyahNotification,
+    requestNotifPermission
 } from '../services/prayerNotifications';
 import { useModal } from '../context/ModalContext';
 
@@ -77,7 +79,7 @@ export function SettingsPage() {
             setDailyAyahActive(false);
             setNotificationMsg('প্রতিদিনের আয়াত নোটিফিকেশন বন্ধ করা হয়েছে।');
         } else {
-            const res = await enablePrayerNotifications();
+            const res = await requestNotifPermission();
             if (res.success) {
                 setDailyAyahNotificationEnabled(true);
                 setDailyAyahActive(true);
@@ -329,6 +331,9 @@ export function SettingsPage() {
                     </div>
                 </div>
 
+                {/* Offline reading: download Quran / duas / hadith */}
+                <OfflineDownloadsCard />
+
                 {/* Cache & Data Setting */}
                 <div className="rounded-2xl bg-card border border-border p-5 shadow-sm flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -422,7 +427,7 @@ export function SettingsPage() {
                 {/* App Info Card */}
                 <div className="rounded-2xl bg-muted/60 border border-border p-5 text-center text-xs text-muted-foreground space-y-1">
                     <p className="font-semibold text-primary text-sm">হাসানা ইসলামিক অ্যাপ্লিকেশন</p>
-                    <p>ভার্সন: ২.৫ (নেটিভ স্পা + ক্যাপাসিটর মোবাইল রেডি)</p>
+                    <p>ভার্সন: 2.5 (নেটিভ স্পা + ক্যাপাসিটর মোবাইল রেডি)</p>
                     <p className="pt-1">
                         Developed with dedication by{' '}
                         <a

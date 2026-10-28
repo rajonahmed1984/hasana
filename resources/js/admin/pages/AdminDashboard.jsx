@@ -60,7 +60,7 @@ export default function AdminDashboard() {
     };
 
     const formatSeconds = (sec) => {
-        if (!sec) return '০ সেকেন্ড';
+        if (!sec) return '0 সেকেন্ড';
         if (sec < 60) return `${sec} সেকেন্ড`;
         const min = Math.floor(sec / 60);
         const rem = sec % 60;
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h3 className="text-base font-bold text-[#14302b] dark:text-[#e4ebe9]">
-                                বিগত ১৪ দিনের ভিজিটর ও ভিউ ট্রেন্ড
+                                বিগত 14 দিনের ভিজিটর ও ভিউ ট্রেন্ড
                             </h3>
                             <p className="text-xs text-[#546e6a] dark:text-[#8aa39f]">
                                 প্রতিদিনের অনন্য ভিজিটর এবং পেজ ভিউ পরিসংখ্যান
@@ -594,7 +594,7 @@ export default function AdminDashboard() {
                                             </span>
                                         </td>
                                         <td className="py-3 px-6 text-right text-[#546e6a] dark:text-[#8aa39f]">
-                                            {log.visited_at ? new Date(log.visited_at).toLocaleString('bn-BD', {
+                                            {log.visited_at ? new Date(log.visited_at).toLocaleString('bn-BD-u-nu-latn', {
                                                 month: 'short',
                                                 day: 'numeric',
                                                 hour: '2-digit',

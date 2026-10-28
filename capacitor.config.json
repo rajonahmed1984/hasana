@@ -14,7 +14,8 @@
       "127.0.0.1",
       "localhost",
       "10.0.2.2"
-    ]
+    ],
+    "errorPath": "offline.html"
   },
   "android": {
     "backgroundColor": "#125e54",
@@ -32,6 +33,17 @@
       "showSpinner": false,
       "splashFullScreen": true,
       "splashImmersive": false
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_hasana",
+      "iconColor": "#125E54"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
   }
 }

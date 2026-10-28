@@ -1,6 +1,8 @@
 import { Capacitor } from '@capacitor/core';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { Share } from '@capacitor/share';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { closeTopOverlay } from './services/backHandler';
 import { App as CapApp } from '@capacitor/app';
 
 export const isNative = () => {
@@ -57,15 +59,42 @@ export const nativeShare = async ({ title, text, url }) => {
     }
 };
 
+// Shares only an image (no text/link) from the native app: writes it to the cache dir, then opens the share sheet
+export const shareImageNative = async (blob, fileName) => {
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(String(reader.result).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+
+    const { uri } = await Filesystem.writeFile({
+        path: fileName,
+        data: base64,
+        directory: Directory.Cache,
+    });
+
+    await Share.share({ files: [uri], dialogTitle: 'ছবি শেয়ার করুন' });
+};
+
+let nativeHandlersReady = false;
+
 export const initNativeAppHandlers = (navigate) => {
-    if (!isNative()) return;
+    if (!isNative() || nativeHandlersReady) return;
+    nativeHandlersReady = true;
 
     try {
+        // Back: close an open dialog/menu first, then go back a page; on Home ask before exiting
         CapApp.addListener('backButton', ({ canGoBack }) => {
-            if (canGoBack && window.location.pathname !== '/') {
+            if (closeTopOverlay()) return;
+
+            if (window.location.pathname === '/') {
+                window.dispatchEvent(new CustomEvent('hasana-request-exit'));
+            } else if (canGoBack) {
                 window.history.back();
             } else {
-                window.dispatchEvent(new CustomEvent('hasana-request-exit'));
+                // Opened directly on an inner page (e.g. from a notification): go Home instead of closing the app
+                navigate('/', { replace: true });
             }
         });
     } catch {

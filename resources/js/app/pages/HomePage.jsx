@@ -28,7 +28,8 @@ import {
     disablePrayerNotifications,
     fetchDailyAyah,
     isDailyAyahNotificationEnabled,
-    setDailyAyahNotificationEnabled
+    setDailyAyahNotificationEnabled,
+    requestNotifPermission
 } from '../services/prayerNotifications';
 import { 
     getStoredLocation, 
@@ -57,9 +58,6 @@ export function HomePage() {
     const [notifActive, setNotifActive] = useState(false);
     const [dailyAyah, setDailyAyah] = useState(null);
     const [dailyAyahNotifActive, setDailyAyahNotifActive] = useState(false);
-    const [showInAppAyahBanner, setShowInAppAyahBanner] = useState(() => {
-        return sessionStorage.getItem('hasana-seen-daily-banner') !== 'true';
-    });
 
     // Dynamic Location & Prayer Times State
     const [locationData, setLocationData] = useState(() => getStoredLocation());
@@ -143,7 +141,7 @@ export function HomePage() {
             setDailyAyahNotificationEnabled(false);
             setDailyAyahNotifActive(false);
         } else {
-            const res = await enablePrayerNotifications();
+            const res = await requestNotifPermission();
             if (res.success) {
                 setDailyAyahNotificationEnabled(true);
                 setDailyAyahNotifActive(true);
@@ -154,8 +152,8 @@ export function HomePage() {
     useEffect(() => {
         const updateClock = () => {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = now.toLocaleDateString('bn-BD', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('bn-BD-u-nu-latn', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = now.toLocaleDateString('bn-BD-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             setCurrentTime(timeStr);
             setCurrentDate(dateStr);
         };
@@ -175,7 +173,7 @@ export function HomePage() {
         title: 'আজকের দিনের আয়াত',
         text_ar: 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
         text_bn: 'তুমি আমাদের (সরল ও) অবিচল পথটি দেখিয়ে দাও-',
-        reference: 'সূরা আল-ফাতিহা, ১:৬',
+        reference: 'সূরা আল-ফাতিহা, 1:6',
         deep_link: '/surah/al-fatiha?ayah=6',
         surah_name: 'আল-ফাতিহা',
     };
@@ -191,49 +189,6 @@ export function HomePage() {
 
     return (
         <Layout>
-            {/* In-App Daily Ayah Notification Banner */}
-            {showInAppAyahBanner && dailyAyah && (
-                <div className="bg-primary/10 border-b border-gold/30 px-4 py-2.5">
-                    <div className="mx-auto max-w-5xl flex items-center justify-between gap-3 text-xs">
-                        <div className="flex items-center gap-2.5 overflow-hidden">
-                            <span className="inline-flex items-center gap-1 bg-primary text-gold px-2 py-0.5 rounded-full font-bold text-[10px] shrink-0">
-                                <Sparkles className="w-3 h-3" /> আজকের আয়াত
-                            </span>
-                            <span className="font-semibold text-primary truncate">
-                                {activeVerse.reference}:
-                            </span>
-                            <span className="text-muted-foreground truncate hidden md:inline">
-                                "{activeVerse.text_bn}"
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                            <Link
-                                to={activeVerse.deep_link || '/quran'}
-                                onClick={() => {
-                                    hapticImpact();
-                                    sessionStorage.setItem('hasana-seen-daily-banner', 'true');
-                                    setShowInAppAyahBanner(false);
-                                }}
-                                className="font-bold text-primary hover:underline hover:text-gold transition text-xs"
-                            >
-                                বিস্তারিত পড়ুন →
-                            </Link>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    sessionStorage.setItem('hasana-seen-daily-banner', 'true');
-                                    setShowInAppAyahBanner(false);
-                                }}
-                                className="w-5 h-5 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center text-xs"
-                                title="নোটিফিকেশন বন্ধ করুন"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* Hero Section */}
             <section className="bg-hero text-primary-foreground relative overflow-hidden pt-10 pb-16 md:py-20">
                 <div className="absolute inset-0 pattern opacity-35 pointer-events-none" />
@@ -296,45 +251,50 @@ export function HomePage() {
                     </div>
                 )}
 
-                <div className="rounded-3xl bg-card border-2 border-gold/40 p-5 md:p-7 shadow-xl backdrop-blur-md">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                                <Clock className="w-4 h-4 text-primary" />
+                <div className="rounded-3xl bg-card border-2 border-gold/40 p-4 sm:p-5 md:p-7 shadow-xl backdrop-blur-md">
+                    <div className="mb-4 space-y-2.5">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-8 h-8 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                                    <Clock className="w-4 h-4 text-primary" />
+                                </div>
+                                <h2 className="font-bold text-base md:text-lg whitespace-nowrap truncate">আজকের নামাজের সময়</h2>
                             </div>
-                            <div>
-                                <h2 className="font-bold text-base md:text-lg">আজকের নামাজের সময়সূচী</h2>
-                                <button
-                                    type="button"
-                                    onClick={() => handleDetectLocation(true)}
-                                    disabled={locationLoading}
-                                    title="বর্তমান জিপিএস লোকেশন আপডেট করতে ক্লিক করুন"
-                                    className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition native-press group"
-                                >
-                                    {locationLoading ? (
-                                        <Loader2 className="w-3 h-3 animate-spin text-primary" />
-                                    ) : (
-                                        <MapPin className="w-3 h-3 text-primary group-hover:scale-110 transition-transform" />
-                                    )}
-                                    <span className="font-semibold text-foreground/90 group-hover:underline">
-                                        {locationData.cityName}
-                                    </span>
-                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-medium ${
-                                        locationData.isDefault
-                                            ? 'text-amber-600 bg-amber-500/10 border border-amber-500/20'
-                                            : 'text-primary bg-primary/10 border border-primary/20'
-                                    }`}>
-                                        {locationData.isDefault ? 'অটো-ডিটেক্ট করুন' : 'জিপিএস সক্রিয়'}
-                                    </span>
-                                </button>
-                            </div>
+                            <span className="shrink-0 whitespace-nowrap text-sm md:text-base font-bold text-primary tabular-nums">
+                                {currentTime}
+                            </span>
                         </div>
-                        <div className="flex items-center gap-2">
+
+                        <div className="flex items-center justify-between gap-2">
+                            <button
+                                type="button"
+                                onClick={() => handleDetectLocation(true)}
+                                disabled={locationLoading}
+                                title="বর্তমান জিপিএস লোকেশন আপডেট করতে ক্লিক করুন"
+                                className="min-w-0 text-xs text-muted-foreground hover:text-primary flex items-center gap-1.5 transition native-press group"
+                            >
+                                {locationLoading ? (
+                                    <Loader2 className="w-3.5 h-3.5 shrink-0 animate-spin text-primary" />
+                                ) : (
+                                    <MapPin className="w-3.5 h-3.5 shrink-0 text-primary group-hover:scale-110 transition-transform" />
+                                )}
+                                <span className="font-semibold text-foreground/90 group-hover:underline truncate">
+                                    {locationData.cityName}
+                                </span>
+                                {/* Only shown while the default city is used, as a hint to detect the real location */}
+                                {locationData.isDefault && (
+                                    <span className="shrink-0 whitespace-nowrap text-[10px] px-2 py-0.5 rounded-full font-medium text-amber-600 bg-amber-500/10 border border-amber-500/20">
+                                        অটো-ডিটেক্ট করুন
+                                    </span>
+                                )}
+                            </button>
+
                             <button
                                 type="button"
                                 onClick={handleToggleNotification}
                                 title={notifActive ? "নামাজের নোটিফিকেশন সক্রিয় আছে (ক্লিক করে বন্ধ করুন)" : "নামাজের নোটিফিকেশন চালু করুন"}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition border ${
+                                aria-label={notifActive ? 'নোটিফিকেশন বন্ধ করুন' : 'নোটিফিকেশন চালু করুন'}
+                                className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition border ${
                                     notifActive 
                                         ? 'bg-primary/10 text-primary border-primary/30 shadow-xs' 
                                         : 'bg-muted text-muted-foreground border-border hover:bg-muted-foreground/15'
@@ -345,28 +305,22 @@ export function HomePage() {
                                 ) : (
                                     <Bell className="w-3.5 h-3.5" />
                                 )}
-                                <span className="hidden sm:inline">
+                                <span className="hidden sm:inline whitespace-nowrap">
                                     {notifActive ? 'নোটিফিকেশন চালু' : 'নোটিফিকেশন পান'}
                                 </span>
                             </button>
-
-                            <div className="text-right">
-                                <span className="text-sm md:text-base font-bold text-primary tabular-nums">
-                                    {currentTime}
-                                </span>
-                            </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-2 md:gap-3 text-center">
+                    <div className="grid grid-cols-5 gap-1.5 md:gap-3 text-center">
                         {prayerTimes.map((prayer) => (
                             <div 
                                 key={prayer.name} 
-                                className="rounded-2xl bg-muted/70 hover:bg-muted p-2.5 md:py-4 md:px-2 border border-border/50 transition-colors"
+                                className="min-w-0 rounded-2xl bg-muted/70 hover:bg-muted px-1 py-2.5 md:py-4 md:px-2 border border-border/50 transition-colors"
                             >
-                                <p className="text-xs md:text-sm font-semibold text-muted-foreground">{prayer.name}</p>
-                                <p className="mt-1 font-bold text-primary tabular-nums text-sm md:text-lg">{prayer.start}</p>
-                                <p className="text-[10px] md:text-xs text-muted-foreground/75 mt-0.5">শেষ {prayer.end}</p>
+                                <p className="text-xs md:text-sm font-semibold text-muted-foreground whitespace-nowrap">{prayer.name}</p>
+                                <p className="mt-1 font-bold text-primary tabular-nums whitespace-nowrap text-[13px] sm:text-sm md:text-lg">{prayer.start}</p>
+                                <p className="mt-1 text-[9px] sm:text-[10px] md:text-xs text-muted-foreground/75 leading-tight">শেষ<span className="block tabular-nums whitespace-nowrap">{prayer.end}</span></p>
                             </div>
                         ))}
                     </div>

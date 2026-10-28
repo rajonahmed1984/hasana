@@ -46,7 +46,7 @@
                 </div>
                 <div class="metric-footer-info">
                     <span class="info-label"><i class="fa-regular fa-clock"></i> গড় সময়:</span>
-                    <strong class="info-val">{{ $todayAvgSec > 0 ? (new App\Models\VisitorLog(['duration_seconds' => $todayAvgSec]))->duration_formatted : '০ সেকেন্ড' }}</strong>
+                    <strong class="info-val">{{ $todayAvgSec > 0 ? (new App\Models\VisitorLog(['duration_seconds' => $todayAvgSec]))->duration_formatted : '0 সেকেন্ড' }}</strong>
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
                 <div class="metric-icon-box">
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
-                <span class="metric-badge">এই সপ্তাহ (৭ দিন)</span>
+                <span class="metric-badge">এই সপ্তাহ (7 দিন)</span>
             </div>
             <div class="metric-body">
                 <div class="metric-number-group">
@@ -66,7 +66,7 @@
                 </div>
                 <div class="metric-footer-info">
                     <span class="info-label"><i class="fa-regular fa-clock"></i> গড় সময়:</span>
-                    <strong class="info-val">{{ $weekAvgSec > 0 ? (new App\Models\VisitorLog(['duration_seconds' => $weekAvgSec]))->duration_formatted : '০ সেকেন্ড' }}</strong>
+                    <strong class="info-val">{{ $weekAvgSec > 0 ? (new App\Models\VisitorLog(['duration_seconds' => $weekAvgSec]))->duration_formatted : '0 সেকেন্ড' }}</strong>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                 <div class="metric-icon-box">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
-                <span class="metric-badge">এই মাস (৩০ দিন)</span>
+                <span class="metric-badge">এই মাস (30 দিন)</span>
             </div>
             <div class="metric-body">
                 <div class="metric-number-group">
@@ -86,7 +86,7 @@
                 </div>
                 <div class="metric-footer-info">
                     <span class="info-label"><i class="fa-regular fa-clock"></i> গড় সময়:</span>
-                    <strong class="info-val">{{ $monthAvgSec > 0 ? (new App\Models\VisitorLog(['duration_seconds' => $monthAvgSec]))->duration_formatted : '০ সেকেন্ড' }}</strong>
+                    <strong class="info-val">{{ $monthAvgSec > 0 ? (new App\Models\VisitorLog(['duration_seconds' => $monthAvgSec]))->duration_formatted : '0 সেকেন্ড' }}</strong>
                 </div>
             </div>
         </div>
@@ -121,7 +121,7 @@
                     <div class="header-icon-circle"><i class="fa-solid fa-chart-column"></i></div>
                     <div>
                         <h3 class="card-title-styled">দৈনিক ভিজিটর ও পেজ ভিউ ট্রেন্ড</h3>
-                        <p class="card-sub-styled">বিগত ১৪ দিনের প্রতিদিনের ইউনিক ভিজিটর ও ভিউ সংখ্যা</p>
+                        <p class="card-sub-styled">বিগত 14 দিনের প্রতিদিনের ইউনিক ভিজিটর ও ভিউ সংখ্যা</p>
                     </div>
                 </div>
                 <div class="device-pills">

@@ -344,7 +344,7 @@ export function BookmarksPage() {
                         <div className="space-y-4">
                             {filteredAyahs.map((b) => {
                                 const isCopied = copiedKey === b.key;
-                                const copyText = `${b.text_ar}\n\n${b.transliteration ? 'উচ্চারণ: ' + b.transliteration + '\n\n' : ''}অর্থ: ${b.text_bn}\n\n— সূরা ${b.surahNameBn} (${b.ayahNumberBn})`;
+                                const copyText = `${b.text_ar}\n\nঅর্থ: ${b.text_bn}\n\n— সূরা ${b.surahNameBn} (${b.ayahNumberBn})`;
                                 const shareUrl = `${window.location.origin}/surah/${b.surahSlug}#ayah-${b.ayahNumber}`;
 
                                 return (
@@ -381,7 +381,6 @@ export function BookmarksPage() {
                                                         reference: `সূরা ${b.surahNameBn} (${b.ayahNumberBn})`,
                                                         text_ar: b.text_ar,
                                                         text_bn: b.text_bn,
-                                                        transliteration: b.transliteration || '',
                                                         url: shareUrl,
                                                     })}
                                                     className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-muted active:scale-95 transition"
@@ -406,12 +405,6 @@ export function BookmarksPage() {
                                             {b.text_ar}
                                         </p>
 
-                                        {/* Transliteration */}
-                                        {b.transliteration && (
-                                            <p className="text-xs md:text-sm text-primary/80 italic my-2">
-                                                {b.transliteration}
-                                            </p>
-                                        )}
 
                                         {/* Bengali Translation */}
                                         <p className="text-sm md:text-base text-foreground mt-2 leading-relaxed">

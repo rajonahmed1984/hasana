@@ -28,7 +28,7 @@ export function AboutPage() {
                 <div className="grid md:grid-cols-2 gap-4">
                     <div className="rounded-2xl bg-card border border-border p-5">
                         <BookOpen className="w-6 h-6 text-primary mb-2" />
-                        <h3 className="font-bold text-base mb-1">পবিত্র ১১৪টি সূরা</h3>
+                        <h3 className="font-bold text-base mb-1">পবিত্র 114টি সূরা</h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                             সহজ সরল প্রমিত বাংলা অনুবাদ, বিশুদ্ধ আরবি মূল পাঠ্য ও পারা ভিত্তিক বিন্যাসসহ সম্পূর্ণ কুরআন।
                         </p>
@@ -36,7 +36,7 @@ export function AboutPage() {
 
                     <div className="rounded-2xl bg-card border border-border p-5">
                         <ShieldCheck className="w-6 h-6 text-primary mb-2" />
-                        <h3 className="font-bold text-base mb-1">১৫,০০০+ সহীহ হাদিস</h3>
+                        <h3 className="font-bold text-base mb-1">15,000+ সহীহ হাদিস</h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                             ইসলামিক ফাউন্ডেশন বাংলাদেশ অনুযায়ী সহীহ বুখারী ও সহীহ মুসলিমের বিষয়ভিত্তিক সম্পূর্ণ হাদিস সংগ্রহ।
                         </p>
@@ -120,11 +120,11 @@ export function AboutPage() {
                         </div>
                         <div className="p-3 bg-card rounded-xl border border-border">
                             <p className="font-bold text-primary">হাফেজ মুনির উদ্দীন আহমদ</p>
-                            <p className="text-xs text-muted-foreground">কুরআন শরীফ সহজ সরল বাংলা অনুবাদ (সূরা ১–৭ এবং ৭৮–১১৪)</p>
+                            <p className="text-xs text-muted-foreground">কুরআন শরীফ সহজ সরল বাংলা অনুবাদ (সূরা 1–7 এবং 78–114)</p>
                         </div>
                         <div className="p-3 bg-card rounded-xl border border-border">
                             <p className="font-bold text-primary">মাওলানা মুহিউদ্দীন খান</p>
-                            <p className="text-xs text-muted-foreground">মারেফুল কুরআন বাংলা অনুবাদ (সূরা ৮–৭৭)</p>
+                            <p className="text-xs text-muted-foreground">মারেফুল কুরআন বাংলা অনুবাদ (সূরা 8–77)</p>
                         </div>
                     </div>
                 </div>

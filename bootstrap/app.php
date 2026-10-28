@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnglishDigits;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\LogSuspiciousActivity;
 use App\Http\Middleware\SetLocale; // <-- import it
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocale::class,
             SecurityHeaders::class,
             LogSuspiciousActivity::class,
+            EnglishDigits::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

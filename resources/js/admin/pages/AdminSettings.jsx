@@ -10,7 +10,8 @@ import {
     CheckCircle2, 
     Sparkles, 
     RefreshCw,
-    ExternalLink
+    ExternalLink,
+    Smartphone
 } from 'lucide-react';
 import { apiGet, apiPost } from '../api';
 import { useToast } from '../components/AdminLayout';
@@ -29,6 +30,18 @@ export default function AdminSettings() {
     const [siteTagline, setSiteTagline] = useState('পবিত্র কুরআন, হাদিস ও দোয়া');
     const [developerName, setDeveloperName] = useState('Apptimatic');
 
+    // Android app version (drives the in-app "new version" prompt)
+    const [appVersion, setAppVersion] = useState({
+        app_latest_version: '1.0',
+        app_latest_build: 1,
+        app_min_build: 1,
+        app_update_message: '',
+        app_store_url: '',
+    });
+    const [savedBuild, setSavedBuild] = useState(1);
+    const [notifyAppUpdate, setNotifyAppUpdate] = useState(true);
+    const setAppField = (key, value) => setAppVersion((prev) => ({ ...prev, [key]: value }));
+
     // Logo state
     const [currentLogoUrl, setCurrentLogoUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -45,6 +58,14 @@ export default function AdminSettings() {
             setSiteTitleBn(s.site_title_bn || 'হাসানা');
             setSiteTagline(s.site_tagline || 'পবিত্র কুরআন, হাদিস ও দোয়া');
             setDeveloperName(s.developer_name || 'Apptimatic');
+            setAppVersion({
+                app_latest_version: s.app_latest_version || '1.0',
+                app_latest_build: s.app_latest_build || 1,
+                app_min_build: s.app_min_build || 1,
+                app_update_message: s.app_update_message || '',
+                app_store_url: s.app_store_url || '',
+            });
+            setSavedBuild(s.app_latest_build || 1);
             setCurrentLogoUrl(res.logo_url || '/images/logo.svg');
             setServerInfo(res.server_info || {});
         } catch (err) {
@@ -65,7 +86,7 @@ export default function AdminSettings() {
             return;
         }
         if (file.size > 3 * 1024 * 1024) {
-            showToast('ফাইলের আকার সর্বোচ্চ ৩ মেগাবাইট হতে পারবে', 'error');
+            showToast('ফাইলের আকার সর্বোচ্চ 3 মেগাবাইট হতে পারবে', 'error');
             return;
         }
         setLogoFile(file);
@@ -98,6 +119,8 @@ export default function AdminSettings() {
             formData.append('site_title_bn', siteTitleBn);
             formData.append('site_tagline', siteTagline);
             formData.append('developer_name', developerName);
+            Object.entries(appVersion).forEach(([key, value]) => formData.append(key, value ?? ''));
+            formData.append('notify_app_update', notifyAppUpdate ? '1' : '0');
 
             if (removeLogo) {
                 formData.append('remove_logo', '1');
@@ -107,6 +130,9 @@ export default function AdminSettings() {
 
             const res = await apiPost('/admin/settings', formData);
             showToast(res.message || 'সকল সেটিংস এবং ব্র্যান্ড লোগো সফলভাবে সংরক্ষণ করা হয়েছে!');
+            if (res.settings?.app_latest_build) {
+                setSavedBuild(res.settings.app_latest_build);
+            }
 
             if (res.logo_url) {
                 setCurrentLogoUrl(res.logo_url);
@@ -244,7 +270,7 @@ export default function AdminSettings() {
                                     ক্লিক করুন অথবা নতুন লোগো ফাইল টেনে আনুন
                                 </h4>
                                 <p className="text-xs text-[#546e6a] dark:text-[#8aa39f] max-w-sm mb-4 leading-relaxed">
-                                    স্বচ্ছ ব্যাকগ্রাউন্ডের SVG বা উচ্চ মানের PNG লোগো সবচেয়ে ভালো দেখাবে। ফাইল সাইজ সর্বোচ্চ ৩ MB.
+                                    স্বচ্ছ ব্যাকগ্রাউন্ডের SVG বা উচ্চ মানের PNG লোগো সবচেয়ে ভালো দেখাবে। ফাইল সাইজ সর্বোচ্চ 3 MB.
                                 </p>
                                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#125e54] text-white text-xs font-semibold shadow-md shadow-[#125e54]/20 hover:bg-[#187468] transition-colors">
                                     <Image className="w-4 h-4 text-[#dfab3b]" />
@@ -338,7 +364,114 @@ export default function AdminSettings() {
                     </div>
                 </div>
 
-                {/* 3. Server & System Environment */}
+                {/* 3. Android App Version & Update Prompt */}
+                <div className="bg-white dark:bg-[#13221f] rounded-3xl p-6 sm:p-8 border border-[#e2dfd5] dark:border-[#233e38] shadow-sm">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#e2dfd5] dark:border-[#233e38]">
+                        <div className="w-10 h-10 rounded-xl bg-[#dfab3b]/15 text-[#dfab3b] flex items-center justify-center">
+                            <Smartphone className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-[#14302b] dark:text-[#e4ebe9]">
+                                অ্যান্ড্রয়েড অ্যাপ ভার্সন ও আপডেট নোটিফিকেশন
+                            </h3>
+                            <p className="text-xs text-[#546e6a] dark:text-[#8aa39f]">
+                                Play Store-এ নতুন ভার্সন প্রকাশের পর এখানে বিল্ড নম্বর বাড়ান — ব্যবহারকারীরা অ্যাপে আপডেট করার বার্তা পাবেন
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-2">
+                                সর্বশেষ ভার্সন নাম (versionName)
+                            </label>
+                            <input
+                                type="text"
+                                value={appVersion.app_latest_version}
+                                onChange={(e) => setAppField('app_latest_version', e.target.value)}
+                                placeholder="1.1"
+                                className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-[#e2dfd5] dark:border-[#233e38] bg-[#f8f7f2] dark:bg-[#162724] text-[#14302b] dark:text-[#e4ebe9] outline-none focus:border-[#125e54]"
+                            />
+                            <span className="text-[10px] text-[#546e6a] block mt-1">
+                                ব্যবহারকারীকে দেখানো ভার্সন, যেমন 1.1
+                            </span>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-2">
+                                সর্বশেষ বিল্ড নম্বর (versionCode) *
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                required
+                                value={appVersion.app_latest_build}
+                                onChange={(e) => setAppField('app_latest_build', e.target.value)}
+                                className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-[#e2dfd5] dark:border-[#233e38] bg-[#f8f7f2] dark:bg-[#162724] text-[#14302b] dark:text-[#e4ebe9] outline-none focus:border-[#125e54]"
+                            />
+                            <span className="text-[10px] text-[#546e6a] block mt-1">
+                                android/app/build.gradle-এর versionCode — এর চেয়ে পুরনো অ্যাপে আপডেট বার্তা দেখাবে
+                            </span>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-2">
+                                ন্যূনতম বিল্ড নম্বর (বাধ্যতামূলক আপডেট) *
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                required
+                                value={appVersion.app_min_build}
+                                onChange={(e) => setAppField('app_min_build', e.target.value)}
+                                className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-[#e2dfd5] dark:border-[#233e38] bg-[#f8f7f2] dark:bg-[#162724] text-[#14302b] dark:text-[#e4ebe9] outline-none focus:border-[#125e54]"
+                            />
+                            <span className="text-[10px] text-[#546e6a] block mt-1">
+                                এর চেয়ে পুরনো অ্যাপ আপডেট না করে ব্যবহার করা যাবে না
+                            </span>
+                        </div>
+
+                        <div className="md:col-span-3">
+                            <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-2">
+                                আপডেট বার্তা (ঐচ্ছিক)
+                            </label>
+                            <input
+                                type="text"
+                                value={appVersion.app_update_message}
+                                onChange={(e) => setAppField('app_update_message', e.target.value)}
+                                placeholder="যেমন: অফলাইনে কুরআন পড়া ও নতুন নোটিফিকেশন সুবিধা যোগ হয়েছে"
+                                className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-[#e2dfd5] dark:border-[#233e38] bg-[#f8f7f2] dark:bg-[#162724] text-[#14302b] dark:text-[#e4ebe9] outline-none focus:border-[#125e54]"
+                            />
+                        </div>
+
+                        <div className="md:col-span-3">
+                            <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-2">
+                                Play Store লিংক
+                            </label>
+                            <input
+                                type="url"
+                                value={appVersion.app_store_url}
+                                onChange={(e) => setAppField('app_store_url', e.target.value)}
+                                placeholder="https://play.google.com/store/apps/details?id=com.hasanaa.app"
+                                className="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-[#e2dfd5] dark:border-[#233e38] bg-[#f8f7f2] dark:bg-[#162724] text-[#14302b] dark:text-[#e4ebe9] outline-none focus:border-[#125e54]"
+                            />
+                        </div>
+
+                        {Number(appVersion.app_latest_build) > Number(savedBuild) && (
+                            <label className="md:col-span-3 flex items-center gap-2.5 text-xs font-semibold text-[#14302b] dark:text-[#e4ebe9] cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={notifyAppUpdate}
+                                    onChange={(e) => setNotifyAppUpdate(e.target.checked)}
+                                    className="w-4 h-4 accent-[#125e54]"
+                                />
+                                সংরক্ষণের পর সকল অ্যাপ ব্যবহারকারীকে "নতুন ভার্সন এসেছে" পুশ নোটিফিকেশন পাঠান
+                            </label>
+                        )}
+                    </div>
+                </div>
+
+                {/* 4. Server & System Environment */}
                 <div className="bg-white dark:bg-[#13221f] rounded-3xl p-6 sm:p-8 border border-[#e2dfd5] dark:border-[#233e38] shadow-sm">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#e2dfd5] dark:border-[#233e38]">
                         <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center">

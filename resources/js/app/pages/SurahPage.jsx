@@ -106,7 +106,6 @@ export function SurahPage() {
                     ayahNumberBn: ayah.number_bn || ayah.number,
                     text_ar: ayah.text_ar,
                     text_bn: ayah.text_bn,
-                    transliteration: ayah.transliteration || '',
                     timestamp: Date.now(),
                 },
             ];
@@ -128,7 +127,6 @@ export function SurahPage() {
             reference: `সূরা ${surahData.name_bn || surahData.name_en} (${surahData.number_bn || surahData.number}:${ayah.number_bn || ayah.number})`,
             text_ar: ayah.text_ar,
             text_bn: ayah.text_bn,
-            transliteration: ayah.transliteration || '',
             url: `${window.location.origin}/surah/${surahData.slug}#ayah-${ayah.number}`,
         });
         setIsShareModalOpen(true);
@@ -167,50 +165,48 @@ export function SurahPage() {
 
     return (
         <Layout>
-            {/* Surah Hero Header */}
-            <section className="bg-hero text-primary-foreground relative overflow-hidden py-10 md:py-16">
+            {/* Surah Hero Header (compact) */}
+            <section className="bg-hero text-primary-foreground relative overflow-hidden py-4 md:py-8">
                 <div className="absolute inset-0 pattern opacity-35 pointer-events-none" />
-                <div className="relative mx-auto max-w-3xl px-4 text-center">
-                    <Link
-                        to="/quran"
-                        onClick={() => hapticImpact()}
-                        className="inline-flex items-center gap-1.5 text-xs md:text-sm text-gold/90 hover:text-gold bg-primary-foreground/10 px-3.5 py-1.5 rounded-full border border-gold/30 mb-4 transition"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> সব সূরা
-                    </Link>
+                <div className="relative mx-auto max-w-3xl px-4">
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to="/quran"
+                            onClick={() => hapticImpact()}
+                            aria-label="সব সূরা"
+                            title="সব সূরা"
+                            className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-gold bg-primary-foreground/10 border border-gold/30 hover:text-gold hover:bg-primary-foreground/20 transition native-press"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </Link>
 
-                    <p className="font-arabic text-5xl md:text-7xl text-gold font-bold my-2 drop-shadow-md">
-                        {surahData.name_ar}
-                    </p>
+                        <div className="min-w-0 flex-1">
+                            <h1 className="text-lg md:text-2xl font-bold leading-tight truncate">
+                                {surahData.name_bn || surahData.name_en}
+                                {surahData.meaning_bn && (
+                                    <span className="ml-1.5 text-sm md:text-base font-medium opacity-80">({surahData.meaning_bn})</span>
+                                )}
+                            </h1>
+                            <p className="mt-0.5 text-[11px] md:text-sm opacity-80 truncate">
+                                {surahData.revelation_label_bn || (surahData.revelation_type === 'meccan' ? 'মক্কায় অবতীর্ণ' : 'মদিনায় অবতীর্ণ')}
+                                {' • '}আয়াত: {surahData.ayah_count_bn || surahData.ayah_count}
+                                {surahData.revelation_order && (
+                                    <>{' • '}ক্রম: {surahData.revelation_order_bn || surahData.revelation_order}</>
+                                )}
+                            </p>
+                        </div>
 
-                    <h1 className="mt-3 text-2xl md:text-4xl font-bold">
-                        {surahData.name_bn || surahData.name_en}
-                    </h1>
-
-                    {surahData.meaning_bn && (
-                        <p className="mt-1 text-base md:text-lg opacity-90 font-medium">
-                            "{surahData.meaning_bn}"
+                        <p className="shrink-0 font-arabic text-3xl md:text-5xl text-gold font-bold leading-none drop-shadow-md" dir="rtl">
+                            {surahData.name_ar}
                         </p>
-                    )}
-
-                    <div className="mt-3 flex items-center justify-center flex-wrap gap-2 text-xs md:text-sm opacity-85">
-                        <span>{surahData.revelation_label_bn || (surahData.revelation_type === 'meccan' ? 'মক্কায় অবতীর্ণ' : 'মদিনায় অবতীর্ণ')}</span>
-                        <span>•</span>
-                        <span>মোট আয়াত: {surahData.ayah_count_bn || surahData.ayah_count}</span>
-                        {surahData.revelation_order && (
-                            <>
-                                <span>•</span>
-                                <span>অবতীর্ণের ক্রম: {surahData.revelation_order_bn || surahData.revelation_order}</span>
-                            </>
-                        )}
                     </div>
 
-                    {/* Translator Reference Badge */}
+                    {/* Translator Reference */}
                     {translator && (
-                        <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 border border-white/25 text-white text-xs md:text-sm font-medium backdrop-blur-md shadow-sm">
-                            <Feather className="w-3.5 h-3.5 text-gold" />
-                            <span>অনুবাদক: {translator}</span>
-                        </div>
+                        <p className="mt-3 flex items-center gap-1.5 text-[11px] md:text-xs text-white/80">
+                            <Feather className="w-3 h-3 shrink-0 text-gold" />
+                            <span className="truncate">অনুবাদক: {translator}</span>
+                        </p>
                     )}
                 </div>
             </section>
@@ -219,7 +215,7 @@ export function SurahPage() {
             <TextSettingsBar settings={textSettings} />
 
             {/* Ayahs Container */}
-            <div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
+            <div className="mx-auto max-w-3xl px-4 py-5 md:py-8 space-y-4 md:space-y-6">
                 {/* Surah Summary / About if available */}
                 {surahData.summary_bn && (
                     <div className="rounded-2xl bg-muted/80 border border-border p-5 text-sm md:text-base leading-relaxed text-foreground/90">
@@ -298,15 +294,8 @@ export function SurahPage() {
 
                                 {/* Bengali Translation */}
                                 <p className="text-base md:text-lg text-foreground font-normal leading-relaxed select-text pt-2">
-                                    {ayah.text_bn || ayah.transliteration}
+                                    {ayah.text_bn}
                                 </p>
-
-                                {/* Transliteration (if distinct) */}
-                                {ayah.transliteration && ayah.text_bn && ayah.transliteration !== ayah.text_bn && (
-                                    <p className="text-xs md:text-sm text-muted-foreground italic select-text">
-                                        {ayah.transliteration}
-                                    </p>
-                                )}
                             </div>
                         </article>
                     );

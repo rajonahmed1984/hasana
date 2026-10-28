@@ -17,7 +17,7 @@ export const adminResourceConfigs = {
         form: {
             title: 'সূরা সম্পাদনা / তৈরি',
             fields: [
-                { name: 'number', label: 'সূরা নম্বর (Number)', type: 'number', required: true, min: 1, placeholder: '১ থেকে ১১৪' },
+                { name: 'number', label: 'সূরা নম্বর (Number)', type: 'number', required: true, min: 1, placeholder: '1 থেকে 114' },
                 { name: 'name_ar', label: 'আরবি নাম (Arabic Name)', type: 'text', required: true, placeholder: 'যেমন: الفاتحة' },
                 { name: 'meta.name_bn', label: 'বাংলা নাম (Bangla Name)', type: 'text', placeholder: 'যেমন: আল-ফাতিহা' },
                 { name: 'slug', label: 'স্লাগ (URL Slug)', type: 'text', help: 'খালি রাখলে ইংরেজি নাম থেকে স্বয়ংক্রিয়ভাবে তৈরি হবে।', placeholder: 'al-fatiha' },
@@ -32,7 +32,7 @@ export const adminResourceConfigs = {
                     ],
                 },
                 { name: 'meta.meaning_bn', label: 'বাংলা অর্থ (Bangla Meaning)', type: 'text', placeholder: 'যেমন: সূচনা' },
-                { name: 'meta.revelation_order', label: 'অবতীর্ণের ক্রম (Order)', type: 'number', min: 1, placeholder: 'যেমন: ৫' },
+                { name: 'meta.revelation_order', label: 'অবতীর্ণের ক্রম (Order)', type: 'number', min: 1, placeholder: 'যেমন: 5' },
                 { name: 'meta.summary_bn', label: 'সংক্ষিপ্ত পরিচিতি ও সারসংক্ষেপ (Summary)', type: 'textarea', placeholder: 'সূরাটির মূল বিষয়বস্তু ও ফযিলত...' },
             ],
         },
@@ -211,7 +211,7 @@ export const adminResourceConfigs = {
         form: {
             title: 'আয়াত এন্ট্রি / সম্পাদনা',
             fields: [
-                { name: 'number', label: 'আয়াত নম্বর (Ayah Number)', type: 'number', min: 1, required: true, placeholder: 'যেমন: ১' },
+                { name: 'number', label: 'আয়াত নম্বর (Ayah Number)', type: 'number', min: 1, required: true, placeholder: 'যেমন: 1' },
                 { name: 'text_ar', label: 'আরবি আয়াত (Arabic Ayah)', type: 'textarea', required: true, placeholder: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' },
                 { name: 'text_bn', label: 'বাংলা অনুবাদ (Bangla Translation)', type: 'textarea', required: true, placeholder: 'পরম করুণাময় অতি দয়ালু আল্লাহর নামে শুরু করছি।' },
                 { name: 'transliteration', label: 'উচ্চারণ (Transliteration)', type: 'textarea', placeholder: 'বিসমিল্লাহির রাহমানির রাহিম' },
@@ -237,7 +237,7 @@ export const adminResourceConfigs = {
             fields: [
                 { name: 'name', label: 'পুরো নাম (Full Name)', type: 'text', required: true, placeholder: 'যেমন: অ্যাডমিন' },
                 { name: 'email', label: 'ইমেইল (Email Address)', type: 'email', required: true, placeholder: 'admin@hasana.app' },
-                { name: 'password', label: 'পাসওয়ার্ড (Password)', type: 'password', required: true, help: 'নূন্যতম ৮ অক্ষর হতে হবে।' },
+                { name: 'password', label: 'পাসওয়ার্ড (Password)', type: 'password', required: true, help: 'নূন্যতম 8 অক্ষর হতে হবে।' },
                 { name: 'password_confirmation', label: 'পাসওয়ার্ড নিশ্চিত করুন (Confirm Password)', type: 'password', required: true },
             ],
         },

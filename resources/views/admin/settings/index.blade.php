@@ -96,7 +96,7 @@
                             <span class="spec-badge">PNG (স্বচ্ছ ব্যাকগ্রাউন্ড)</span>
                             <span class="spec-badge">WEBP</span>
                             <span class="spec-badge">JPG</span>
-                            <span class="spec-badge">সর্বোচ্চ ৩ MB</span>
+                            <span class="spec-badge">সর্বোচ্চ 3 MB</span>
                         </div>
                     </div>
 
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Validate max size 3MB
         if (file.size > 3 * 1024 * 1024) {
-            alert('লোগো ফাইলের সাইজ ৩ মেগাবাইটের বেশি হতে পারবে না।');
+            alert('লোগো ফাইলের সাইজ 3 মেগাবাইটের বেশি হতে পারবে না।');
             fileInput.value = '';
             return;
         }

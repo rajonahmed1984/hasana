@@ -131,7 +131,7 @@
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none; /* "none" so fixed-position modals inside <main> stay relative to the viewport */
   }
 }
 

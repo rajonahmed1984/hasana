@@ -13,7 +13,7 @@ const curatedDuas = [
         text_ar: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
         transliteration: 'বিসমিকাল্লাহুম্মা আমূতু ওয়া আহইয়া',
         text_bn: 'হে আল্লাহ! আপনার নাম নিয়েই আমি মৃত্যুবরণ করছি (ঘুমাচ্ছি) এবং আপনার নামেই জীবিত (জাগ্রত) হব।',
-        reference: 'সহীহ বুখারী, হাদিস নং ৬৩২৪',
+        reference: 'সহীহ বুখারী, হাদিস নং 6324',
         category: 'দৈনন্দিন দোয়া',
         category_slug: 'daily-life-duas',
     },
@@ -23,7 +23,7 @@ const curatedDuas = [
         text_ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
         transliteration: 'আলহামদু লিল্লাহিল্লাযী আহ্ইয়ানা বা\'দা মা আমাতানা ওয়া ইলাইহিন নুশূর',
         text_bn: 'সমস্ত প্রশংসা সেই আল্লাহর জন্য যিনি মৃত্যুর (ঘুমের) পর আমাদের পুনরায় জীবন দান করলেন এবং তাঁর কাছেই সকলের পুনরুত্থান।',
-        reference: 'সহীহ বুখারী, হাদিস নং ৬৩১২',
+        reference: 'সহীহ বুখারী, হাদিস নং 6312',
         category: 'দৈনন্দিন দোয়া',
         category_slug: 'daily-life-duas',
     },
@@ -33,7 +33,7 @@ const curatedDuas = [
         text_ar: 'بِسْمِ اللَّهِ وَعَلَى بَرَكَةِ اللَّهِ',
         transliteration: 'বিসমিল্লাহি ওয়া \'আলা বারাকাতিল্লাহ',
         text_bn: 'আল্লাহর নামে এবং আল্লাহর বরকতের ওপর ভরসা করে খাওয়া শুরু করছি।',
-        reference: 'মুস্তাদরাক হাকিম, হাদিস নং ৭১১১',
+        reference: 'মুস্তাদরাক হাকিম, হাদিস নং 7111',
         category: 'দৈনন্দিন দোয়া',
         category_slug: 'daily-life-duas',
     },
@@ -43,7 +43,7 @@ const curatedDuas = [
         text_ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
         transliteration: 'আলহামদু লিল্লাহিল্লাযী আত\'আমানা ওয়া সাক্বানা ওয়া জা\'আলানা মুসলিমীন',
         text_bn: 'সমস্ত প্রশংসা আল্লাহর জন্য যিনি আমাদের আহার করালেন, পান করালেন এবং মুসলিম হিসেবে সৃষ্টি করলেন।',
-        reference: 'সুনানে আবু দাউদ, হাদিস নং ৩৮৫০',
+        reference: 'সুনানে আবু দাউদ, হাদিস নং 3850',
         category: 'দৈনন্দিন দোয়া',
         category_slug: 'daily-life-duas',
     },
@@ -53,7 +53,7 @@ const curatedDuas = [
         text_ar: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
         transliteration: 'রাব্বানা আতিনা ফিদ-দুনইয়া হাসানাতাও ওয়া ফিল-আখিরাতি হাসানাতাও ওয়া ক্বিনা \'আযাবান নার',
         text_bn: 'হে আমাদের প্রতিপালক! আমাদের দুনিয়াতেও কল্যাণ দান করুন এবং আখিরাতেও কল্যাণ দান করুন, আর আমাদেরকে জাহান্নামের ভয়াবহ আযাব থেকে রক্ষা করুন।',
-        reference: 'সূরা আল-বাকারা, ২:২০১',
+        reference: 'সূরা আল-বাকারা, 2:201',
         category: 'কুরআনী দোয়া ও মোনাজাত',
         category_slug: 'quranic-duas',
     },
@@ -63,7 +63,7 @@ const curatedDuas = [
         text_ar: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي',
         transliteration: 'রাব্বিশ রাহলী সাদরী, ওয়া ইয়াসসির লী আমরী, ওয়াহলুল \'উকদাতাম মিল লিসানী, ইয়াফক্বাহূ ক্বওলী',
         text_bn: 'হে আমার রব! আমার বক্ষ প্রশস্ত করে দিন, আমার কাজ সহজ করে দিন এবং আমার জিহ্বার জড়তা দূর করে দিন যেন মানুষ আমার কথা বুঝতে পারে।',
-        reference: 'সূরা ত্বা-হা, ২০:২৫-২৮',
+        reference: 'সূরা ত্বা-হা, 20:25-28',
         category: 'কুরআনী দোয়া ও মোনাজাত',
         category_slug: 'quranic-duas',
     },
@@ -73,7 +73,7 @@ const curatedDuas = [
         text_ar: 'لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ',
         transliteration: 'লা ইলাহা ইল্লা আনতা সুবহানাকা ইন্নী কুনতু মিনায যালিমীন',
         text_bn: 'আপনি ব্যতীত কোনো সত্য উপাস্য নেই, আপনি পরম পবিত্র। নিশ্চয়ই আমি অত্যাচারীদের অন্তর্ভুক্ত হয়ে গেছি।',
-        reference: 'সূরা আল-আম্বিয়া, ২১:৮৭; তিরমিযী, হাদিস নং ৩৫০৫',
+        reference: 'সূরা আল-আম্বিয়া, 21:87; তিরমিযী, হাদিস নং 3505',
         category: 'বিপদ-আপদ ও দুশ্চিন্তা মুক্তি',
         category_slug: 'distress-and-protection',
     },
@@ -307,7 +307,7 @@ export function DuasPage() {
                                     : 'bg-muted text-muted-foreground hover:text-foreground'
                             }`}
                         >
-                            সকল দোয়া ({totalCount ? totalCount.toLocaleString('bn-BD') : duas.length.toLocaleString('bn-BD')})
+                            সকল দোয়া ({totalCount ? totalCount.toLocaleString('bn-BD-u-nu-latn') : duas.length.toLocaleString('bn-BD-u-nu-latn')})
                         </button>
                         {categories.map((cat) => (
                             <button
@@ -320,7 +320,7 @@ export function DuasPage() {
                                         : 'bg-muted text-muted-foreground hover:text-foreground'
                                 }`}
                             >
-                                {cat.name} ({cat.items_count?.toLocaleString('bn-BD') || 0})
+                                {cat.name} ({cat.items_count?.toLocaleString('bn-BD-u-nu-latn') || 0})
                             </button>
                         ))}
                     </div>
@@ -379,7 +379,7 @@ export function DuasPage() {
                                         <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-3">
                                             <div className="flex items-center gap-2.5">
                                                 <span className="w-8 h-8 rounded-full bg-primary text-gold flex items-center justify-center text-xs font-bold shrink-0">
-                                                    {(idx + 1).toLocaleString('bn-BD')}
+                                                    {(idx + 1).toLocaleString('bn-BD-u-nu-latn')}
                                                 </span>
                                                 <h3 className="font-bold text-base md:text-lg text-foreground">
                                                     {item.title}

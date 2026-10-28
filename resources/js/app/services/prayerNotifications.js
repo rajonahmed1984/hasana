@@ -1,12 +1,17 @@
 // Namaz / Prayer Times Notification Manager for Hasana App
-// Integrated with Firebase & Web Push Notification APIs
+// Web: Firebase push from the server + in-page checker. Native app: on-device local notifications.
 
+import { App as CapApp } from '@capacitor/app';
 import { requestNotificationPermission } from './firebase';
-import { 
-    getStoredLocation, 
-    calculateSolarPrayerTimes, 
-    syncLocationWithBackend 
-} from './locationService';
+import { isNative } from '../native';
+import { getStoredLocation, calculateSolarPrayerTimes } from './locationService';
+import { syncDeviceWithBackend, savePushToken } from './deviceRegistration';
+import {
+    requestNativeNotificationPermission,
+    rescheduleNativeNotifications,
+    showNativeNotificationNow,
+    initNativeNotificationListeners,
+} from './nativeNotifications';
 
 export const PRAYER_SCHEDULE = [
     {
@@ -15,7 +20,7 @@ export const PRAYER_SCHEDULE = [
         nameEn: 'Fajr',
         startHour: 5,
         startMin: 5,
-        displayTime: '০৫:০৫',
+        displayTime: '05:05',
         title: 'ফজরের নামাজের সময় হয়েছে 🌅',
         body: 'আস-সালাতু খাইরুম মিনান নাওম — ঘুম থেকে নামাজ উত্তম। আসুন জামায়াতে নামাজ আদায় করি।',
     },
@@ -25,7 +30,7 @@ export const PRAYER_SCHEDULE = [
         nameEn: 'Dhuhr',
         startHour: 12,
         startMin: 5,
-        displayTime: '১২:০৫',
+        displayTime: '12:05',
         title: 'যোহরের নামাজের সময় হয়েছে ☀️',
         body: 'যোহরের নামাজের ওয়াক্ত শুরু হয়েছে। দুনিয়াবী ব্যস্ততা ছেড়ে রবের ডাকে সাড়া দিন।',
     },
@@ -35,7 +40,7 @@ export const PRAYER_SCHEDULE = [
         nameEn: 'Asr',
         startHour: 15,
         startMin: 40,
-        displayTime: '০৩:৪০',
+        displayTime: '03:40',
         title: 'আসরের নামাজের সময় হয়েছে ⛅',
         body: 'আসরের নামাজের ওয়াক্ত শুরু হয়েছে। সময়মতো নামাজ আদায় করে অপরিসীম সওয়াব অর্জন করুন।',
     },
@@ -45,7 +50,7 @@ export const PRAYER_SCHEDULE = [
         nameEn: 'Maghrib',
         startHour: 17,
         startMin: 15,
-        displayTime: '০৫:১৫',
+        displayTime: '05:15',
         title: 'মাগরিবের নামাজের সময় হয়েছে 🌇',
         body: 'সূর্যাস্তের সাথে সাথে মাগরিবের ওয়াক্ত শুরু হয়েছে। বিলম্ব না করে দ্রুত নামাজ আদায় করুন।',
     },
@@ -55,7 +60,7 @@ export const PRAYER_SCHEDULE = [
         nameEn: 'Isha',
         startHour: 18,
         startMin: 25,
-        displayTime: '০৬:২৫',
+        displayTime: '06:25',
         title: 'ইশার নামাজের সময় হয়েছে 🌙',
         body: 'ইশার নামাজের ওয়াক্ত শুরু হয়েছে। জামায়াতে নামাজ ও রাতের বিতর সালাত আদায় করুন।',
     },
@@ -86,13 +91,25 @@ export const getDynamicPrayerSchedule = () => {
 const STORAGE_KEY = 'hasana-namaz-notifications';
 const PREFS_KEY = 'hasana-prayer-prefs';
 const LOG_KEY = 'hasana-last-notified-prayer';
+const AYAH_STORAGE_KEY = 'hasana-daily-ayah-notifications';
+const AYAH_LOG_KEY = 'hasana-last-notified-ayah';
+const NATIVE_PERMISSION_KEY = 'hasana-native-notif-permission';
+
+const pad = (n) => String(n).padStart(2, '0');
+// Local calendar date (not UTC), so Fajr before 6 AM in Bangladesh counts as "today"
+const localDateKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+const hasPermission = () => {
+    if (isNative()) return localStorage.getItem(NATIVE_PERMISSION_KEY) === 'granted';
+    return typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted';
+};
 
 /**
  * Check if notifications are enabled
  */
 export const isPrayerNotificationEnabled = () => {
-    if (typeof window === 'undefined' || !('Notification' in window)) return false;
-    return Notification.permission === 'granted' && localStorage.getItem(STORAGE_KEY) === 'enabled';
+    if (typeof window === 'undefined') return false;
+    return hasPermission() && localStorage.getItem(STORAGE_KEY) === 'enabled';
 };
 
 /**
@@ -115,19 +132,56 @@ export const getPrayerPreferences = () => {
 };
 
 /**
+ * Re-apply notification settings everywhere: reschedule native local notifications
+ * and push the preferences + location to the backend (which sends web push).
+ */
+export const refreshNotifications = async () => {
+    const prayerEnabled = isPrayerNotificationEnabled();
+    const ayahEnabled = isDailyAyahNotificationEnabled();
+    const prefs = getPrayerPreferences();
+
+    await rescheduleNativeNotifications({ prayerEnabled, ayahEnabled, prefs });
+
+    const loc = getStoredLocation();
+    await syncDeviceWithBackend({
+        prayer_enabled: prayerEnabled,
+        ayah_enabled: ayahEnabled,
+        prayer_prefs: prefs,
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        city_name: loc.cityName,
+    });
+};
+
+/**
  * Save prayer preference
  */
 export const savePrayerPreference = (prayerId, isEnabled) => {
     const prefs = getPrayerPreferences();
     prefs[prayerId] = isEnabled;
     localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+    refreshNotifications();
     return prefs;
 };
 
 /**
- * Trigger a browser or service worker notification
+ * Ask the user for notification permission (native app or browser) and get a push token.
  */
-export const showPrayerNotification = async (title, body, tag = 'namaz-alert') => {
+export const requestNotifPermission = async () => {
+    if (isNative()) {
+        const res = await requestNativeNotificationPermission();
+        if (res.success) localStorage.setItem(NATIVE_PERMISSION_KEY, 'granted');
+        return res;
+    }
+    return requestNotificationPermission();
+};
+
+/**
+ * Trigger a browser, service worker or native notification right away
+ */
+export const showPrayerNotification = async (title, body, tag = 'namaz-alert', url = '/') => {
+    if (isNative()) return showNativeNotificationNow(title, body);
+
     if (typeof window === 'undefined' || !('Notification' in window)) return false;
     if (Notification.permission !== 'granted') return false;
 
@@ -136,9 +190,10 @@ export const showPrayerNotification = async (title, body, tag = 'namaz-alert') =
         icon: '/favicon.png',
         badge: '/favicon.png',
         tag,
-        renotify: true,
+        // Same tag as the server push for this prayer, so a duplicate replaces silently
+        renotify: false,
         vibrate: [300, 150, 300, 150, 400],
-        data: { url: '/' },
+        data: { url },
     };
 
     try {
@@ -165,8 +220,8 @@ export const showPrayerNotification = async (title, body, tag = 'namaz-alert') =
  * Send an immediate test notification
  */
 export const sendTestPrayerNotification = async () => {
-    if (Notification.permission !== 'granted') {
-        const result = await requestNotificationPermission();
+    if (!hasPermission()) {
+        const result = await requestNotifPermission();
         if (!result.success) {
             return { success: false, message: result.error || 'অনুমতি পাওয়া যায়নি' };
         }
@@ -180,20 +235,20 @@ export const sendTestPrayerNotification = async () => {
 
     return {
         success: sent,
-        message: sent 
-            ? 'টেস্ট নোটিফিকেশন সফলভাবে পাঠানো হয়েছে!' 
-            : 'নোটিফিকেশন পাঠানো যায়নি। ব্রাউজার পারমিশন পরীক্ষা করুন।'
+        message: sent
+            ? 'টেস্ট নোটিফিকেশন সফলভাবে পাঠানো হয়েছে!'
+            : 'নোটিফিকেশন পাঠানো যায়নি। পারমিশন পরীক্ষা করুন।'
     };
 };
 
 /**
- * Enable prayer notifications and register FCM token
+ * Enable prayer notifications and register the push token
  */
 export const enablePrayerNotifications = async () => {
-    const res = await requestNotificationPermission();
+    const res = await requestNotifPermission();
     if (res.success) {
         localStorage.setItem(STORAGE_KEY, 'enabled');
-        initPrayerScheduler();
+        await refreshNotifications();
     }
     return res;
 };
@@ -203,10 +258,8 @@ export const enablePrayerNotifications = async () => {
  */
 export const disablePrayerNotifications = () => {
     localStorage.setItem(STORAGE_KEY, 'disabled');
+    refreshNotifications();
 };
-
-const AYAH_STORAGE_KEY = 'hasana-daily-ayah-notifications';
-const AYAH_LOG_KEY = 'hasana-last-notified-ayah';
 
 /**
  * Fetch today's Ayah from backend
@@ -236,7 +289,7 @@ export const fetchDailyAyah = async () => {
         ayah_number: 6,
         text_ar: 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
         text_bn: 'তুমি আমাদের (সরল ও) অবিচল পথটি দেখিয়ে দাও-',
-        reference: 'সূরা আল-ফাতিহা, ১:৬',
+        reference: 'সূরা আল-ফাতিহা, 1:6',
         deep_link: '/surah/al-fatiha?ayah=6',
     };
 };
@@ -245,8 +298,8 @@ export const fetchDailyAyah = async () => {
  * Check if Daily Ayah notification is enabled
  */
 export const isDailyAyahNotificationEnabled = () => {
-    if (typeof window === 'undefined' || !('Notification' in window)) return false;
-    return Notification.permission === 'granted' && localStorage.getItem(AYAH_STORAGE_KEY) !== 'disabled';
+    if (typeof window === 'undefined') return false;
+    return hasPermission() && localStorage.getItem(AYAH_STORAGE_KEY) !== 'disabled';
 };
 
 /**
@@ -254,14 +307,15 @@ export const isDailyAyahNotificationEnabled = () => {
  */
 export const setDailyAyahNotificationEnabled = (enabled) => {
     localStorage.setItem(AYAH_STORAGE_KEY, enabled ? 'enabled' : 'disabled');
+    refreshNotifications();
 };
 
 /**
  * Send an immediate test daily ayah notification
  */
 export const sendTestDailyAyahNotification = async () => {
-    if (Notification.permission !== 'granted') {
-        const result = await requestNotificationPermission();
+    if (!hasPermission()) {
+        const result = await requestNotifPermission();
         if (!result.success) {
             return { success: false, message: result.error || 'অনুমতি পাওয়া যায়নি' };
         }
@@ -271,30 +325,30 @@ export const sendTestDailyAyahNotification = async () => {
     const sent = await showPrayerNotification(
         `আজকের দিনের আয়াত 📖 (${ayah.surah_name})`,
         `${ayah.text_bn}\n— ${ayah.reference}`,
-        'daily-ayah-test-' + Date.now()
+        'daily-ayah-test-' + Date.now(),
+        ayah.deep_link || '/'
     );
 
     return {
         success: sent,
         ayah,
-        message: sent 
-            ? 'আজকের আয়াতের টেস্ট নোটিফিকেশন সফলভাবে পাঠানো হয়েছে!' 
-            : 'নোটিফিকেশন পাঠানো যায়নি। ব্রাউজার পারমিশন পরীক্ষা করুন।'
+        message: sent
+            ? 'আজকের আয়াতের টেস্ট নোটিফিকেশন সফলভাবে পাঠানো হয়েছে!'
+            : 'নোটিফিকেশন পাঠানো যায়নি। পারমিশন পরীক্ষা করুন।'
     };
 };
 
 /**
- * Check and notify Daily Ayah
+ * Check and notify Daily Ayah (web, while the page is open)
  */
 export const checkDailyAyahAndNotify = async () => {
     if (!isDailyAyahNotificationEnabled()) return;
 
     const now = new Date();
-    const currentHour = now.getHours();
-    const dateStr = now.toISOString().slice(0, 10);
+    const dateStr = localDateKey(now);
 
     // Notify at or after 8 AM (or when app first opened in morning/day)
-    if (currentHour >= 8) {
+    if (now.getHours() >= 8) {
         const lastNotified = localStorage.getItem(AYAH_LOG_KEY);
         if (lastNotified !== dateStr) {
             localStorage.setItem(AYAH_LOG_KEY, dateStr);
@@ -303,7 +357,8 @@ export const checkDailyAyahAndNotify = async () => {
                 showPrayerNotification(
                     `আজকের দিনের আয়াত 📖 (${ayah.surah_name})`,
                     `${ayah.text_bn}\n— ${ayah.reference}`,
-                    `daily-ayah-${dateStr}`
+                    `daily-ayah-${dateStr}`,
+                    ayah.deep_link || '/'
                 );
             }
         }
@@ -311,15 +366,12 @@ export const checkDailyAyahAndNotify = async () => {
 };
 
 /**
- * Check and fire prayer notifications
+ * Check and fire prayer notifications (web, while the page is open)
  */
 export const checkPrayerTimeAndNotify = () => {
-    // Check prayer times
     if (isPrayerNotificationEnabled()) {
         const now = new Date();
-        const currentHour = now.getHours();
-        const currentMin = now.getMinutes();
-        const dateStr = now.toISOString().slice(0, 10);
+        const dateStr = localDateKey(now);
 
         const prefs = getPrayerPreferences();
         const schedule = getDynamicPrayerSchedule();
@@ -328,7 +380,7 @@ export const checkPrayerTimeAndNotify = () => {
             if (!prefs[prayer.id]) continue;
 
             // Check if current hour and minute match within 1-minute window
-            if (currentHour === prayer.startHour && currentMin === prayer.startMin) {
+            if (now.getHours() === prayer.startHour && now.getMinutes() === prayer.startMin) {
                 const lastNotifiedKey = `${LOG_KEY}-${prayer.id}`;
                 const lastNotifiedDate = localStorage.getItem(lastNotifiedKey);
 
@@ -346,23 +398,37 @@ export const checkPrayerTimeAndNotify = () => {
         }
     }
 
-    // Check daily ayah notification
     checkDailyAyahAndNotify();
 };
 
 let schedulerInterval = null;
+let schedulerStarted = false;
 
 /**
- * Initialize background interval checker for prayer & daily ayah notifications
+ * Start notifications at app launch.
+ * - Native app: schedule the next 7 days of local notifications (refreshed on every resume / location change).
+ * - Web: server push delivers them in the background; this in-page checker covers the open tab
+ *   (same notification tag as the push, so they never show twice).
+ * @param {(url: string) => void} navigate
  */
-export const initPrayerScheduler = () => {
-    if (typeof window === 'undefined') return;
+export const initPrayerScheduler = (navigate = () => {}) => {
+    if (typeof window === 'undefined' || schedulerStarted) return;
+    schedulerStarted = true;
 
-    if (schedulerInterval) {
-        clearInterval(schedulerInterval);
+    if (isNative()) {
+        initNativeNotificationListeners(navigate, (token) => {
+            savePushToken(token);
+            refreshNotifications();
+        });
+        CapApp.addListener('resume', () => refreshNotifications());
+    } else {
+        if (schedulerInterval) {
+            clearInterval(schedulerInterval);
+        }
+        checkPrayerTimeAndNotify();
+        schedulerInterval = setInterval(checkPrayerTimeAndNotify, 30000);
     }
 
-    // Check immediately and then every 30 seconds
-    checkPrayerTimeAndNotify();
-    schedulerInterval = setInterval(checkPrayerTimeAndNotify, 30000);
+    window.addEventListener('hasana-location-changed', () => refreshNotifications());
+    refreshNotifications();
 };

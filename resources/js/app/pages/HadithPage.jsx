@@ -222,7 +222,7 @@ export function HadithPage() {
                                     : 'bg-muted text-muted-foreground hover:text-foreground'
                             }`}
                         >
-                            সকল হাদিস ({totalCount.toLocaleString('bn-BD')})
+                            সকল হাদিস ({totalCount.toLocaleString('bn-BD-u-nu-latn')})
                         </button>
                         {categories.map((cat) => (
                             <button
@@ -235,7 +235,7 @@ export function HadithPage() {
                                         : 'bg-muted text-muted-foreground hover:text-foreground'
                                 }`}
                             >
-                                {cat.name} ({cat.items_count?.toLocaleString('bn-BD') || 0})
+                                {cat.name} ({cat.items_count?.toLocaleString('bn-BD-u-nu-latn') || 0})
                             </button>
                         ))}
                     </div>
@@ -287,7 +287,7 @@ export function HadithPage() {
                                             <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-3">
                                                 <div className="flex items-center gap-2.5">
                                                     <span className="w-8 h-8 rounded-full bg-primary text-gold flex items-center justify-center text-xs font-bold shrink-0">
-                                                        {(idx + 1).toLocaleString('bn-BD')}
+                                                        {(idx + 1).toLocaleString('bn-BD-u-nu-latn')}
                                                     </span>
                                                     <h3 className="font-bold text-base md:text-lg text-foreground">
                                                         {item.title}

@@ -60,7 +60,7 @@
                     <i class="fa-solid fa-circle-info"></i>
                     <span>সংস্করণ</span>
                 </div>
-                <span>১.০.০</span>
+                <span>1.0.0</span>
             </div>
             <div class="settings-item">
                 <div class="settings-item-content">

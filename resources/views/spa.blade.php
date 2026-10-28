@@ -40,8 +40,8 @@
     <!-- Structured Data (JSON-LD) for Search Engines -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
+      "@@context": "https://schema.org",
+      "@@type": "WebApplication",
       "name": "Hasana (হাসানা)",
       "url": "https://hasanaa.com",
       "applicationCategory": "LifestyleApplication",
@@ -49,7 +49,7 @@
       "description": "হাসানা — আল কুরআন, হাদিস, দোয়া, নামাজের সময়সূচী ও ডিজিটাল উমরাহ সহায়িকা।",
       "image": "{{ asset('images/og-share-hasana.jpg') }}",
       "offers": {
-        "@type": "Offer",
+        "@@type": "Offer",
         "price": "0",
         "priceCurrency": "BDT"
       }
@@ -65,11 +65,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="হাসানা">
-
-    <!-- Google Fonts: Amiri (Arabic) & Hind Siliguri (Bengali) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Early Theme Detection -->
     <script>

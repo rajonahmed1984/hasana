@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
     X, 
     Download, 
@@ -10,8 +11,9 @@ import {
     Palette,
     Eye
 } from 'lucide-react';
-import { toPng, toBlob } from 'html-to-image';
-import { hapticImpact, nativeShare } from '../native';
+import { toBlob, getFontEmbedCSS } from 'html-to-image';
+import { hapticImpact, isNative, shareImageNative } from '../native';
+import { useCloseOnBack } from '../services/backHandler';
 
 const THEMES = [
     {
@@ -80,12 +82,23 @@ const THEMES = [
     },
 ];
 
+const BN_FONT = "'Hind Siliguri', sans-serif";
+const AR_FONT = "'Amiri', serif";
+
+// getFontEmbedCSS fetches every font file, so it is computed once per page load
+let fontEmbedCSSCache = null;
+
 export function ShareCardModal({ isOpen, onClose, data }) {
     if (!isOpen || !data) return null;
+    // Separate component so its hooks always run in the same order (and state resets on each open)
+    return <ShareCardDialog onClose={onClose} data={data} />;
+}
+
+function ShareCardDialog({ onClose, data }) {
+    useCloseOnBack(true, onClose);
 
     const [selectedThemeId, setSelectedThemeId] = useState('emerald');
     const [showBismillah, setShowBismillah] = useState(true);
-    const [showTranslit, setShowTranslit] = useState(Boolean(data.transliteration));
     const [isGenerating, setIsGenerating] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
     const [toast, setToast] = useState(null);
@@ -98,25 +111,46 @@ export function ShareCardModal({ isOpen, onClose, data }) {
         setTimeout(() => setToast(null), 2500);
     };
 
-    // Download Card as PNG
+    // Render the card to a PNG blob, with the self-hosted fonts embedded so Bangla/Arabic text renders correctly
+    const generateBlob = async () => {
+        if (document.fonts?.ready) await document.fonts.ready;
+        if (!fontEmbedCSSCache) {
+            fontEmbedCSSCache = await getFontEmbedCSS(cardRef.current);
+        }
+        const blob = await toBlob(cardRef.current, {
+            pixelRatio: 3,
+            cacheBust: true,
+            fontEmbedCSS: fontEmbedCSSCache,
+        });
+        if (!blob) throw new Error('Blob creation failed');
+        return blob;
+    };
+
+    const fileName = () => `hasana-${(data.reference || data.title || 'card').replace(/[^a-zA-Z0-9ঀ-৿]+/g, '-')}.png`;
+
+    const downloadBlob = (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = fileName();
+        link.href = url;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    // Download Card as PNG (in the native app, the share sheet offers "Save")
     const handleDownload = async () => {
         hapticImpact();
         if (!cardRef.current) return;
         setIsGenerating(true);
 
         try {
-            const dataUrl = await toPng(cardRef.current, {
-                pixelRatio: 2.5,
-                cacheBust: true,
-            });
-
-            const link = document.createElement('a');
-            const safeName = (data.title || 'hasana-card').replace(/[^a-zA-Z0-9\u0980-\u09FF]/g, '_');
-            link.download = `${safeName}.png`;
-            link.href = dataUrl;
-            link.click();
-
-            showToastMessage('ছবি সফলভাবে ডাউনলোড হয়েছে!');
+            const blob = await generateBlob();
+            if (isNative()) {
+                await shareImageNative(blob, fileName());
+            } else {
+                downloadBlob(blob);
+                showToastMessage('ছবি সফলভাবে ডাউনলোড হয়েছে!');
+            }
         } catch (error) {
             console.error('Failed to generate image:', error);
             showToastMessage('ছবি তৈরি করা সম্ভব হয়নি।');
@@ -125,53 +159,31 @@ export function ShareCardModal({ isOpen, onClose, data }) {
         }
     };
 
-    // Share Card as Image File (or fallback)
+    // Share only the card image — no extra text or link
     const handleShareImage = async () => {
         hapticImpact();
         if (!cardRef.current) return;
         setIsGenerating(true);
 
         try {
-            const blob = await toBlob(cardRef.current, {
-                pixelRatio: 2.5,
-                cacheBust: true,
-            });
+            const blob = await generateBlob();
 
-            if (!blob) throw new Error('Blob creation failed');
+            if (isNative()) {
+                await shareImageNative(blob, fileName());
+                return;
+            }
 
-            const file = new File([blob], 'hasana-card.png', { type: 'image/png' });
-
+            const file = new File([blob], fileName(), { type: 'image/png' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    files: [file],
-                    title: data.title || 'হাসানা ইসলামিক ফটো কার্ড',
-                    text: `${data.title}\n\n— হাসানা ইসলামিক অ্যাপ`,
-                });
-                showToastMessage('কার্ডটি শেয়ার করা হয়েছে!');
+                await navigator.share({ files: [file] });
             } else {
-                // If direct file sharing is not supported, download the image and copy text
-                const dataUrl = await toPng(cardRef.current, { pixelRatio: 2.5 });
-                const link = document.createElement('a');
-                link.download = `hasana_card.png`;
-                link.href = dataUrl;
-                link.click();
-
-                await nativeShare({
-                    title: data.title || 'হাসানা',
-                    text: `${data.text_ar}\n\n${data.text_bn}\n\n— ${data.reference || ''}\n${data.url || window.location.href}`,
-                    url: data.url || window.location.href,
-                });
-                showToastMessage('ছবি সেভ হয়েছে এবং লিঙ্ক শেয়ার খোলা হয়েছে');
+                downloadBlob(blob);
+                showToastMessage('এই ব্রাউজারে সরাসরি শেয়ার হয় না — ছবি ডাউনলোড হয়েছে');
             }
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Share failed:', error);
-                // Fallback to text share
-                await nativeShare({
-                    title: data.title || 'হাসানা',
-                    text: `${data.text_ar}\n\n${data.text_bn}\n\n— ${data.reference || ''}`,
-                    url: data.url || window.location.href,
-                });
+                showToastMessage('শেয়ার করা সম্ভব হয়নি।');
             }
         } finally {
             setIsGenerating(false);
@@ -181,7 +193,7 @@ export function ShareCardModal({ isOpen, onClose, data }) {
     // Copy formatted text
     const handleCopyText = async () => {
         hapticImpact();
-        const copyText = `${data.text_ar}\n\n${data.transliteration && showTranslit ? 'উচ্চারণ: ' + data.transliteration + '\n\n' : ''}অর্থ: ${data.text_bn}\n\n— ${data.reference || data.title}\n${data.url || window.location.href}`;
+        const copyText = `${data.text_ar}\n\nঅর্থ: ${data.text_bn}\n\n— ${data.reference || data.title}\n${data.url || window.location.href}`;
         try {
             await navigator.clipboard.writeText(copyText);
             setIsCopied(true);
@@ -192,7 +204,7 @@ export function ShareCardModal({ isOpen, onClose, data }) {
         }
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
             {/* Backdrop */}
             <div 
@@ -232,19 +244,6 @@ export function ShareCardModal({ isOpen, onClose, data }) {
                                 <Palette className="w-3.5 h-3.5 text-primary" /> কার্ডের থিম নির্বাচন করুন
                             </span>
                             <div className="flex items-center gap-2">
-                                {data.transliteration && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowTranslit(!showTranslit)}
-                                        className={`px-2 py-0.5 rounded-full text-[11px] font-semibold transition ${
-                                            showTranslit 
-                                                ? 'bg-primary/10 text-primary border border-primary/20' 
-                                                : 'bg-muted text-muted-foreground'
-                                        }`}
-                                    >
-                                        উচ্চারণ {showTranslit ? '✓' : '✗'}
-                                    </button>
-                                )}
                                 <button
                                     type="button"
                                     onClick={() => setShowBismillah(!showBismillah)}
@@ -278,76 +277,79 @@ export function ShareCardModal({ isOpen, onClose, data }) {
                         </div>
                     </div>
 
-                    {/* LIVE PHOTO CARD CONTAINER (Centered Content) */}
+                    {/* LIVE PHOTO CARD (this exact node is exported as the image) */}
                     <div className="flex items-center justify-center py-1">
                         <div
                             ref={cardRef}
-                            style={{ background: theme.cardBg }}
-                            className={`w-full max-w-[420px] rounded-3xl p-6 sm:p-7 shadow-xl relative overflow-hidden flex flex-col items-center justify-center text-center transition-all select-none border-2 ${theme.border}`}
+                            style={{ background: theme.cardBg, fontFamily: BN_FONT }}
+                            className={`w-full max-w-[400px] rounded-[28px] px-6 pt-7 pb-5 relative overflow-hidden flex flex-col items-center text-center select-none border-2 ${theme.border}`}
                         >
-                            {/* Inner Ornamental Border Frame */}
-                            <div 
-                                className="absolute inset-3 rounded-2xl pointer-events-none"
+                            {/* Inner ornamental frame */}
+                            <div
+                                className="absolute inset-2.5 rounded-[22px] pointer-events-none"
                                 style={{ border: `1px solid ${theme.innerBorder}` }}
                             />
 
-                            {/* Corner Decorative Dots */}
-                            <div className="absolute top-4 left-4 w-1.5 h-1.5 rounded-full bg-amber-400/60" />
-                            <div className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-amber-400/60" />
-                            <div className="absolute bottom-4 left-4 w-1.5 h-1.5 rounded-full bg-amber-400/60" />
-                            <div className="absolute bottom-4 right-4 w-1.5 h-1.5 rounded-full bg-amber-400/60" />
-
-                            {/* Card Header: Bismillah & Ornament */}
+                            {/* Bismillah */}
                             {showBismillah && (
-                                <div className="mb-4 relative z-10">
-                                    <p className={`font-arabic text-lg sm:text-xl font-bold tracking-wide ${theme.bismillah}`}>
+                                <div className="relative z-10 mb-3">
+                                    <p
+                                        className={`whitespace-nowrap text-[17px] leading-relaxed font-bold ${theme.bismillah}`}
+                                        style={{ fontFamily: AR_FONT }}
+                                        dir="rtl"
+                                    >
                                         بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
                                     </p>
-                                    <div className="flex items-center justify-center gap-2 mt-1 opacity-60">
-                                        <span className="w-8 h-[1px] bg-gradient-to-r from-transparent to-amber-400" />
-                                        <span className="text-[10px] text-amber-300">✦</span>
-                                        <span className="w-8 h-[1px] bg-gradient-to-l from-transparent to-amber-400" />
+                                    <div className="flex items-center justify-center gap-2 mt-1 opacity-70">
+                                        <span className="w-10 h-px bg-gradient-to-r from-transparent to-amber-400" />
+                                        <span className={`text-[9px] ${theme.accent}`}>✦</span>
+                                        <span className="w-10 h-px bg-gradient-to-l from-transparent to-amber-400" />
                                     </div>
                                 </div>
                             )}
 
-                            {/* Card Center: Arabic Content */}
+                            {/* Arabic text */}
                             {data.text_ar && (
-                                <div className="my-2 relative z-10 w-full px-2">
-                                    <p 
-                                        className={`font-arabic text-2xl sm:text-3xl font-bold leading-loose text-center ${theme.arabic}`}
-                                        dir="rtl"
-                                    >
-                                        {data.text_ar}
-                                    </p>
-                                </div>
-                            )}
-
-                            {/* Card Center: Transliteration */}
-                            {showTranslit && data.transliteration && (
-                                <p className={`text-xs sm:text-sm italic my-2 relative z-10 px-3 max-w-sm leading-relaxed ${theme.translit}`}>
-                                    {data.transliteration}
+                                <p
+                                    className={`relative z-10 w-full text-[25px] leading-[2] font-bold ${theme.arabic}`}
+                                    style={{ fontFamily: AR_FONT }}
+                                    dir="rtl"
+                                >
+                                    {data.text_ar}
                                 </p>
                             )}
 
-                            {/* Card Center: Bengali Translation */}
+                            {/* Bangla translation */}
                             {data.text_bn && (
-                                <div className="mt-2 mb-3 relative z-10 px-2 max-w-sm">
-                                    <p className={`text-sm sm:text-base font-medium leading-relaxed ${theme.translation}`}>
-                                        "{data.text_bn}"
-                                    </p>
-                                </div>
+                                <p
+                                    className={`relative z-10 mt-3 w-full text-[15px] leading-[1.8] font-medium ${theme.translation}`}
+                                    style={{ fontFamily: BN_FONT, textWrap: 'pretty' }}
+                                >
+                                    <span className={`${theme.accent} font-bold`}>“</span>
+                                    {data.text_bn.trim()}
+                                    <span className={`${theme.accent} font-bold`}>”</span>
+                                </p>
                             )}
 
-                            {/* Card Footer: Divider, Reference & Branding */}
-                            <div className="mt-4 pt-3 w-full border-t border-amber-400/20 relative z-10 flex flex-col items-center gap-2">
-                                <span className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold border ${theme.refBg}`}>
-                                    {data.reference || data.title}
-                                </span>
+                            {/* Footer: reference + branding */}
+                            <div className="relative z-10 mt-5 w-full flex flex-col items-center gap-2.5">
+                                <div className="flex items-center justify-center gap-2 w-full">
+                                    <span className="flex-1 h-px bg-gradient-to-r from-transparent to-amber-400/40" />
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-[12px] leading-snug font-semibold border ${theme.refBg}`}
+                                        style={{ textWrap: 'balance' }}
+                                    >
+                                        {data.reference || data.title}
+                                    </span>
+                                    <span className="flex-1 h-px bg-gradient-to-l from-transparent to-amber-400/40" />
+                                </div>
 
-                                <div className="flex items-center justify-center gap-1.5 opacity-90 text-[11px] font-semibold">
-                                    <span className="font-arabic text-sm font-bold text-amber-300">حسنة</span>
-                                    <span className={`${theme.brandText}`}>• হাসানা ইসলামিক প্ল্যাটফর্ম</span>
+                                <div className={`flex items-center gap-1.5 whitespace-nowrap text-[11px] font-semibold opacity-85 ${theme.brandText}`}>
+                                    <span className="text-[15px] leading-none font-bold" style={{ fontFamily: AR_FONT }}>حسنة</span>
+                                    <span className="opacity-60">|</span>
+                                    <span>হাসানা অ্যাপ</span>
+                                    <span className="opacity-60">•</span>
+                                    <span className="tracking-wide" style={{ fontFamily: 'system-ui, sans-serif' }}>hasanaa.com</span>
                                 </div>
                             </div>
                         </div>
@@ -396,6 +398,7 @@ export function ShareCardModal({ isOpen, onClose, data }) {
                     <span>{toast}</span>
                 </div>
             )}
-        </div>
+        </div>,
+        document.body
     );
 }

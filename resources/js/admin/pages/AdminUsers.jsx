@@ -225,7 +225,7 @@ export default function AdminUsers() {
                                                 </span>
                                             </td>
                                             <td className="py-3.5 px-6 text-[#546e6a] dark:text-[#8aa39f]">
-                                                {u.created_at ? new Date(u.created_at).toLocaleDateString('bn-BD', {
+                                                {u.created_at ? new Date(u.created_at).toLocaleDateString('bn-BD-u-nu-latn', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: 'numeric'
@@ -298,7 +298,7 @@ export default function AdminUsers() {
 
                     <div>
                         <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-1">
-                            {isEditOpen ? 'নতুন পাসওয়ার্ড (পরিবর্তন না করতে চাইলে খালি রাখুন)' : 'পাসওয়ার্ড (নূন্যতম ৮ অক্ষর) *'}
+                            {isEditOpen ? 'নতুন পাসওয়ার্ড (পরিবর্তন না করতে চাইলে খালি রাখুন)' : 'পাসওয়ার্ড (নূন্যতম 8 অক্ষর) *'}
                         </label>
                         <input
                             type="password"

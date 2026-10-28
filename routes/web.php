@@ -14,10 +14,12 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Api\AnalyticsController;
+use App\Http\Controllers\Api\AppVersionController as ApiAppVersionController;
 use App\Http\Controllers\Api\SurahController as ApiSurahController;
 use App\Http\Controllers\Api\HadithController as ApiHadithController;
 use App\Http\Controllers\Api\DuaController as ApiDuaController;
 use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
+use App\Http\Controllers\Api\OfflineController as ApiOfflineController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
@@ -32,6 +34,14 @@ Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(functio
     Route::get('/hadiths', [ApiHadithController::class, 'index'])->name('hasana.hadiths.index');
     Route::get('/dua/categories', [ApiDuaController::class, 'categories'])->name('hasana.duas.categories');
     Route::get('/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
+    Route::get('/app/version', [ApiAppVersionController::class, 'show'])->name('app.version');
+});
+
+// Offline data packs (large, one request each) — separate limit so a full download doesn't hit the API limit
+Route::prefix('api/offline')->name('api.offline.')->middleware(['throttle:40,1'])->group(function () {
+    Route::get('/quran', [ApiOfflineController::class, 'quran'])->name('quran');
+    Route::get('/hadiths/{category}', [ApiOfflineController::class, 'hadiths'])->name('hadiths');
+    Route::get('/duas', [ApiOfflineController::class, 'duas'])->name('duas');
 });
 Route::view('/', 'spa')->name('hasana.home');
 Route::view('/quran', 'spa')->name('hasana.quran');

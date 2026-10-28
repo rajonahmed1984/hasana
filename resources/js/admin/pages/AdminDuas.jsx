@@ -360,7 +360,7 @@ export default function AdminDuas() {
                             </label>
                             <input
                                 type="text"
-                                placeholder="তিরমিযী: ৩৩৭৪"
+                                placeholder="তিরমিযী: 3374"
                                 value={form.reference}
                                 onChange={(e) => setForm({ ...form, reference: e.target.value })}
                                 className="w-full text-xs px-3 py-2.5 rounded-xl border border-[#e2dfd5] dark:border-[#233e38] bg-[#f8f7f2] dark:bg-[#162724] text-[#14302b] dark:text-[#e4ebe9] outline-none focus:border-[#125e54]"

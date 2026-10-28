@@ -31,8 +31,8 @@ const umrahSteps = [
         step: 1,
         title: 'ইহরাম পরিধান ও মীকাতের প্রস্তুতি',
         subtitle: 'পবিত্রতার সংকল্প ও আনুষ্ঠানিক সূচনা',
-        image: '/images/umrah/ihram.jpg',
-        badge: '১ম ফরজ (রুকন)',
+        image: '/images/umrah/ihram.webp',
+        badge: '1ম ফরজ (রুকন)',
         desc: 'উমরার প্রথম কাজ হলো মীকাত অতিক্রম করার পূর্বেই ইহরামের পোশাক পরিধান করা এবং মানসিকভাবে পবিত্রতা ও বিনম্রতার সর্বোচ্চ প্রস্তুতি গ্রহণ করা।',
         details: [
             'শারীরিক পরিচ্ছন্নতা: নখ কাটা, অতিরিক্ত পশম পরিষ্কার করা এবং সুন্দরভাবে গোসল (বা ওজু) করা সুন্নত।',
@@ -49,7 +49,7 @@ const umrahSteps = [
         step: 2,
         title: 'উমরার নিয়ত ও তালবিয়া পাঠ',
         subtitle: 'আল্লাহর ডাকে সাড়া দিয়ে হাজির হওয়ার ঘোষণা',
-        image: '/images/umrah/kaaba.jpg',
+        image: '/images/umrah/kaaba.webp',
         badge: 'ওয়াজিব আমল',
         desc: 'মীকাতে পৌঁছে বা অতিক্রম করার প্রাক্কালে অন্তরে উমরার সুনির্দিষ্ট নিয়ত করে মুখে উচ্চারণের মাধ্যমে তালবিয়া পাঠ শুরু করা।',
         arNiyyah: 'اللَّهُمَّ إِنِّي أُرِيدُ العُمْرَةَ فَيَسِّرْهَا لِي وَتَقَبَّلْهَا مِنِّي',
@@ -69,11 +69,11 @@ const umrahSteps = [
     },
     {
         step: 3,
-        title: 'কাবা শরীফের তাওয়াফ (৭ চক্কর)',
-        subtitle: 'কাবার চারপাশ ঘড়ির কাঁটার বিপরীত দিকে ৭ চক্কর প্রদক্ষিণ',
-        image: '/images/umrah/kaaba.jpg',
-        badge: '২য় ফরজ (রুকন)',
-        desc: 'মসজিদে হারামে ডান পা দিয়ে প্রবেশের পর হাজরে আসওয়াদ থেকে শুরু করে কাবা শরীফকে বামে রেখে পূর্ণ ৭ চক্কর তাওয়াফ সম্পন্ন করা।',
+        title: 'কাবা শরীফের তাওয়াফ (7 চক্কর)',
+        subtitle: 'কাবার চারপাশ ঘড়ির কাঁটার বিপরীত দিকে 7 চক্কর প্রদক্ষিণ',
+        image: '/images/umrah/kaaba.webp',
+        badge: '2য় ফরজ (রুকন)',
+        desc: 'মসজিদে হারামে ডান পা দিয়ে প্রবেশের পর হাজরে আসওয়াদ থেকে শুরু করে কাবা শরীফকে বামে রেখে পূর্ণ 7 চক্কর তাওয়াফ সম্পন্ন করা।',
         arTawafStart: 'بِسْمِ اللَّهِ وَاللَّهُ أَكْبَرُ',
         transTawafStart: 'বিসমিল্লাহি ওয়াল্লাহু আকবার',
         meaningTawafStart: 'আল্লাহর নামে শুরু করছি এবং আল্লাহ সর্বশ্রেষ্ঠ।',
@@ -83,9 +83,9 @@ const umrahSteps = [
         details: [
             'পবিত্রতা: তাওয়াফের জন্য পূর্ণ অজু ও পাক-পবিত্র থাকা শর্ত।',
             'ইজতিবা (পুরুষদের): তাওয়াফ শুরুর পূর্বে গায়ের চাদরটির ডান বগলের নিচ দিয়ে নিয়ে বাম কাঁধের ওপর তুলে দেওয়া (ডান কাঁধ খোলা রাখা)। তাওয়াফ শেষে আবার কাঁধ ঢেকে ফেলা।',
-            'রমল (পুরুষদের): প্রথম ৩ চক্করে কাঁধ হেলিয়ে বীরদর্পে একটু দ্রুত ও ছোট পদক্ষেপে হাঁটা সুন্নত। অবশিষ্ট ৪ চক্কর স্বাভাবিক পদক্ষেপে হাঁটা।',
+            'রমল (পুরুষদের): প্রথম 3 চক্করে কাঁধ হেলিয়ে বীরদর্পে একটু দ্রুত ও ছোট পদক্ষেপে হাঁটা সুন্নত। অবশিষ্ট 4 চক্কর স্বাভাবিক পদক্ষেপে হাঁটা।',
             'ইস্তিলাম: প্রতি চক্করের শুরুতে হাজরে আসওয়াদের সোজাসুজি মেঝেতে থাকা মার্বেল রেখায় দাঁড়িয়ে দুই হাত কানের লতি পর্যন্ত তুলে "বিসমিল্লাহি আল্লাহু আকবার" বলে কাবার দিকে ইশারা করে হাতে চুমু খাওয়া।',
-            'রুকনে ইয়ামানী: ৩য় কোণ বা রুকনে ইয়ামানী অতিক্রমের সময় সম্ভব হলে স্পর্শ করা (চুমু খাওয়া নয়) এবং হাজরে আসওয়াদ পর্যন্ত "রাব্বানা আতিনা..." দোয়াটি পাঠ করা সুন্নত।',
+            'রুকনে ইয়ামানী: 3য় কোণ বা রুকনে ইয়ামানী অতিক্রমের সময় সম্ভব হলে স্পর্শ করা (চুমু খাওয়া নয়) এবং হাজরে আসওয়াদ পর্যন্ত "রাব্বানা আতিনা..." দোয়াটি পাঠ করা সুন্নত।',
         ],
         points: [
             'তাওয়াফের জন্য কোনো নির্দিষ্ট দোয়া মুখস্থ থাকা আবশ্যক নয়; কুরআন তেলাওয়াত, জিকির ও নিজের ভাষায় মনের আকুল মোনাজাত করা যায়।',
@@ -94,15 +94,15 @@ const umrahSteps = [
     {
         step: 4,
         title: 'মাকামে ইবরাহীমে নামাজ ও জমজমের পানি পান',
-        subtitle: '২ রাকাত তাওয়াফের সালাত ও বরকতময় জমজম',
-        image: '/images/umrah/zamzam.jpg',
+        subtitle: '2 রাকাত তাওয়াফের সালাত ও বরকতময় জমজম',
+        image: '/images/umrah/zamzam.webp',
         badge: 'ওয়াজিব ও সুন্নত',
-        desc: 'তাওয়াফের ৭ চক্কর শেষ করে পুরুষদের উভয় কাঁধ ঢেকে নেওয়া, মাকামে ইবরাহীমের পেছনে দুই রাকাত সালাত আদায় করা এবং তৃপ্তিভরে জমজম পান করা।',
+        desc: 'তাওয়াফের 7 চক্কর শেষ করে পুরুষদের উভয় কাঁধ ঢেকে নেওয়া, মাকামে ইবরাহীমের পেছনে দুই রাকাত সালাত আদায় করা এবং তৃপ্তিভরে জমজম পান করা।',
         arZamzam: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا وَاسِعًا، وَشِفَاءً مِنْ كُلِّ دَاءٍ',
         transZamzam: 'আল্লাহুম্মা ইন্নী আসআলুকা \'ইলমান নাফি\'আ, ওয়া রিযক্বান ওয়াসি\'আ, ওয়া শিফা-আম মিন কুল্লি দা-\'',
         meaningZamzam: 'হে আল্লাহ! আমি আপনার নিকট উপকারী জ্ঞান, প্রশস্ত হালাল রিজিক এবং সকল রোগব্যাধি থেকে পূর্ণ আরোগ্য প্রার্থনা করছি।',
         details: [
-            'তাওয়াফের নামাজ: মাকামে ইবরাহীমের পেছনে (জায়গা না পেলে মাতাফের বা হারামের যেকোনো স্থানে) ২ রাকাত তাওয়াফের ওয়াজিব নামাজ আদায় করা। ১ম রাকাতে সূরা কাফিরুন ও ২য় রাকাতে সূরা ইখলাস পাঠ করা মোস্তাহাব।',
+            'তাওয়াফের নামাজ: মাকামে ইবরাহীমের পেছনে (জায়গা না পেলে মাতাফের বা হারামের যেকোনো স্থানে) 2 রাকাত তাওয়াফের ওয়াজিব নামাজ আদায় করা। 1ম রাকাতে সূরা কাফিরুন ও 2য় রাকাতে সূরা ইখলাস পাঠ করা মোস্তাহাব।',
             'মুলতাজামে দোয়া: সুযোগ ও সুবিধা থাকলে কাবা ঘরের দরজা ও হাজরে আসওয়াদের মধ্যবর্তী স্থান \'মুলতাজাম\'-এ বুক ও গাল লাগিয়ে দোয়া করা।',
             'জমজম পান: দাঁড়িয়ে কাবামুখী হয়ে তিন শ্বাসে তৃপ্তিভরে জমজমের পানি পান করা এবং মাথায় ও মুখমণ্ডলে কিছু পানি মেখে বরকতের দোয়া করা।',
         ],
@@ -112,11 +112,11 @@ const umrahSteps = [
     },
     {
         step: 5,
-        title: 'সাফা-মারওয়া পাহাড়ে সাঈ (৭ বার)',
+        title: 'সাফা-মারওয়া পাহাড়ে সাঈ (7 বার)',
         subtitle: 'মা হাজেরা (আ.)-এর স্মরণে সাফা ও মারওয়ার মাঝে দৌড়ানো ও দোয়া',
-        image: '/images/umrah/safa.jpg',
-        badge: '৩য় ফরজ (রুকন)',
-        desc: 'সাফা পাহাড় থেকে শুরু করে মারওয়া পাহাড় পর্যন্ত মোট ৭ বার যাতায়াত করা। সাফা থেকে মারওয়া = ১ম বার, মারওয়া থেকে সাফা = ২য় বার... এভাবে ৭ম বার মারওয়া পাহাড়ে সমাপ্ত হবে।',
+        image: '/images/umrah/safa.webp',
+        badge: '3য় ফরজ (রুকন)',
+        desc: 'সাফা পাহাড় থেকে শুরু করে মারওয়া পাহাড় পর্যন্ত মোট 7 বার যাতায়াত করা। সাফা থেকে মারওয়া = 1ম বার, মারওয়া থেকে সাফা = 2য় বার... এভাবে 7ম বার মারওয়া পাহাড়ে সমাপ্ত হবে।',
         arSaiStart: 'إِنَّ الصَّفَا وَالْمَرْوَةَ مِنْ شَعَائِرِ اللَّهِ ۖ فَمَنْ حَجَّ الْبَيْتَ أَوِ اعْتَمَرَ فَلَا جُنَاحَ عَلَيْهِ أَنْ يَطَّوَّفَ بِهِمَا',
         transSaiStart: 'ইন্নাস সাফা ওয়াল মারওয়াতা মিন শা\'আইরিল্লাহ...',
         meaningSaiStart: 'নিশ্চয়ই সাফা ও মারওয়া আল্লাহর নিদর্শনসমূহের অন্তর্ভুক্ত।',
@@ -124,9 +124,9 @@ const umrahSteps = [
         transSafaTakbeer: 'লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু, লাহুল মুলকু ওয়া লাহুল হামদু...',
         meaningSafaTakbeer: 'এক আল্লাহ ব্যতীত কোনো সত্য উপাস্য নেই, তাঁর কোনো শরিক নেই। রাজত্ব ও প্রশংসা একমাত্র তাঁরই। তিনি তাঁর ওয়াদা পূর্ণ করেছেন, তাঁর বান্দাকে সাহায্য করেছেন এবং একাই সকল সম্মিলিত বাহিনীকে পরাভূত করেছেন।',
         details: [
-            'সাফায় আগমন: সাফা পাহাড়ের প্রাঙ্গণে উঠে কাবামুখী হয়ে দুই হাত তুলে ৩ বার তাকবীর ("আল্লাহু আকবার") ও তাওহীদের ঘোষণা দেওয়া এবং নিজের জন্য দীর্ঘ দোয়া করা।',
+            'সাফায় আগমন: সাফা পাহাড়ের প্রাঙ্গণে উঠে কাবামুখী হয়ে দুই হাত তুলে 3 বার তাকবীর ("আল্লাহু আকবার") ও তাওহীদের ঘোষণা দেওয়া এবং নিজের জন্য দীর্ঘ দোয়া করা।',
             'সবুজ বাতি (মাইল্লাইন আখদারাইন): সাফা ও মারওয়ার মধ্যবর্তী সবুজ টিউবলাইটে চিহ্নিত স্থানে পুরুষদের একটু দ্রুতপায়ে দৌড়ে পার হওয়া সুন্নত। নারীরা স্বাভাবিকভাবে হাঁটবেন।',
-            'মারওয়ায় সমাপ্তি: প্রতিবার মারওয়ায় পৌঁছেও কাবামুখী হয়ে হাত তুলে দোয়া করা। এভাবে ৭ম চক্করটি মারওয়া পাহাড়ে এসে শেষ হবে।',
+            'মারওয়ায় সমাপ্তি: প্রতিবার মারওয়ায় পৌঁছেও কাবামুখী হয়ে হাত তুলে দোয়া করা। এভাবে 7ম চক্করটি মারওয়া পাহাড়ে এসে শেষ হবে।',
             'পবিত্রতা: সাঈর জন্য অজু থাকা উত্তম, তবে অজু ভেঙে গেলেও সাঈ শুদ্ধ হয়ে যায়।',
         ],
         points: [
@@ -137,11 +137,11 @@ const umrahSteps = [
         step: 6,
         title: 'হলক বা কসর (মাথা মুণ্ডন বা চুল কাটা)',
         subtitle: 'ইহরামের সমাপ্তি ও উমরার পরিপূর্ণতা',
-        image: '/images/umrah/ihram.jpg',
+        image: '/images/umrah/ihram.webp',
         badge: 'ওয়াজিব আমল',
         desc: 'সাঈ সম্পন্ন করার পর চুল কাটার মাধ্যমে উমরার যাবতীয় কার্যাবলী আনুষ্ঠানিকভাবে সমাপ্ত হয় এবং ইহরামের সমস্ত বিধিনিষেধ মুক্ত হয়ে স্বাভাবিক হালাল অবস্থায় ফেরা হয়।',
         details: [
-            'পুরুষদের জন্য: সম্পূর্ণ মাথা ব্লেড বা মেশিন দিয়ে ন্যাড়া করা (হলক) সবচেয়ে বেশি সওয়াবের। নবীজী (ﷺ) মাথা মুণ্ডনকারীদের জন্য ৩ বার রহমতের দোয়া করেছেন। অথবা পুরো মাথার চুল চতুর্দিক থেকে সমানভাবে ছোট করে ছাঁটা (কসর)।',
+            'পুরুষদের জন্য: সম্পূর্ণ মাথা ব্লেড বা মেশিন দিয়ে ন্যাড়া করা (হলক) সবচেয়ে বেশি সওয়াবের। নবীজী (ﷺ) মাথা মুণ্ডনকারীদের জন্য 3 বার রহমতের দোয়া করেছেন। অথবা পুরো মাথার চুল চতুর্দিক থেকে সমানভাবে ছোট করে ছাঁটা (কসর)।',
             'নারীদের জন্য: নারীরা কখনোই মাথা মুণ্ডন করবেন না। তাদের ক্ষেত্রে চুলের যেকোনো একদিকের বেনী বা গোছা একত্র করে আঙুলের এক কর পরিমাণ (প্রায় এক ইঞ্চি) চুল কাটাই নিয়ম।',
             'ইহরাম সমাপ্তি (তাহাল্লুল): চুল কাটার সাথে সাথেই উমরার ইহরাম শেষ হয়ে যায় এবং পূর্বে নিষিদ্ধ হওয়া সাধারণ পোশাক, সুগন্ধি ইত্যাদি সবকিছু আবার হালাল হয়ে যায়।',
         ],
@@ -168,12 +168,12 @@ const prohibitions = [
 // Interactive Checklist items
 const defaultChecklist = [
     { id: 'c1', text: 'পাসপোর্ট ও নুসুক/উমরা ভিসা প্রিন্ট কপি', checked: false },
-    { id: 'c2', text: '২ সেট সুতি সাদা ইহরামের কাপড় (পুরুষদের জন্য)', checked: false },
+    { id: 'c2', text: '2 সেট সুতি সাদা ইহরামের কাপড় (পুরুষদের জন্য)', checked: false },
     { id: 'c3', text: 'ইহরামের চাদর আটকানোর জন্য মজবুত বেল্ট বা মানিব্যাগ', checked: false },
     { id: 'c4', text: 'আরামদায়ক স্যান্ডেল (গোড়ালি ও পায়ের উপরিভাগ উন্মুক্ত)', checked: false },
     { id: 'c5', text: 'সুগন্ধিমুক্ত (Fragrance-Free) সাবান, শ্যাম্পু ও পেট্রোলিয়াম জেলি', checked: false },
     { id: 'c6', text: 'তাওয়াফ ও সাঈ দোয়ার ছোট বই বা হাসানা মোবাইল অ্যাপ', checked: false },
-    { id: 'c7', text: 'ডিজিটাল তসবিহ বা আঙুলের ৭-দানার তাওয়াফ রিং', checked: false },
+    { id: 'c7', text: 'ডিজিটাল তসবিহ বা আঙুলের 7-দানার তাওয়াফ রিং', checked: false },
     { id: 'c8', text: 'নিয়মিত প্রেসক্রিপশনের প্রয়োজনীয় ওষুধপত্র', checked: false },
     { id: 'c9', text: 'পাসপোর্ট ও টাকা বহনের জন্য ছোট ঝুলানো সাইডব্যাগ', checked: false },
     { id: 'c10', text: 'হলক বা মাথা মুণ্ডনের জন্য পরিচ্ছন্ন ডিসপোজেবল রেজার (পুরুষ)', checked: false },
@@ -279,7 +279,7 @@ export function UmrahGuidePage() {
                 {/* Background Artwork */}
                 <div 
                     className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity scale-105 transition duration-1000"
-                    style={{ backgroundImage: `url('/images/umrah/kaaba.jpg')` }}
+                    style={{ backgroundImage: `url('/images/umrah/kaaba.webp')` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-transparent" />
 
@@ -302,11 +302,11 @@ export function UmrahGuidePage() {
                     {/* Quick Info Badges */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mt-8">
                         <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 text-center">
-                            <span className="text-gold font-bold text-lg block">৪টি মূল স্তম্ভ</span>
+                            <span className="text-gold font-bold text-lg block">4টি মূল স্তম্ভ</span>
                             <span className="text-xs text-white/80">ইহরাম, তাওয়াফ, সাঈ, হলক</span>
                         </div>
                         <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 text-center">
-                            <span className="text-gold font-bold text-lg block">৩-৪ ঘণ্টা</span>
+                            <span className="text-gold font-bold text-lg block">3-4 ঘণ্টা</span>
                             <span className="text-xs text-white/80">মোট সম্ভাব্য সময়</span>
                         </div>
                         <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 text-center">
@@ -335,7 +335,7 @@ export function UmrahGuidePage() {
                             }`}
                         >
                             <Footprints className="w-4 h-4" />
-                            ধাপে ধাপে ভিউ ({activeStepIndex + 1}/৬)
+                            ধাপে ধাপে ভিউ ({activeStepIndex + 1}/6)
                         </button>
 
                         <button
@@ -348,7 +348,7 @@ export function UmrahGuidePage() {
                             }`}
                         >
                             <Layers className="w-4 h-4" />
-                            একনজরে পূর্ণাঙ্গ গাইড (৬ ধাপ)
+                            একনজরে পূর্ণাঙ্গ গাইড (6 ধাপ)
                         </button>
 
                         <button
@@ -458,7 +458,7 @@ export function UmrahGuidePage() {
                                     </div>
 
                                     {/* Bottom Content Card with Guaranteed Crystal Contrast */}
-                                    <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-10 p-3.5 sm:p-4.5 rounded-2xl bg-black/70 backdrop-blur-md border border-white/20 shadow-2xl">
+                                    <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-10 p-3.5 sm:p-4.5">
                                         <div className="flex items-center gap-2 mb-1.5">
                                             <span className="px-2.5 py-0.5 rounded-full bg-gold/25 border border-gold/60 text-gold text-[11px] font-bold tracking-wide">
                                                 ধাপ {currentStep.step} এর আমল
@@ -686,7 +686,7 @@ export function UmrahGuidePage() {
                                         <div className="flex items-center justify-between mb-3 pb-3 border-b border-border/50">
                                             <div className="flex items-center gap-2.5">
                                                 <span className="w-9 h-9 rounded-2xl bg-primary text-gold flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
-                                                    {item.step.toLocaleString('bn-BD')}
+                                                    {item.step.toLocaleString('bn-BD-u-nu-latn')}
                                                 </span>
                                                 <div>
                                                     <h3 className="font-bold text-base md:text-lg text-foreground">
@@ -743,10 +743,10 @@ export function UmrahGuidePage() {
                                         তাওয়াফ ডিজিটাল সহায়ক
                                     </span>
                                     <h3 className="text-xl md:text-2xl font-extrabold text-foreground mt-1">
-                                        কাবা শরীফ তাওয়াফ কাউন্টার (৭ চক্কর)
+                                        কাবা শরীফ তাওয়াফ কাউন্টার (7 চক্কর)
                                     </h3>
                                     <p className="text-xs text-muted-foreground">
-                                        হাজরে আসওয়াদ থেকে শুরু করে কাবার চারপাশ ঘড়ির কাঁটার বিপরীত দিকে ৭ চক্কর গণনা করুন
+                                        হাজরে আসওয়াদ থেকে শুরু করে কাবার চারপাশ ঘড়ির কাঁটার বিপরীত দিকে 7 চক্কর গণনা করুন
                                     </p>
                                 </div>
                                 <button
@@ -764,10 +764,10 @@ export function UmrahGuidePage() {
                                     {/* Circular Round Indicator */}
                                     <div className="relative w-36 h-36 flex items-center justify-center rounded-full border-4 border-primary/20 bg-primary/5 shadow-inner mb-6">
                                         <span className="text-4xl md:text-5xl font-black text-primary">
-                                            {tawafRound.toLocaleString('bn-BD')}
+                                            {tawafRound.toLocaleString('bn-BD-u-nu-latn')}
                                         </span>
                                         <span className="absolute bottom-6 text-xs font-bold text-muted-foreground">
-                                            / ৭ম চক্কর
+                                            / 7ম চক্কর
                                         </span>
                                     </div>
 
@@ -775,11 +775,11 @@ export function UmrahGuidePage() {
                                     <div className="max-w-md bg-muted/60 border border-border p-4 rounded-2xl text-xs md:text-sm text-foreground/90 mb-6">
                                         {tawafRound <= 3 ? (
                                             <p className="font-semibold text-primary">
-                                                ⚡ ১ম-৩য় চক্কর: পুরুষদের একটু দ্রুত ও বীরদর্পে চলা (রমল) সুন্নত এবং ডান কাঁধ খোলা রাখা (ইজতিবা)।
+                                                ⚡ 1ম-3য় চক্কর: পুরুষদের একটু দ্রুত ও বীরদর্পে চলা (রমল) সুন্নত এবং ডান কাঁধ খোলা রাখা (ইজতিবা)।
                                             </p>
                                         ) : (
                                             <p className="font-semibold text-foreground">
-                                                🚶 ৪র্থ-৭ম চক্কর: স্বাভাবিক পদক্ষেপে প্রশান্তির সাথে প্রদক্ষিণ করুন।
+                                                🚶 4র্থ-7ম চক্কর: স্বাভাবিক পদক্ষেপে প্রশান্তির সাথে প্রদক্ষিণ করুন।
                                             </p>
                                         )}
                                         <p className="text-xs text-muted-foreground mt-2">
@@ -792,7 +792,7 @@ export function UmrahGuidePage() {
                                         onClick={handleTawafIncrement}
                                         className="native-press w-full sm:w-auto px-10 py-3.5 rounded-2xl bg-primary text-gold text-base font-bold shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2"
                                     >
-                                        <span>চক্কর {tawafRound} সম্পন্ন (+১ গণনা)</span>
+                                        <span>চক্কর {tawafRound} সম্পন্ন (+1 গণনা)</span>
                                         <ArrowRight className="w-5 h-5" />
                                     </button>
                                 </div>
@@ -802,10 +802,10 @@ export function UmrahGuidePage() {
                                         <Check className="w-8 h-8" />
                                     </div>
                                     <h4 className="text-xl font-bold text-emerald-600">
-                                        আলহামদুলিল্লাহ! আপনার ৭ চক্কর তাওয়াফ সম্পন্ন হয়েছে।
+                                        আলহামদুলিল্লাহ! আপনার 7 চক্কর তাওয়াফ সম্পন্ন হয়েছে।
                                     </h4>
                                     <p className="text-xs md:text-sm text-muted-foreground max-w-md mx-auto">
-                                        এখন ডান কাঁধ ঢেকে নিন, মাকামে ইবরাহীমের পেছনে ২ রাকাত তাওয়াফের সালাত আদায় করুন এবং তৃপ্তিভরে জমজম পান করে সাঈর জন্য অগ্রসর হোন।
+                                        এখন ডান কাঁধ ঢেকে নিন, মাকামে ইবরাহীমের পেছনে 2 রাকাত তাওয়াফের সালাত আদায় করুন এবং তৃপ্তিভরে জমজম পান করে সাঈর জন্য অগ্রসর হোন।
                                     </p>
                                     <button
                                         type="button"
@@ -826,10 +826,10 @@ export function UmrahGuidePage() {
                                         সাঈ ডিজিটাল সহায়ক
                                     </span>
                                     <h3 className="text-xl md:text-2xl font-extrabold text-foreground mt-1">
-                                        সাফা ও মারওয়া সাঈ কাউন্টার (৭ বার)
+                                        সাফা ও মারওয়া সাঈ কাউন্টার (7 বার)
                                     </h3>
                                     <p className="text-xs text-muted-foreground">
-                                        সাফা থেকে শুরু করে মারওয়া পাহাড়ে ৭ম বারে সমাপ্তি
+                                        সাফা থেকে শুরু করে মারওয়া পাহাড়ে 7ম বারে সমাপ্তি
                                     </p>
                                 </div>
                                 <button
@@ -846,10 +846,10 @@ export function UmrahGuidePage() {
                                 <div className="flex flex-col items-center justify-center py-6 text-center">
                                     <div className="relative w-36 h-36 flex items-center justify-center rounded-full border-4 border-emerald-500/20 bg-emerald-500/5 shadow-inner mb-6">
                                         <span className="text-4xl md:text-5xl font-black text-emerald-600">
-                                            {saiLap.toLocaleString('bn-BD')}
+                                            {saiLap.toLocaleString('bn-BD-u-nu-latn')}
                                         </span>
                                         <span className="absolute bottom-6 text-xs font-bold text-muted-foreground">
-                                            / ৭ম বার
+                                            / 7ম বার
                                         </span>
                                     </div>
 
@@ -871,7 +871,7 @@ export function UmrahGuidePage() {
                                         onClick={handleSaiIncrement}
                                         className="native-press w-full sm:w-auto px-10 py-3.5 rounded-2xl bg-emerald-600 text-white text-base font-bold shadow-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2"
                                     >
-                                        <span>{saiLap % 2 === 1 ? 'মারওয়ায় পৌঁছেছি (+১)' : 'সাফায় পৌঁছেছি (+১)'}</span>
+                                        <span>{saiLap % 2 === 1 ? 'মারওয়ায় পৌঁছেছি (+1)' : 'সাফায় পৌঁছেছি (+1)'}</span>
                                         <ArrowRight className="w-5 h-5" />
                                     </button>
                                 </div>
@@ -948,7 +948,7 @@ export function UmrahGuidePage() {
                                 <HelpCircle className="w-4 h-4 text-primary" /> ভুলবশত কোনো নিষিদ্ধ কাজ হয়ে গেলে করণীয়:
                             </span>
                             <p>
-                                অজ্ঞতাবশত বা ভুলবশত কোনো নিষিদ্ধ কাজ (যেমন আতর লাগানো বা চুল ঝরে যাওয়া) হয়ে গেলে তাৎক্ষণিকভাবে তা বন্ধ করে তওবা ও ইস্তিগফার করবেন। ইচ্ছাকৃত বা অসাবধানতাবশত নিষেধাজ্ঞা ভঙ্গ করলে অপরাধভেদে ফিদইয়া বা দম (একটি ছাগল/ভেড়া কোরবানি অথবা ৬ জন মিসকিনকে খাবার খাওয়ানো) ওয়াজিব হতে পারে।
+                                অজ্ঞতাবশত বা ভুলবশত কোনো নিষিদ্ধ কাজ (যেমন আতর লাগানো বা চুল ঝরে যাওয়া) হয়ে গেলে তাৎক্ষণিকভাবে তা বন্ধ করে তওবা ও ইস্তিগফার করবেন। ইচ্ছাকৃত বা অসাবধানতাবশত নিষেধাজ্ঞা ভঙ্গ করলে অপরাধভেদে ফিদইয়া বা দম (একটি ছাগল/ভেড়া কোরবানি অথবা 6 জন মিসকিনকে খাবার খাওয়ানো) ওয়াজিব হতে পারে।
                             </p>
                         </div>
                     </div>

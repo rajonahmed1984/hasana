@@ -105,7 +105,7 @@ function initDateTimeTicker() {
     const update = () => {
         const now = new Date();
         if (timeElem) {
-            timeElem.textContent = formatDigits(now.toLocaleTimeString('bn-BD', {
+            timeElem.textContent = formatDigits(now.toLocaleTimeString('bn-BD-u-nu-latn', {
                 hour: 'numeric',
                 minute: '2-digit',
                 second: '2-digit',
@@ -114,7 +114,7 @@ function initDateTimeTicker() {
         }
 
         if (gregorianElem) {
-            gregorianElem.textContent = formatDigits(now.toLocaleDateString('bn-BD', {
+            gregorianElem.textContent = formatDigits(now.toLocaleDateString('bn-BD-u-nu-latn', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -131,7 +131,7 @@ function initDateTimeTicker() {
                     year: 'numeric',
                     numberingSystem: 'beng',
                 };
-                const formatted = new Intl.DateTimeFormat('bn-BD', options).format(now);
+                const formatted = new Intl.DateTimeFormat('bn-BD-u-nu-latn', options).format(now);
                 updateIslamicDate(formatted);
             } catch (error) {
                 hasIslamicCalendarSupport = false;

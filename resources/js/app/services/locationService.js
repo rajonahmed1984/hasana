@@ -1,8 +1,10 @@
+import { syncDeviceWithBackend } from './deviceRegistration';
+
 // Location & Astronomical Prayer Times Engine for Hasana App
 // Provides GPS detection, Bengali reverse-geocoding, and offline/online astronomical prayer calculations.
 
 export const toBengaliDigits = (numOrStr) => {
-    const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    const bnDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     return String(numOrStr).replace(/\d/g, (d) => bnDigits[Number(d)]);
 };
 
@@ -400,8 +402,9 @@ export const requestUserLocation = async () => {
                 const schedule = await getAccuratePrayerTimes(lat, lng);
                 localStorage.setItem('hasana-dynamic-prayer-schedule', JSON.stringify(schedule));
 
-                // Sync with backend API if FCM token exists
+                // Sync with backend API if a push token exists, and let notification schedulers recalculate
                 syncLocationWithBackend(locObj);
+                window.dispatchEvent(new CustomEvent('hasana-location-changed'));
 
                 resolve({
                     success: true,
@@ -427,29 +430,10 @@ export const requestUserLocation = async () => {
 };
 
 /**
- * Sync location with backend
+ * Sync location with backend (if this device has a push token)
  */
-export const syncLocationWithBackend = async (location) => {
-    try {
-        const token = localStorage.getItem('hasana-fcm-token');
-        if (!token) return;
-
-        await fetch('/api/notifications/register-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                token,
-                platform: 'web',
-                latitude: location.latitude,
-                longitude: location.longitude,
-                city_name: location.cityName,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Dhaka',
-            }),
-        });
-    } catch {
-        // Silent fail
-    }
-};
+export const syncLocationWithBackend = (location) => syncDeviceWithBackend({
+    latitude: location.latitude,
+    longitude: location.longitude,
+    city_name: location.cityName,
+});

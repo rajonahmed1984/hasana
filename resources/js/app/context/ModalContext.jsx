@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { AlertTriangle, Trash2, LogOut, Info, CheckCircle2, BellRing, Sparkles, X } from 'lucide-react';
-import { hapticImpact } from '../native';
+import { hapticImpact, isNative } from '../native';
+import { useCloseOnBack } from '../services/backHandler';
 import { App as CapApp } from '@capacitor/app';
 
 const ModalContext = createContext(null);
@@ -19,6 +20,8 @@ export function ModalProvider({ children }) {
         resolve: null,
     });
 
+    const exitPromptOpen = useRef(false);
+
     const closeModal = useCallback((result = false) => {
         hapticImpact();
         if (modalState.resolve) {
@@ -26,6 +29,14 @@ export function ModalProvider({ children }) {
         }
         setModalState((prev) => ({ ...prev, isOpen: false, resolve: null }));
     }, [modalState]);
+
+    // Close like "cancel" (X, backdrop, Escape, back button) — except dialogs opened with dismissible: false
+    const dismissModal = useCallback(() => {
+        if (modalState.dismissible !== false) closeModal(false);
+    }, [modalState.dismissible, closeModal]);
+
+    // While a dialog is open the back button only affects the dialog
+    useCloseOnBack(modalState.isOpen, dismissModal);
 
     /**
      * Show a confirmation modal (returns Promise<boolean>)
@@ -38,6 +49,7 @@ export function ModalProvider({ children }) {
         confirmText = 'হ্যাঁ, নিশ্চিত',
         cancelText = 'বাতিল',
         variant = 'primary',
+        dismissible = true,
     }) => {
         hapticImpact();
         return new Promise((resolve) => {
@@ -51,6 +63,7 @@ export function ModalProvider({ children }) {
                 confirmText,
                 cancelText,
                 variant,
+                dismissible,
                 resolve,
             });
         });
@@ -65,6 +78,7 @@ export function ModalProvider({ children }) {
         arabic = '',
         iconType = 'info',
         buttonText = 'ঠিক আছে',
+        dismissible = true,
     }) => {
         hapticImpact();
         return new Promise((resolve) => {
@@ -78,6 +92,7 @@ export function ModalProvider({ children }) {
                 confirmText: buttonText,
                 cancelText: '',
                 variant: 'primary',
+                dismissible,
                 resolve,
             });
         });
@@ -98,11 +113,11 @@ export function ModalProvider({ children }) {
         });
 
         if (ok) {
-            try {
+            if (isNative()) {
                 await CapApp.exitApp();
-            } catch {
-                // If on browser
-                window.close();
+            } else {
+                // Browser: step back past the exit guard (see useWebExitGuard), leaving the app
+                window.history.go(-1);
             }
         }
         return ok;
@@ -111,7 +126,12 @@ export function ModalProvider({ children }) {
     // Global listener for exit request (from native back button or menu)
     useEffect(() => {
         const handleExitRequest = () => {
-            confirmExit();
+            if (!exitPromptOpen.current) {
+                exitPromptOpen.current = true;
+                confirmExit().finally(() => {
+                    exitPromptOpen.current = false;
+                });
+            }
         };
 
         window.addEventListener('hasana-request-exit', handleExitRequest);
@@ -122,13 +142,13 @@ export function ModalProvider({ children }) {
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape' && modalState.isOpen) {
-                closeModal(false);
+                dismissModal();
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [modalState.isOpen, closeModal]);
+    }, [modalState.isOpen, dismissModal]);
 
     // Icon renderer based on iconType
     const renderIcon = () => {
@@ -179,7 +199,7 @@ export function ModalProvider({ children }) {
             {modalState.isOpen && (
                 <div 
                     className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fade-in"
-                    onClick={() => closeModal(false)}
+                    onClick={dismissModal}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="modal-title"
@@ -192,14 +212,16 @@ export function ModalProvider({ children }) {
                         <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-40 h-40 bg-primary/20 rounded-full blur-2xl pointer-events-none" />
 
                         {/* Close 'X' button top right */}
-                        <button
-                            type="button"
-                            onClick={() => closeModal(false)}
-                            className="absolute top-4 right-4 w-7 h-7 rounded-full bg-muted/80 text-muted-foreground hover:text-foreground flex items-center justify-center text-xs transition"
-                            title="বন্ধ করুন"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
+                        {modalState.dismissible !== false && (
+                            <button
+                                type="button"
+                                onClick={dismissModal}
+                                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-muted/80 text-muted-foreground hover:text-foreground flex items-center justify-center text-xs transition"
+                                title="বন্ধ করুন"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
 
                         {/* Top decorative Icon */}
                         {renderIcon()}

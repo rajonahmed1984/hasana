@@ -121,7 +121,7 @@ export default function AdminProfile() {
                     </p>
                     <p className="text-[11px] text-[#546e6a] mt-2 flex items-center justify-center sm:justify-start gap-1">
                         <Calendar className="w-3.5 h-3.5" />
-                        <span>অ্যাকাউন্ট তৈরি: {user?.created_at ? new Date(user.created_at).toLocaleDateString('bn-BD', {
+                        <span>অ্যাকাউন্ট তৈরি: {user?.created_at ? new Date(user.created_at).toLocaleDateString('bn-BD-u-nu-latn', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
@@ -222,7 +222,7 @@ export default function AdminProfile() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] mb-1">
-                                নতুন পাসওয়ার্ড (নূন্যতম ৮ অক্ষর) *
+                                নতুন পাসওয়ার্ড (নূন্যতম 8 অক্ষর) *
                             </label>
                             <input
                                 type="password"

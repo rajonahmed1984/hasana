@@ -36,7 +36,7 @@ class SurahSummaryResource extends JsonResource
 
     protected static function convertDigits($value): string
     {
-        $digitsMap = ['0' => '০', '1' => '১', '2' => '২', '3' => '৩', '4' => '৪', '5' => '৫', '6' => '৬', '7' => '৭', '8' => '৮', '9' => '৯'];
+        $digitsMap = ['0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9'];
 
         return strtr((string) $value, $digitsMap);
     }

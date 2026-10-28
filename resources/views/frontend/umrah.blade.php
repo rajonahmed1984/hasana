@@ -33,7 +33,7 @@
         <!-- Step 1: Preparation -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">১</div>
+                <div class="step-number">1</div>
                 <h2 class="step-title">প্রস্তুতি পর্ব</h2>
             </div>
             <div class="step-content">
@@ -50,7 +50,7 @@
         <!-- Step 2: Ihram -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">২</div>
+                <div class="step-number">2</div>
                 <h2 class="step-title">ইহরাম পরিধান ও নিয়ত</h2>
             </div>
             <div class="step-content">
@@ -67,7 +67,7 @@
         <!-- Step 3: Talbiyah -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৩</div>
+                <div class="step-number">3</div>
                 <h2 class="step-title">তালবিয়া পাঠ</h2>
             </div>
             <div class="step-content">
@@ -83,7 +83,7 @@
         <!-- Step 4: Masjid al-Haram Entry -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৪</div>
+                <div class="step-number">4</div>
                 <h2 class="step-title">মসজিদুল হারামে প্রবেশ</h2>
             </div>
             <div class="step-content">
@@ -99,14 +99,14 @@
         <!-- Step 5: Tawaf -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৫</div>
-                <h2 class="step-title">তাওয়াফ (৭ চক্কর)</h2>
+                <div class="step-number">5</div>
+                <h2 class="step-title">তাওয়াফ (7 চক্কর)</h2>
             </div>
             <div class="step-content">
-                <p class="step-description"><strong>হাজরে আসওয়াদ</strong> থেকে শুরু করে কাবাকে বাম দিকে রেখে ৭ চক্কর সম্পন্ন করুন:</p>
+                <p class="step-description"><strong>হাজরে আসওয়াদ</strong> থেকে শুরু করে কাবাকে বাম দিকে রেখে 7 চক্কর সম্পন্ন করুন:</p>
                 <ul class="step-list">
                     <li>হাজরে আসওয়াদে ইশারা করে বলুন: <strong>بِسْمِ اللهِ، اللَّهُ أَكْبَرُ</strong></li>
-                    <li>প্রথম ৩ চক্করে পুরুষরা দ্রুত হাঁটবেন (রমল)</li>
+                    <li>প্রথম 3 চক্করে পুরুষরা দ্রুত হাঁটবেন (রমল)</li>
                     <li>রুকনে ইয়ামানি স্পর্শ করুন (সম্ভব হলে)</li>
                     <li>প্রতি চক্করে হাজরে আসওয়াদে তাকবির বলুন</li>
                 </ul>
@@ -122,14 +122,14 @@
         <!-- Step 6: Salat after Tawaf -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৬</div>
+                <div class="step-number">6</div>
                 <h2 class="step-title">তাওয়াফের নামাজ</h2>
             </div>
             <div class="step-content">
-                <p class="step-description">৭ চক্কর শেষে <strong>মাকামে ইবরাহিম</strong>ের পেছনে বা মসজিদের যেকোনো স্থানে দুই রাকাত নামাজ পড়ুন:</p>
+                <p class="step-description">7 চক্কর শেষে <strong>মাকামে ইবরাহিম</strong>ের পেছনে বা মসজিদের যেকোনো স্থানে দুই রাকাত নামাজ পড়ুন:</p>
                 <ul class="step-list">
-                    <li>১ম রাকাতে সূরা কাফিরুন পড়া মুস্তাহাব</li>
-                    <li>২য় রাকাতে সূরা ইখলাস পড়া মুস্তাহাব</li>
+                    <li>1ম রাকাতে সূরা কাফিরুন পড়া মুস্তাহাব</li>
+                    <li>2য় রাকাতে সূরা ইখলাস পড়া মুস্তাহাব</li>
                 </ul>
             </div>
         </article>
@@ -137,7 +137,7 @@
         <!-- Step 7: Zamzam -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৭</div>
+                <div class="step-number">7</div>
                 <h2 class="step-title">যমযম পানি পান</h2>
             </div>
             <div class="step-content">
@@ -153,15 +153,15 @@
         <!-- Step 8: Sa'i -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৮</div>
+                <div class="step-number">8</div>
                 <h2 class="step-title">সাঈ (সাফা-মারওয়া)</h2>
             </div>
             <div class="step-content">
-                <p class="step-description">সাফা পাহাড় থেকে শুরু করে মারওয়া পর্যন্ত ৭ বার যাতায়াত করুন:</p>
+                <p class="step-description">সাফা পাহাড় থেকে শুরু করে মারওয়া পর্যন্ত 7 বার যাতায়াত করুন:</p>
                 <ul class="step-list">
-                    <li>সাফা → মারওয়া = ১ চক্কর</li>
-                    <li>মারওয়া → সাফা = ২ চক্কর</li>
-                    <li>এভাবে মারওয়ায় ৭ম চক্কর শেষ হবে</li>
+                    <li>সাফা → মারওয়া = 1 চক্কর</li>
+                    <li>মারওয়া → সাফা = 2 চক্কর</li>
+                    <li>এভাবে মারওয়ায় 7ম চক্কর শেষ হবে</li>
                     <li>সবুজ বাতির মাঝে পুরুষরা দ্রুত হাঁটবেন</li>
                     <li>নারীরা স্বাভাবিক গতিতে হাঁটবেন</li>
                 </ul>
@@ -179,14 +179,14 @@
         <!-- Step 9: Halq or Taqsir -->
         <article class="umrah-step-card">
             <div class="step-header">
-                <div class="step-number">৯</div>
+                <div class="step-number">9</div>
                 <h2 class="step-title">চুল মুণ্ডন বা ছোট করা</h2>
             </div>
             <div class="step-content">
                 <p class="step-description">সাঈ শেষে চুল মুণ্ডন বা ছোট করুন:</p>
                 <ul class="step-list">
                     <li><strong>পুরুষ:</strong> মাথা মুণ্ডন করা (হালক) উত্তম, না হলে সমস্ত মাথার চুল ছোট করুন (তাকসির)</li>
-                    <li><strong>নারী:</strong> এক আঙুল পরিমাণ (১-২ সেমি) চুলের ডগা সমানভাবে কাটুন</li>
+                    <li><strong>নারী:</strong> এক আঙুল পরিমাণ (1-2 সেমি) চুলের ডগা সমানভাবে কাটুন</li>
                     <li>এরপর ইহরামের সকল নিষেধাজ্ঞা উঠে যাবে</li>
                     <li>আপনার উমরাহ সম্পন্ন হয়েছে, আলহামদুলিল্লাহ!</li>
                 </ul>

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    // Firebase Cloud Messaging: path to the service account JSON (Firebase console → Project settings → Service accounts)
+    'fcm' => [
+        'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/private/firebase-credentials.json')),
+    ],
+
 ];
