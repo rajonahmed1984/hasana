@@ -16,7 +16,12 @@
     </style>
 
 
+    <!-- Launch splash. Android 12+ shows the system splash (background colour + centred icon);
+         older versions show @drawable/splash. It stays up until the web app calls SplashScreen.hide(). -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">@color/hasana_splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>
