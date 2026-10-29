@@ -332,8 +332,8 @@ export function HomePage() {
                         <span>{currentDate || 'আজকের দিন'}</span>
                     </div>
 
-                    {/* Islamic Mosque Arch & Prayer Countdown Hero Card */}
-                    <div className="mt-6 mx-auto max-w-md rounded-3xl bg-gradient-to-b from-[#0c4a3b]/90 via-[#073327]/90 to-[#041a13]/95 border-2 border-gold/45 p-5 sm:p-6 shadow-2xl backdrop-blur-md relative overflow-hidden">
+                    {/* Islamic Mosque Arch & Prayer Countdown Hero */}
+                    <div className="mt-6 mx-auto max-w-md relative">
                         {/* Ambient Gold Glow */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 bg-gold/20 blur-2xl pointer-events-none rounded-full" />
 
