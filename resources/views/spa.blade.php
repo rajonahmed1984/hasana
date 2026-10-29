@@ -70,7 +70,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="হাসানা">
 
-    <!-- Early Theme Detection -->
+    <!-- Early Theme & Platform Detection -->
     <script>
         (function() {
             try {
@@ -79,6 +79,9 @@
                 if (theme === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
                     document.documentElement.classList.add('dark');
+                }
+                if (window.Capacitor?.isNativePlatform?.() || /Capacitor|hasanaa\.app/i.test(navigator.userAgent)) {
+                    document.documentElement.classList.add('is-capacitor-native');
                 }
             } catch (e) {}
         })();
@@ -115,7 +118,7 @@
             color: #ffffff;
             z-index: 9999;
             text-align: center;
-            padding: 48px 24px calc(36px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
+            padding: calc(48px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 24px calc(36px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
             overflow: hidden;
         }
         .hs-splash-top { height: 10px; }

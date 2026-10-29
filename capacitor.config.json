@@ -27,7 +27,7 @@
   "plugins": {
     "SystemBars": {
       "style": "DARK",
-      "insetsHandling": "css"
+      "insetsHandling": "disable"
     },
     "SplashScreen": {
       "launchShowDuration": 8000,

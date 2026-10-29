@@ -101,27 +101,37 @@
 .leading-2-6 { line-height: 2.6; }
 .leading-3-0 { line-height: 3; }
 
-/* Safe Area Insets for Mobile App (iOS / Android Notch & Nav Bar)
-   In the Android app (edge-to-edge) Capacitor injects the real status / navigation bar sizes as
-   --safe-area-inset-*; Android WebView's env() often reports 0, so those come first. */
+/* Dynamic Safe Area Insets for Mobile App (iOS / Android Notch & Nav Bar)
+   - On Android native app, MainActivity dynamically injects --safe-area-inset-* via OnApplyWindowInsetsListener.
+   - On iOS / modern browsers, env(safe-area-inset-*) is used.
+   - If in native Capacitor app before insets inject, a safe 28px/16px fallback prevents status bar overlap. */
 :root {
   --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
   --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
   --safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
 }
+
+.is-capacitor-native:not(.has-native-insets) {
+  --safe-top: 28px;
+  --safe-bottom: 16px;
+}
+
 .pt-safe {
   padding-top: var(--safe-top) !important;
 }
+
 .pb-safe {
-  padding-bottom: calc(0.25rem + var(--safe-bottom)) !important;
+  padding-bottom: max(0.25rem, var(--safe-bottom)) !important;
 }
-/* Room for the fixed mobile bottom navigation (5rem) plus the system navigation bar */
+
+/* Room for the fixed mobile bottom navigation (4.75rem) plus the system navigation bar */
 .pb-bottom-nav {
-  padding-bottom: calc(5rem + var(--safe-bottom));
+  padding-bottom: calc(4.75rem + var(--safe-bottom));
 }
+
 .bottom-above-nav {
-  bottom: calc(5rem + var(--safe-bottom));
+  bottom: calc(4.75rem + var(--safe-bottom));
 }
 @media (min-width: 768px) {
   .pb-bottom-nav { padding-bottom: 0; }
