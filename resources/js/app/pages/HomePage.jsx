@@ -40,6 +40,7 @@ import {
     getAccuratePrayerTimes,
     calculateSolarPrayerTimes 
 } from '../services/locationService';
+import { subscribeToUpdateState } from '../services/appUpdate';
 
 const quickAccess = [
     { to: '/quran', title: 'আল-কুরআন', desc: 'পবিত্র কুরআন শরীফ পড়ুন', icon: BookOpen },
@@ -63,6 +64,11 @@ export function HomePage() {
     const [dailyAyah, setDailyAyah] = useState(null);
     const [dailyAyahNotifActive, setDailyAyahNotifActive] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [appUpdateInfo, setAppUpdateInfo] = useState(null);
+
+    useEffect(() => {
+        return subscribeToUpdateState((info) => setAppUpdateInfo(info));
+    }, []);
 
     // Dynamic Location & Prayer Times State
     const [locationData, setLocationData] = useState(() => getStoredLocation());
@@ -228,6 +234,45 @@ export function HomePage() {
 
             {/* Prayer Times Floating Card */}
             <section className="mx-auto max-w-5xl px-4 -mt-10 relative z-20">
+                {/* Play Store App Update Alert Banner */}
+                {appUpdateInfo && appUpdateInfo.hasUpdate && (
+                    <div className="mb-3.5 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-900 border border-gold/50 shadow-xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-fade-scale">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-9 h-9 rounded-xl bg-gold/25 border border-gold/50 text-gold flex items-center justify-center shrink-0 shadow-xs">
+                                <Sparkles className="w-5 h-5 text-gold animate-pulse" />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 flex-wrap">
+                                    <span>নতুন সংস্করণ এসেছে (v{appUpdateInfo.latestVersion})</span>
+                                    <span className="text-[10px] bg-gold text-primary font-extrabold px-1.5 py-0.2 rounded-full">Play Store</span>
+                                </p>
+                                <p className="text-[11px] text-white/80 line-clamp-1">
+                                    {appUpdateInfo.message || 'নতুন ফিচার ও পারফরম্যান্স উন্নয়নের জন্য এখনই আপডেট করুন।'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <a
+                                href={appUpdateInfo.storeUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => hapticImpact()}
+                                className="px-3.5 py-1.5 rounded-xl bg-gold text-primary text-xs font-bold shadow-md hover:bg-gold/90 active:scale-95 transition"
+                            >
+                                আপডেট
+                            </a>
+                            <button
+                                type="button"
+                                onClick={() => setAppUpdateInfo(null)}
+                                className="p-1 text-white/60 hover:text-white"
+                                title="বাতিল করুন"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* Location Detection Banner for First Open / Install */}
                 {showLocationBanner && (
                     <div className="mb-3 p-3.5 rounded-2xl bg-card border-2 border-primary/30 shadow-lg backdrop-blur-md flex items-center justify-between gap-3 animate-fade-scale">

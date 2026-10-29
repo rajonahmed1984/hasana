@@ -18,6 +18,9 @@ import {
     requestNotifPermission
 } from '../services/prayerNotifications';
 import { useModal } from '../context/ModalContext';
+import { checkForAppUpdate, openPlayStore } from '../services/appUpdate';
+import { App as CapApp } from '@capacitor/app';
+import { isNative } from '../native';
 
 export function SettingsPage() {
     const { confirm, alert: customAlert, confirmExit } = useModal();
@@ -32,11 +35,45 @@ export function SettingsPage() {
     const [isTestingNotification, setIsTestingNotification] = useState(false);
     const [isTestingAyah, setIsTestingAyah] = useState(false);
     const [notificationMsg, setNotificationMsg] = useState(null);
+    const [checkingUpdate, setCheckingUpdate] = useState(false);
+    const [updateStatusMsg, setUpdateStatusMsg] = useState(null);
+    const [installedVer, setInstalledVer] = useState('1.3');
 
     useEffect(() => {
         setNotificationsActive(isPrayerNotificationEnabled());
         setDailyAyahActive(isDailyAyahNotificationEnabled());
+        if (isNative()) {
+            CapApp.getInfo().then((info) => setInstalledVer(info.version || '1.3')).catch(() => {});
+        }
     }, []);
+
+    const handleManualUpdateCheck = async () => {
+        hapticImpact();
+        setCheckingUpdate(true);
+        setUpdateStatusMsg(null);
+        try {
+            const res = await checkForAppUpdate(null, { force: true, silent: true });
+            if (res.status === 'update-available' && res.details) {
+                setUpdateStatusMsg({
+                    type: 'available',
+                    text: `নতুন সংস্করণ v${res.details.latestVersion} পাওয়া যাচ্ছে!`,
+                    storeUrl: res.details.storeUrl,
+                });
+            } else {
+                setUpdateStatusMsg({
+                    type: 'up-to-date',
+                    text: 'আলহামদুলিল্লাহ! আপনার অ্যাপটি লেটেস্ট সংস্করণে রয়েছে (আপ-টু-ডেট)।',
+                });
+            }
+        } catch {
+            setUpdateStatusMsg({
+                type: 'error',
+                text: 'আপডেট চেক করতে ব্যর্থ হয়েছে। ইন্টারনেট কানেকশন পরীক্ষা করুন।',
+            });
+        } finally {
+            setCheckingUpdate(false);
+        }
+    };
 
     const toggleTheme = () => {
         hapticImpact();
@@ -399,6 +436,67 @@ export function SettingsPage() {
                     >
                         প্রস্থান করুন
                     </button>
+                </div>
+
+                {/* App Version & Check Updates Card */}
+                <div className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <RefreshCw className={`w-5 h-5 text-primary ${checkingUpdate ? 'animate-spin' : ''}`} />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-base">অ্যাপ সংস্করণ ও আপডেট</h3>
+                                <p className="text-xs text-muted-foreground">
+                                    বর্তমান ইনস্টলড সংস্করণ: v{installedVer}
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleManualUpdateCheck}
+                            disabled={checkingUpdate}
+                            className="px-3.5 py-2 rounded-xl bg-primary text-gold hover:brightness-110 font-bold text-xs transition active:scale-95 flex items-center gap-1.5 shadow-xs shrink-0"
+                        >
+                            {checkingUpdate ? (
+                                <>
+                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                    <span>চেক হচ্ছে...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Sparkles className="w-3.5 h-3.5" />
+                                    <span>আপডেট চেক</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                    {updateStatusMsg && (
+                        <div className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 animate-fade-scale ${
+                            updateStatusMsg.type === 'available'
+                                ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30'
+                                : updateStatusMsg.type === 'error'
+                                ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30'
+                                : 'bg-muted text-foreground border border-border'
+                        }`}>
+                            {updateStatusMsg.type === 'available' ? (
+                                <div className="flex items-center justify-between w-full gap-2">
+                                    <span>{updateStatusMsg.text}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => openPlayStore(updateStatusMsg.storeUrl)}
+                                        className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 active:scale-95 shadow-xs"
+                                    >
+                                        প্লে-স্টোর খুলুন
+                                    </button>
+                                </div>
+                            ) : (
+                                <span>{updateStatusMsg.text}</span>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Developer Info Card */}
