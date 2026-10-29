@@ -52,6 +52,13 @@ export function SettingsPage() {
         setCheckingUpdate(true);
         setUpdateStatusMsg(null);
         try {
+            if (!isNative()) {
+                setUpdateStatusMsg({
+                    type: 'up-to-date',
+                    text: 'আলহামদুলিল্লাহ! হাসানা ওয়েব সংস্করণ সর্বদা সর্বশেষ আপ-টু-ডেট থাকে।',
+                });
+                return;
+            }
             const res = await checkForAppUpdate(null, { force: true, silent: true });
             if (res.status === 'update-available' && res.details) {
                 setUpdateStatusMsg({
@@ -448,7 +455,7 @@ export function SettingsPage() {
                             <div>
                                 <h3 className="font-bold text-base text-foreground">অ্যাপ সংস্করণ ও আপডেট</h3>
                                 <p className="text-xs text-muted-foreground">
-                                    বর্তমান ইনস্টলড সংস্করণ: v{installedVer}
+                                    {isNative() ? `বর্তমান ইনস্টলড সংস্করণ: v${installedVer}` : `ওয়েব সংস্করণ — ক্লাউড সিঙ্কড (v${installedVer})`}
                                 </p>
                             </div>
                         </div>

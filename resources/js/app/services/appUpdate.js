@@ -55,8 +55,15 @@ const wasDismissedRecently = (buildOrVer) => {
 
 /**
  * Compare the installed version/build with server/Play Store and show update notification.
+ * ONLY runs on native Android app. On web browser it immediately exits and never shows.
  */
 export const checkForAppUpdate = async (modal = null, { force = false, silent = false } = {}) => {
+    // Strictly native Android app only
+    if (!isNative()) {
+        notifyListeners(null);
+        return { status: 'web-platform-no-update' };
+    }
+
     if (prompting) return { status: 'prompting' };
     if (!force && Date.now() - lastCheck < CHECK_INTERVAL_MS) {
         return { status: 'throttled', info: currentUpdateInfo };
@@ -64,17 +71,15 @@ export const checkForAppUpdate = async (modal = null, { force = false, silent = 
     lastCheck = Date.now();
 
     try {
-        let installedBuild = 0;
-        let installedVersion = '1.0';
+        let installedBuild = 4;
+        let installedVersion = '1.3';
 
-        if (isNative()) {
-            try {
-                const info = await CapApp.getInfo();
-                installedBuild = parseInt(info.build, 10) || 0;
-                installedVersion = info.version || '1.0';
-            } catch (e) {
-                console.warn('[AppUpdate] Failed getting CapApp info:', e);
-            }
+        try {
+            const info = await CapApp.getInfo();
+            if (info?.build) installedBuild = parseInt(info.build, 10) || installedBuild;
+            if (info?.version) installedVersion = info.version || installedVersion;
+        } catch (e) {
+            console.warn('[AppUpdate] Failed getting CapApp info:', e);
         }
 
         const res = await fetch('/api/app/version', {
@@ -86,8 +91,8 @@ export const checkForAppUpdate = async (modal = null, { force = false, silent = 
         const latest = await res.json();
 
         // Compare both semantic version and build code
-        const isBuildOutdated = latest.latest_build && installedBuild > 0 && installedBuild < latest.latest_build;
-        const isVersionOutdated = latest.latest_version && compareVersions(installedVersion, latest.latest_version) < 0;
+        const isBuildOutdated = Boolean(latest.latest_build && installedBuild > 0 && installedBuild < latest.latest_build);
+        const isVersionOutdated = Boolean(latest.latest_version && compareVersions(installedVersion, latest.latest_version) < 0);
         const hasUpdate = isBuildOutdated || isVersionOutdated;
 
         const updateDetails = {
@@ -99,28 +104,27 @@ export const checkForAppUpdate = async (modal = null, { force = false, silent = 
             minBuild: latest.min_build,
             message: latest.message,
             storeUrl: latest.store_url || 'https://play.google.com/store/apps/details?id=com.hasanaa.app',
-            isRequired: installedBuild > 0 && installedBuild < (latest.min_build || 0),
+            isRequired: Boolean(installedBuild > 0 && latest.min_build && installedBuild < latest.min_build),
         };
 
         notifyListeners(hasUpdate ? updateDetails : null);
 
+        // If the app is already updated (latest version installed), NEVER show update modal
         if (!hasUpdate) {
             return { status: 'up-to-date', installedVersion };
         }
 
         // Trigger native notification tray alert once per version
-        if (isNative()) {
-            try {
-                const lastNotified = localStorage.getItem(NOTIFIED_KEY);
-                if (lastNotified !== latest.latest_version) {
-                    localStorage.setItem(NOTIFIED_KEY, latest.latest_version);
-                    showNativeNotificationNow(
-                        'হাসানা অ্যাপের নতুন আপডেট এসেছে 🎉',
-                        `নতুন ভার্সন (${latest.latest_version}) প্লে-স্টোরে পাওয়া যাচ্ছে। নতুন ফিচার ও সুবিধার জন্য এখনই আপডেট করুন।`
-                    );
-                }
-            } catch (e) {}
-        }
+        try {
+            const lastNotified = localStorage.getItem(NOTIFIED_KEY);
+            if (lastNotified !== latest.latest_version) {
+                localStorage.setItem(NOTIFIED_KEY, latest.latest_version);
+                showNativeNotificationNow(
+                    'হাসানা অ্যাপের নতুন আপডেট এসেছে 🎉',
+                    `নতুন ভার্সন (${latest.latest_version}) প্লে-স্টোরে পাওয়া যাচ্ছে। নতুন ফিচার ও সুবিধার জন্য এখনই আপডেট করুন।`
+                );
+            }
+        } catch (e) {}
 
         // If silent check or no modal, stop here (listeners are already updated)
         if (silent || !modal) {
@@ -178,19 +182,22 @@ export const checkForAppUpdate = async (modal = null, { force = false, silent = 
 
 let initialized = false;
 
+/**
+ * Initializes automatic background version checks.
+ * ONLY executes on native Android app. Web browser is completely bypassed.
+ */
 export const initAppUpdateChecks = (modal) => {
-    if (initialized) return;
+    // Strictly native Android app only
+    if (!isNative() || initialized) return;
     initialized = true;
 
     // First check after 3 seconds on launch
     setTimeout(() => {
-        checkForAppUpdate(modal, { force: true });
+        checkForAppUpdate(modal);
     }, 3000);
 
     // On app resume / foreground
-    if (isNative()) {
-        CapApp.addListener('resume', () => {
-            checkForAppUpdate(modal);
-        });
-    }
+    CapApp.addListener('resume', () => {
+        checkForAppUpdate(modal);
+    });
 };
