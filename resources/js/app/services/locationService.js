@@ -443,3 +443,111 @@ export const syncLocationWithBackend = (location) => syncDeviceWithBackend({
     longitude: location.longitude,
     city_name: location.cityName,
 });
+
+/**
+ * Calculates live real-time countdown to the next prayer / end of current waqt.
+ * Runs second-by-second and updates live.
+ */
+export const calculatePrayerCountdown = (prayerTimes, now = new Date()) => {
+    if (!prayerTimes || prayerTimes.length < 5) {
+        return {
+            currentPrayerName: 'নামাজ',
+            nextPrayerName: '',
+            nextPrayerTime: '',
+            remainingSeconds: 0,
+            formattedCountdown: '00:00:00',
+            label: 'পরবর্তী ওয়াক্তের বাকি সময়',
+        };
+    }
+
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    const currentDate = now.getDate();
+
+    const getPrayerDate = (prayer, dayOffset = 0) => {
+        return new Date(currentYear, currentMonth, currentDate + dayOffset, prayer.startHour, prayer.startMin, 0, 0);
+    };
+
+    const fajrStart = getPrayerDate(prayerTimes[0]);
+    const sunriseEnd = new Date(
+        currentYear,
+        currentMonth,
+        currentDate,
+        prayerTimes[0].endHour ?? prayerTimes[0].startHour + 1,
+        prayerTimes[0].endMin ?? prayerTimes[0].startMin + 20,
+        0, 0
+    );
+    const dhuhrStart = getPrayerDate(prayerTimes[1]);
+    const asrStart = getPrayerDate(prayerTimes[2]);
+    const maghribStart = getPrayerDate(prayerTimes[3]);
+    const ishaStart = getPrayerDate(prayerTimes[4]);
+    const nextFajrStart = getPrayerDate(prayerTimes[0], 1);
+
+    let currentPrayerName = '';
+    let nextPrayerName = '';
+    let nextPrayerTime = '';
+    let targetEndDate = null;
+    let label = 'ওয়াক্ত শেষ হতে বাকি';
+
+    if (now < fajrStart) {
+        currentPrayerName = 'ইশা / তাহাজ্জুদ';
+        nextPrayerName = 'ফজর';
+        nextPrayerTime = prayerTimes[0].start;
+        targetEndDate = fajrStart;
+        label = 'ফজর ওয়াক্ত শুরু হতে বাকি';
+    } else if (now >= fajrStart && now < sunriseEnd) {
+        currentPrayerName = 'ফজর';
+        nextPrayerName = 'সূর্যোদয়';
+        nextPrayerTime = prayerTimes[0].end;
+        targetEndDate = sunriseEnd;
+        label = 'ফজর ওয়াক্ত শেষ হতে বাকি';
+    } else if (now >= sunriseEnd && now < dhuhrStart) {
+        currentPrayerName = 'ইশরাক / চাশত';
+        nextPrayerName = 'যোহর';
+        nextPrayerTime = prayerTimes[1].start;
+        targetEndDate = dhuhrStart;
+        label = 'যোহর ওয়াক্ত শুরু হতে বাকি';
+    } else if (now >= dhuhrStart && now < asrStart) {
+        currentPrayerName = 'যোহর';
+        nextPrayerName = 'আসর';
+        nextPrayerTime = prayerTimes[2].start;
+        targetEndDate = asrStart;
+        label = 'যোহর ওয়াক্ত শেষ হতে বাকি';
+    } else if (now >= asrStart && now < maghribStart) {
+        currentPrayerName = 'আসর';
+        nextPrayerName = 'মাগরিব';
+        nextPrayerTime = prayerTimes[3].start;
+        targetEndDate = maghribStart;
+        label = 'আসর ওয়াক্ত শেষ হতে বাকি';
+    } else if (now >= maghribStart && now < ishaStart) {
+        currentPrayerName = 'মাগরিব';
+        nextPrayerName = 'ইশা';
+        nextPrayerTime = prayerTimes[4].start;
+        targetEndDate = ishaStart;
+        label = 'মাগরিব ওয়াক্ত শেষ হতে বাকি';
+    } else {
+        currentPrayerName = 'ইশা';
+        nextPrayerName = 'ফজর';
+        nextPrayerTime = prayerTimes[0].start;
+        targetEndDate = nextFajrStart;
+        label = 'ইশা ওয়াক্ত শেষ হতে বাকি';
+    }
+
+    const diffMs = Math.max(0, targetEndDate.getTime() - now.getTime());
+    const totalSec = Math.floor(diffMs / 1000);
+    const hours = Math.floor(totalSec / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const seconds = totalSec % 60;
+
+    const pad = (n) => String(n).padStart(2, '0');
+    const formattedCountdown = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+
+    return {
+        currentPrayerName,
+        nextPrayerName,
+        nextPrayerTime,
+        remainingSeconds: totalSec,
+        formattedCountdown,
+        label,
+    };
+};

@@ -28,7 +28,7 @@ import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
 import { DailyQuiz } from '../components/DailyQuiz';
 import { ShareCardModal } from '../components/ShareCardModal';
-import { hapticImpact } from '../native';
+import { hapticImpact, isNative } from '../native';
 import { 
     isPrayerNotificationEnabled, 
     enablePrayerNotifications, 
@@ -42,7 +42,8 @@ import {
     getStoredLocation, 
     requestUserLocation, 
     getAccuratePrayerTimes,
-    calculateSolarPrayerTimes 
+    calculateSolarPrayerTimes,
+    calculatePrayerCountdown
 } from '../services/locationService';
 import { subscribeToUpdateState } from '../services/appUpdate';
 
@@ -120,6 +121,7 @@ export function HomePage() {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState('');
     const [currentDate, setCurrentDate] = useState('');
+    const [nowTime, setNowTime] = useState(() => new Date());
     const [notifActive, setNotifActive] = useState(false);
     const [dailyAyah, setDailyAyah] = useState(null);
     const [dailyAyahNotifActive, setDailyAyahNotifActive] = useState(false);
@@ -189,6 +191,12 @@ export function HomePage() {
     const nextPrayer = prayerTimes && prayerTimes.length > 0 
         ? prayerTimes[(activePrayerIndex + 1 + prayerTimes.length) % prayerTimes.length] 
         : null;
+
+    // Live countdown to next prayer / end of current waqt, updates every second
+    const countdownData = React.useMemo(() => {
+        return calculatePrayerCountdown(prayerTimes, nowTime);
+    }, [prayerTimes, nowTime]);
+
     const [showLocationBanner, setShowLocationBanner] = useState(() => {
         return localStorage.getItem('hasana-location-prompted') !== 'true' && 
                getStoredLocation().isDefault;
@@ -279,6 +287,7 @@ export function HomePage() {
             const dateStr = now.toLocaleDateString('bn-BD-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             setCurrentTime(timeStr);
             setCurrentDate(dateStr);
+            setNowTime(now);
         };
         updateClock();
         const interval = setInterval(updateClock, 1000);
@@ -347,21 +356,22 @@ export function HomePage() {
                             </svg>
                         </div>
 
-                        {/* Current Waqt Info */}
+                        {/* Current Waqt Info & Live Countdown */}
                         <div className="relative z-10 -mt-1">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-gold/15 border border-gold/40 text-gold text-[11px] sm:text-xs font-bold uppercase tracking-wider">
-                                <Sparkles className="w-3.5 h-3.5" />
-                                {currentPrayer ? `বর্তমান ওয়াক্ত: ${currentPrayer.name}` : "নামাজের সময়সূচী"}
+                            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gold/20 border border-gold/45 text-gold text-[11px] sm:text-xs font-bold uppercase tracking-wider shadow-xs">
+                                <Sparkles className="w-3.5 h-3.5 text-gold animate-pulse" />
+                                <span>{`বর্তমান ওয়াক্ত: ${countdownData.currentPrayerName}`}</span>
                             </span>
 
-                            <div className="mt-2.5">
-                                <h3 className="text-4xl sm:text-5xl font-black text-gold tracking-tight tabular-nums drop-shadow-[0_2px_12px_rgba(212,175,55,0.45)]">
-                                    {currentPrayer ? currentPrayer.start : currentTime}
+                            <div className="mt-3">
+                                {/* Live second and minute-wise countdown timer */}
+                                <h3 className="text-4xl sm:text-5xl font-black text-gold tracking-tight tabular-nums drop-shadow-[0_2px_14px_rgba(212,175,55,0.5)]">
+                                    {countdownData.formattedCountdown}
                                 </h3>
-                                <p className="mt-1 text-xs text-emerald-100/90 font-medium">
-                                    {nextPrayer 
-                                        ? `পরবর্তী ওয়াক্ত: ${nextPrayer.name} (${nextPrayer.start})`
-                                        : "সঠিক সময়ে সালাত আদায় করুন"}
+                                <p className="mt-1 text-xs text-emerald-100/90 font-medium flex items-center justify-center gap-1.5 flex-wrap">
+                                    <span className="text-gold/90 font-semibold">{countdownData.label}</span>
+                                    <span>•</span>
+                                    <span>পরবর্তী ওয়াক্ত: {countdownData.nextPrayerName} ({countdownData.nextPrayerTime})</span>
                                 </p>
                             </div>
 
@@ -386,8 +396,8 @@ export function HomePage() {
 
             {/* Prayer Times Floating Card */}
             <section className="mx-auto max-w-5xl px-4 -mt-8 relative z-20">
-                {/* Play Store App Update Alert Banner */}
-                {appUpdateInfo && appUpdateInfo.hasUpdate && (
+                {/* Play Store App Update Alert Banner (Native Android only) */}
+                {isNative() && appUpdateInfo && appUpdateInfo.hasUpdate && (
                     <div className="mb-3.5 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-900 border border-gold/50 shadow-xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-fade-scale">
                         <div className="flex items-center gap-3 min-w-0">
                             <div className="w-9 h-9 rounded-xl bg-gold/25 border border-gold/50 text-gold flex items-center justify-center shrink-0 shadow-xs">
