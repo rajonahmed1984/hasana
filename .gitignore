@@ -36,3 +36,7 @@ Thumbs.db
 scratch/
 temp.ps1
 *.zip
+
+# Signing keys
+*.jks
+*.keystore

@@ -17,7 +17,7 @@ import {
     WifiOff
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from './IslamicIcons';
-import { hapticImpact } from '../native';
+import { hapticImpact, isNative } from '../native';
 import { trackPageView } from '../services/analytics';
 import { useModal } from '../context/ModalContext';
 import { useCloseOnBack } from '../services/backHandler';
@@ -29,6 +29,28 @@ const navItems = [
     { to: '/duas', label: 'দোয়া', icon: DuaHandsIcon },
     { to: '/umrah-guide', label: 'উমরা', icon: KaabaIcon },
 ];
+
+// Logo uploaded from Admin → Settings (separate ones for the app / website and light / dark mode);
+// falls back to the Arabic wordmark when none is set or it can't load (e.g. offline)
+function BrandLogo({ isDark, size, fallbackClass }) {
+    const brand = window.HasanaConfig?.brand || {};
+    const logoUrl = isNative()
+        ? (isDark ? brand.app_logo_dark : brand.app_logo)
+        : (isDark ? brand.logo_dark : brand.logo);
+    const [failedUrl, setFailedUrl] = useState(null);
+
+    if (!logoUrl || failedUrl === logoUrl) {
+        return <span className={`font-arabic text-gold font-bold ${fallbackClass}`}>حسنة</span>;
+    }
+    return (
+        <img
+            src={logoUrl}
+            alt="হাসানা"
+            className={`${size} w-auto max-w-[120px] object-contain shrink-0 transition-transform group-hover:scale-105`}
+            onError={() => setFailedUrl(logoUrl)}
+        />
+    );
+}
 
 export function Layout({ children }) {
     const { confirmExit } = useModal();
@@ -92,7 +114,7 @@ export function Layout({ children }) {
                             className="flex items-center gap-2 select-none group"
                             onClick={() => hapticImpact()}
                         >
-                            <span className="font-arabic text-3xl text-gold font-bold transition-transform group-hover:scale-105">حسنة</span>
+                            <BrandLogo isDark={isDark} size="h-9" fallbackClass="text-3xl transition-transform group-hover:scale-105" />
                             <span className="font-bold text-lg text-primary-foreground tracking-wide">হাসানা</span>
                         </Link>
                     </div>
@@ -236,7 +258,7 @@ export function Layout({ children }) {
                             <div className="absolute inset-0 pattern opacity-30" />
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="font-arabic text-4xl text-gold font-bold">حسنة</span>
+                                    <BrandLogo isDark={isDark} size="h-12" fallbackClass="text-4xl" />
                                     <div>
                                         <h2 className="font-bold text-lg leading-tight">হাসানা</h2>
                                         <p className="text-xs text-primary-foreground/80">ইসলামিক গাইড ও কুরআন</p>

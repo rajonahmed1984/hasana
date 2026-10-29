@@ -213,11 +213,11 @@ function ShareCardDialog({ onClose, data }) {
             />
 
             {/* Modal Dialog */}
-            <div className="relative w-full max-w-lg bg-card text-card-foreground rounded-3xl shadow-2xl border border-border overflow-hidden z-10 flex flex-col my-auto animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-lg bg-card text-card-foreground shadow-2xl border border-border overflow-hidden z-10 flex flex-col my-auto animate-in zoom-in-95 duration-200">
                 {/* Modal Header */}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-primary to-primary/90 text-primary-foreground">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-gold border border-gold/30">
+                        <div className="w-8 h-8 bg-white/10 flex items-center justify-center text-gold border border-gold/30">
                             <ImageIcon className="w-4 h-4" />
                         </div>
                         <div>
@@ -228,7 +228,7 @@ function ShareCardDialog({ onClose, data }) {
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+                        className="w-8 h-8 bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
                         aria-label="বন্ধ করুন"
                     >
                         <X className="w-4 h-4" />
@@ -247,7 +247,7 @@ function ShareCardDialog({ onClose, data }) {
                                 <button
                                     type="button"
                                     onClick={() => setShowBismillah(!showBismillah)}
-                                    className={`px-2 py-0.5 rounded-full text-[11px] font-semibold transition ${
+                                    className={`px-2 py-0.5 text-[11px] font-semibold transition ${
                                         showBismillah 
                                             ? 'bg-primary/10 text-primary border border-primary/20' 
                                             : 'bg-muted text-muted-foreground'
@@ -264,13 +264,13 @@ function ShareCardDialog({ onClose, data }) {
                                     key={t.id}
                                     type="button"
                                     onClick={() => { hapticImpact(); setSelectedThemeId(t.id); }}
-                                    className={`flex flex-col items-center gap-1 p-2 rounded-xl border text-[11px] font-semibold transition ${
+                                    className={`flex flex-col items-center gap-1 p-2 border text-[11px] font-semibold transition ${
                                         selectedThemeId === t.id
                                             ? 'border-primary ring-2 ring-primary/20 bg-primary/5 font-bold text-primary'
                                             : 'border-border bg-card text-muted-foreground hover:bg-muted'
                                     }`}
                                 >
-                                    <span className={`w-6 h-6 rounded-full shadow-inner border-2 ${t.swatch}`} />
+                                    <span className={`w-6 h-6 shadow-inner border-2 ${t.swatch}`} />
                                     <span className="truncate w-full text-center">{t.name}</span>
                                 </button>
                             ))}
@@ -282,11 +282,11 @@ function ShareCardDialog({ onClose, data }) {
                         <div
                             ref={cardRef}
                             style={{ background: theme.cardBg, fontFamily: BN_FONT }}
-                            className={`w-full max-w-[400px] rounded-[28px] px-6 pt-7 pb-5 relative overflow-hidden flex flex-col items-center text-center select-none border-2 ${theme.border}`}
+                            className={`w-full max-w-[400px] px-6 pt-7 pb-5 relative overflow-hidden flex flex-col items-center text-center select-none border-2 ${theme.border}`}
                         >
                             {/* Inner ornamental frame */}
                             <div
-                                className="absolute inset-2.5 rounded-[22px] pointer-events-none"
+                                className="absolute inset-2.5 pointer-events-none"
                                 style={{ border: `1px solid ${theme.innerBorder}` }}
                             />
 
@@ -336,7 +336,7 @@ function ShareCardDialog({ onClose, data }) {
                                 <div className="flex items-center justify-center gap-2 w-full">
                                     <span className="flex-1 h-px bg-gradient-to-r from-transparent to-amber-400/40" />
                                     <span
-                                        className={`px-3 py-1 rounded-full text-[12px] leading-snug font-semibold border ${theme.refBg}`}
+                                        className={`px-3 py-1 text-[12px] leading-snug font-semibold border ${theme.refBg}`}
                                         style={{ textWrap: 'balance' }}
                                     >
                                         {data.reference || data.title}
@@ -361,7 +361,7 @@ function ShareCardDialog({ onClose, data }) {
                     <button
                         type="button"
                         onClick={handleCopyText}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-xs font-bold text-foreground hover:bg-muted active:scale-95 transition"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-card border border-border text-xs font-bold text-foreground hover:bg-muted active:scale-95 transition"
                     >
                         {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{isCopied ? 'কপি হয়েছে' : 'টেক্সট কপি'}</span>
@@ -372,7 +372,7 @@ function ShareCardDialog({ onClose, data }) {
                             type="button"
                             disabled={isGenerating}
                             onClick={handleDownload}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-bold active:scale-95 transition disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-bold active:scale-95 transition disabled:opacity-50"
                         >
                             <Download className="w-4 h-4" />
                             <span>{isGenerating ? 'তৈরি হচ্ছে...' : 'ছবি ডাউনলোড'}</span>
@@ -382,7 +382,7 @@ function ShareCardDialog({ onClose, data }) {
                             type="button"
                             disabled={isGenerating}
                             onClick={handleShareImage}
-                            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-primary text-gold font-bold text-xs shadow-md hover:brightness-110 active:scale-95 transition disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 px-5 py-2 bg-primary text-gold font-bold text-xs shadow-md hover:brightness-110 active:scale-95 transition disabled:opacity-50"
                         >
                             <Share2 className="w-4 h-4" />
                             <span>ছবি শেয়ার করুন</span>
@@ -393,7 +393,7 @@ function ShareCardDialog({ onClose, data }) {
 
             {/* Floating Toast inside modal */}
             {toast && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-primary text-primary-foreground px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-150">
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-primary text-primary-foreground px-5 py-2.5 shadow-2xl flex items-center gap-2 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-150">
                     <Sparkles className="w-4 h-4 text-gold" />
                     <span>{toast}</span>
                 </div>

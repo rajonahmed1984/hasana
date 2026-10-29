@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>হাসানা অ্যাডমিন পোর্টাল — Hasana Islamic Platform Control</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="icon" id="site-favicon" href="{{ brand_assets()['favicon'] }}">
     <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
 
     <!-- Google Fonts: Amiri (Arabic) & Hind Siliguri (Bengali) -->
@@ -104,6 +104,7 @@
             user: @json(Auth::user()),
             csrfToken: "{{ csrf_token() }}",
             logoUrl: "{{ logo_url() }}",
+            brand: @json(brand_assets()),
             siteTitle: "{{ setting('site_title_bn', setting('site_name', 'হাসানা')) }}",
             siteTagline: "{{ setting('site_tagline', 'পবিত্র কুরআন, হাদিস ও দোয়া') }}",
             developerName: "{{ setting('developer_name', 'Apptimatic') }}",

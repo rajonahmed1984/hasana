@@ -23,10 +23,8 @@
     <meta property="og:site_name" content="Hasana (হাসানা)">
     <meta property="og:title" content="হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়">
     <meta property="og:description" content="নির্ভুল নামাজের সময়সূচী, আল-কুরআন বাংলা অনুবাদ, সহিহ হাদিস, দৈনন্দিন দোয়া ও পূর্ণাঙ্গ ডিজিটাল উমরাহ সহায়িকা।">
-    <meta property="og:image" content="{{ asset('images/og-share-hasana.jpg') }}">
-    <meta property="og:image:secure_url" content="{{ asset('images/og-share-hasana.jpg') }}">
-    <meta property="og:image:width" content="1024">
-    <meta property="og:image:height" content="500">
+    <meta property="og:image" content="{{ brand_assets()['og_image'] }}">
+    <meta property="og:image:secure_url" content="{{ brand_assets()['og_image'] }}">
     <meta property="og:image:alt" content="Hasana Islamic App">
     <meta property="og:locale" content="bn_BD">
 
@@ -35,7 +33,7 @@
     <meta name="twitter:url" content="https://hasanaa.com/">
     <meta name="twitter:title" content="হাসানা — আল কুরআন, হাদিস, দোয়া ও নামাজের সময়">
     <meta name="twitter:description" content="নির্ভুল নামাজের সময়সূচী, আল-কুরআন বাংলা অনুবাদ, সহিহ হাদিস, দৈনন্দিন দোয়া ও পূর্ণাঙ্গ ডিজিটাল উমরাহ সহায়িকা।">
-    <meta name="twitter:image" content="{{ asset('images/og-share-hasana.jpg') }}">
+    <meta name="twitter:image" content="{{ brand_assets()['og_image'] }}">
 
     <!-- Structured Data (JSON-LD) for Search Engines -->
     <script type="application/ld+json">
@@ -56,8 +54,14 @@
     }
     </script>
     
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="icon" href="{{ brand_assets()['favicon'] }}">
+    <script>
+        // Brand logo uploaded from Admin → Settings
+        window.HasanaConfig = { brand: @json(brand_assets()) };
+    </script>
     <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
+    <link rel="preload" href="{{ asset('images/hasana-app-logo.png') }}" as="image">
+    <link rel="preload" href="{{ asset('images/apptimatic_logo.png') }}" as="image">
 
     <!-- PWA & Mobile Meta Tags -->
     <meta name="theme-color" content="#125e54">
@@ -97,59 +101,108 @@
             color: #e4ebe9;
         }
 
-        /* Native-style boot splash screen */
+        /* Native-style boot splash screen (same look as the Android launch splash) */
         .hs-splash-screen {
             position: fixed;
             inset: 0;
+            height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background: radial-gradient(circle at 70% 20%, #177a6d, #0d3b34);
+            justify-content: space-between;
+            background: radial-gradient(circle at 50% 36%, #177a6d 0%, #0f4a41 55%, #082a25 100%);
             color: #ffffff;
             z-index: 9999;
             text-align: center;
-            padding: 20px;
+            padding: 48px 24px calc(36px + env(safe-area-inset-bottom, 0px));
+            overflow: hidden;
         }
-        .hs-splash-arabic {
-            font-family: 'Amiri', serif;
-            font-size: 5rem;
-            color: #dfab3b;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        .hs-splash-top { height: 10px; }
+        .hs-splash-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hs-splash-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            padding: 3px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #f6dc8f, #dfab3b, #b07a1c);
+            box-shadow: 0 0 45px rgba(223, 171, 59, 0.4), 0 12px 30px rgba(0, 0, 0, 0.6);
+            animation: hs-glow 2.4s ease-in-out infinite alternate;
+        }
+        .hs-splash-logo img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 25px;
+        }
+        @keyframes hs-glow {
+            0% { box-shadow: 0 0 25px rgba(223, 171, 59, 0.3), 0 10px 24px rgba(0, 0, 0, 0.5); transform: scale(0.98); }
+            100% { box-shadow: 0 0 50px rgba(246, 220, 143, 0.55), 0 14px 34px rgba(0, 0, 0, 0.7); transform: scale(1.02); }
         }
         .hs-splash-title {
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 700;
-            letter-spacing: 0.05em;
+            line-height: 1.3;
             margin: 0;
+            background: linear-gradient(180deg, #ffffff 25%, #f6dc8f 65%, #dfab3b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .hs-splash-subtitle {
             font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.75);
-            margin-top: 0.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0.25rem 0 26px;
         }
         .hs-splash-loader {
-            width: 120px;
+            width: 130px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 9999px;
-            margin-top: 2rem;
             overflow: hidden;
-            position: relative;
         }
         .hs-splash-bar {
             width: 40%;
             height: 100%;
-            background: #dfab3b;
+            background: linear-gradient(90deg, #f6dc8f, #dfab3b);
             border-radius: 9999px;
             animation: hs-indeterminate 1.4s infinite ease-in-out;
         }
         @keyframes hs-indeterminate {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(300%); }
+        }
+        .hs-splash-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .hs-splash-devby {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.2px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+        .hs-splash-badge {
+            display: flex;
+            align-items: center;
+            padding: 8px 22px;
+            background: #ffffff;
+            border-radius: 9999px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(29, 211, 151, 0.25);
+        }
+        .hs-splash-badge img {
+            display: block;
+            height: 24px;
+            width: auto;
         }
     </style>
 
@@ -160,11 +213,22 @@
     <div id="root">
         <!-- Native-like initial splash while React loads -->
         <div class="hs-splash-screen" aria-label="হাসানা লোড হচ্ছে...">
-            <div class="hs-splash-arabic">حسنة</div>
-            <h1 class="hs-splash-title">হাসানা</h1>
-            <p class="hs-splash-subtitle">পবিত্র কুরআন, হাদিস ও দোয়া</p>
-            <div class="hs-splash-loader">
-                <div class="hs-splash-bar"></div>
+            <div class="hs-splash-top"></div>
+            <div class="hs-splash-center">
+                <div class="hs-splash-logo">
+                    <img src="{{ asset('images/hasana-app-logo.png') }}" alt="হাসানা">
+                </div>
+                <h1 class="hs-splash-title">হাসানা</h1>
+                <p class="hs-splash-subtitle">পবিত্র কুরআন, হাদিস ও দোয়া</p>
+                <div class="hs-splash-loader">
+                    <div class="hs-splash-bar"></div>
+                </div>
+            </div>
+            <div class="hs-splash-bottom">
+                <div class="hs-splash-devby">DEVELOPED BY</div>
+                <div class="hs-splash-badge">
+                    <img src="{{ asset('images/apptimatic_logo.png') }}" alt="Apptimatic">
+                </div>
             </div>
         </div>
     </div>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <filter id="white-mark" color-interpolation-filters="sRGB">
+      <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="#0d3b34" />
+  <image href="logo.svg" x="96" y="128" width="320" height="255.4" filter="url(#white-mark)" />
+</svg>

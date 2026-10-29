@@ -38,6 +38,18 @@ export default function AdminLayout({ children }) {
 
     const config = window.AdminConfig || {};
     const currentUser = config.user || { name: 'অ্যাডমিন', email: 'admin@hasana.app' };
+    const [brand, setBrand] = useState(config.brand || {});
+
+    // Settings page fires this after brand images are saved: refresh the sidebar logo and the tab icon
+    useEffect(() => {
+        const onLogoUpdated = (e) => {
+            setBrand(e.detail);
+            const favicon = document.getElementById('site-favicon');
+            if (favicon && e.detail.favicon) favicon.href = e.detail.favicon;
+        };
+        window.addEventListener('hasana-logo-updated', onLogoUpdated);
+        return () => window.removeEventListener('hasana-logo-updated', onLogoUpdated);
+    }, []);
 
     // Initialize Theme
     useEffect(() => {
@@ -125,16 +137,19 @@ export default function AdminLayout({ children }) {
                     <div className="h-20 px-6 flex items-center justify-between border-b border-[#e2dfd5] dark:border-[#1a2f2b]">
                         <Link to="/" className="flex items-center gap-3 group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#125e54] to-[#0a3a34] p-1.5 flex items-center justify-center shadow-md shadow-[#125e54]/20 group-hover:scale-105 transition-transform">
-                                <img 
-                                    src={config.logoUrl || '/images/logo.svg'} 
-                                    alt="Logo" 
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextElementSibling.style.display = 'block';
-                                    }}
-                                />
-                                <span className="hidden font-serif font-bold text-lg text-[#dfab3b]">ح</span>
+                                {(isDark ? brand.logo_dark : brand.logo) ? (
+                                    <img
+                                        key={isDark ? brand.logo_dark : brand.logo}
+                                        src={isDark ? brand.logo_dark : brand.logo}
+                                        alt="Logo"
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextElementSibling.style.display = 'block';
+                                        }}
+                                    />
+                                ) : null}
+                                <span className={`${(isDark ? brand.logo_dark : brand.logo) ? 'hidden' : ''} font-serif font-bold text-lg text-[#dfab3b]`}>ح</span>
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-bold text-lg leading-tight tracking-tight text-[#14302b] dark:text-[#e4ebe9]">

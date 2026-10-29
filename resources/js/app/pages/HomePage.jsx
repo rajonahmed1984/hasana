@@ -21,7 +21,8 @@ import {
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
-import { hapticImpact, nativeShare } from '../native';
+import { ShareCardModal } from '../components/ShareCardModal';
+import { hapticImpact } from '../native';
 import { 
     isPrayerNotificationEnabled, 
     enablePrayerNotifications, 
@@ -58,6 +59,7 @@ export function HomePage() {
     const [notifActive, setNotifActive] = useState(false);
     const [dailyAyah, setDailyAyah] = useState(null);
     const [dailyAyahNotifActive, setDailyAyahNotifActive] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     // Dynamic Location & Prayer Times State
     const [locationData, setLocationData] = useState(() => getStoredLocation());
@@ -178,13 +180,10 @@ export function HomePage() {
         surah_name: 'আল-ফাতিহা',
     };
 
-    const handleShareVerse = async () => {
+    // Same photo card share as the Quran ayah share
+    const handleShareVerse = () => {
         hapticImpact();
-        await nativeShare({
-            title: activeVerse.title,
-            text: `${activeVerse.text_ar}\n\n${activeVerse.text_bn}\n\n— ${activeVerse.reference}`,
-            url: window.location.origin + (activeVerse.deep_link || '/'),
-        });
+        setIsShareModalOpen(true);
     };
 
     return (
@@ -426,6 +425,19 @@ export function HomePage() {
                     ))}
                 </div>
             </section>
+
+            <ShareCardModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                data={{
+                    type: 'ayah',
+                    title: activeVerse.title,
+                    reference: activeVerse.reference,
+                    text_ar: activeVerse.text_ar,
+                    text_bn: activeVerse.text_bn,
+                    url: window.location.origin + (activeVerse.deep_link || '/quran'),
+                }}
+            />
         </Layout>
     );
 }

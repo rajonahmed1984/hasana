@@ -16,9 +16,148 @@ import {
 import { apiGet, apiPost } from '../api';
 import { useToast } from '../components/AdminLayout';
 
+const LOGO_TYPES = /^image\/(svg\+xml|png|jpeg|jpg|webp)$/;
+
+// Brand images, each previewed on the background it is shown on
+const BRAND_SLOTS = [
+    {
+        key: 'logo',
+        title: 'ওয়েবসাইট লোগো — লাইট মোড',
+        hint: 'ওয়েবসাইটের সবুজ হেডার ও মেনুতে দেখাবে। সাদা বা হালকা রঙের লোগো ভালো দেখাবে।',
+        previewBg: '#125e54',
+        accept: '.svg,.png,.jpg,.jpeg,.webp',
+        types: LOGO_TYPES,
+        maxMb: 3,
+    },
+    {
+        key: 'logo_dark',
+        title: 'ওয়েবসাইট লোগো — ডার্ক মোড',
+        hint: 'ডার্ক মোডে ওয়েবসাইটে দেখাবে। না দিলে লাইট মোডের লোগো দেখাবে।',
+        previewBg: '#0d1715',
+        accept: '.svg,.png,.jpg,.jpeg,.webp',
+        types: LOGO_TYPES,
+        maxMb: 3,
+    },
+    {
+        key: 'app_logo',
+        title: 'অ্যাপ লোগো — লাইট মোড',
+        hint: 'Android অ্যাপের হেডার ও মেনুতে দেখাবে। না দিলে ওয়েবসাইটের লোগো দেখাবে।',
+        previewBg: '#125e54',
+        accept: '.svg,.png,.jpg,.jpeg,.webp',
+        types: LOGO_TYPES,
+        maxMb: 3,
+    },
+    {
+        key: 'app_logo_dark',
+        title: 'অ্যাপ লোগো — ডার্ক মোড',
+        hint: 'ডার্ক মোডে অ্যাপে দেখাবে। না দিলে ওয়েবসাইটের ডার্ক লোগো বা অ্যাপের লাইট লোগো দেখাবে।',
+        previewBg: '#0d1715',
+        accept: '.svg,.png,.jpg,.jpeg,.webp',
+        types: LOGO_TYPES,
+        maxMb: 3,
+    },
+    {
+        key: 'favicon',
+        title: 'ফেভিকন (ব্রাউজার ট্যাব আইকন)',
+        hint: 'বর্গাকার ICO, PNG বা SVG — 512×512 সাইজ সবচেয়ে ভালো। ওয়েবসাইট ও অ্যাডমিন দুই জায়গাতেই দেখাবে।',
+        previewBg: '#f8f7f2',
+        accept: '.ico,.svg,.png,.jpg,.jpeg,.webp',
+        types: /^image\/(x-icon|vnd\.microsoft\.icon|svg\+xml|png|jpeg|jpg|webp)$/,
+        maxMb: 1,
+        square: true,
+    },
+    {
+        key: 'og_image',
+        title: 'OG ইমেজ (সোশ্যাল শেয়ার প্রিভিউ)',
+        hint: 'Facebook, WhatsApp ইত্যাদিতে ওয়েবসাইটের লিংক শেয়ার করলে এই ছবি দেখাবে। 1200×630 সাইজ, JPG বা PNG।',
+        previewBg: '#e2dfd5',
+        accept: '.png,.jpg,.jpeg,.webp',
+        types: /^image\/(png|jpeg|jpg|webp)$/,
+        maxMb: 5,
+        wide: true,
+    },
+];
+
+function BrandImageCard({ slot, currentUrl, isUploaded, file, previewUrl, removed, onSelect, onRemove }) {
+    const inputRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const shownUrl = previewUrl || (removed ? null : currentUrl);
+
+    const status = file
+        ? `নতুন ফাইল: ${file.name}`
+        : removed
+            ? 'সংরক্ষণের পর ডিফল্টে ফিরে যাবে'
+            : isUploaded ? 'আপলোড করা ছবি সক্রিয়' : 'ডিফল্ট দেখাচ্ছে';
+
+    return (
+        <div className={`rounded-2xl border border-[#e2dfd5] dark:border-[#233e38] p-4 flex flex-col gap-3 ${slot.wide ? 'md:col-span-2' : ''}`}>
+            <div>
+                <h4 className="text-sm font-bold text-[#14302b] dark:text-[#e4ebe9]">{slot.title}</h4>
+                <p className="text-[11px] leading-relaxed text-[#546e6a] dark:text-[#8aa39f] mt-0.5">{slot.hint}</p>
+            </div>
+
+            <input
+                ref={inputRef}
+                type="file"
+                accept={slot.accept}
+                onChange={(e) => { onSelect(e.target.files[0]); e.target.value = ''; }}
+                className="hidden"
+            />
+
+            {/* Preview on the background it is shown on — click or drop a file to replace */}
+            <div
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => { e.preventDefault(); setIsDragging(false); onSelect(e.dataTransfer.files?.[0]); }}
+                onClick={() => inputRef.current?.click()}
+                style={{ background: slot.previewBg }}
+                className={`relative rounded-xl cursor-pointer flex items-center justify-center overflow-hidden border-2 border-dashed transition ${
+                    isDragging ? 'border-[#dfab3b]' : 'border-transparent hover:border-[#dfab3b]/70'
+                } ${slot.wide ? 'aspect-[1200/630] max-h-64' : 'h-32'}`}
+            >
+                {shownUrl ? (
+                    <img
+                        src={shownUrl}
+                        alt={slot.title}
+                        className={slot.wide ? 'w-full h-full object-cover' : slot.square ? 'w-16 h-16 object-contain' : 'max-h-20 max-w-[70%] object-contain'}
+                    />
+                ) : (
+                    <span className="flex flex-col items-center gap-1.5 text-xs font-semibold text-[#8aa39f]">
+                        <UploadCloud className="w-6 h-6" />
+                        ছবি নেই
+                    </span>
+                )}
+            </div>
+
+            <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="text-[11px] text-[#546e6a] dark:text-[#8aa39f] truncate">{status}</span>
+                <div className="flex items-center gap-3 shrink-0">
+                    <button
+                        type="button"
+                        onClick={() => inputRef.current?.click()}
+                        className="flex items-center gap-1.5 text-[#125e54] dark:text-[#dfab3b] font-semibold hover:underline"
+                    >
+                        <Image className="w-3.5 h-3.5" />
+                        <span>আপলোড</span>
+                    </button>
+                    {(file || (isUploaded && !removed)) && (
+                        <button
+                            type="button"
+                            onClick={onRemove}
+                            className="flex items-center gap-1.5 text-red-600 dark:text-red-400 font-semibold hover:underline"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>রিমুভ</span>
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function AdminSettings() {
     const { showToast } = useToast();
-    const fileInputRef = useRef(null);
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -42,12 +181,12 @@ export default function AdminSettings() {
     const [notifyAppUpdate, setNotifyAppUpdate] = useState(true);
     const setAppField = (key, value) => setAppVersion((prev) => ({ ...prev, [key]: value }));
 
-    // Logo state
-    const [currentLogoUrl, setCurrentLogoUrl] = useState('');
-    const [previewUrl, setPreviewUrl] = useState(null);
-    const [logoFile, setLogoFile] = useState(null);
-    const [removeLogo, setRemoveLogo] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
+    // Brand images: what is live now, plus pending uploads / removals keyed by slot
+    const [brandAssets, setBrandAssets] = useState({});
+    const [brandUploaded, setBrandUploaded] = useState({});
+    const [brandFiles, setBrandFiles] = useState({});
+    const [brandPreviews, setBrandPreviews] = useState({});
+    const [brandRemoved, setBrandRemoved] = useState({});
 
     const fetchSettings = async () => {
         setLoading(true);
@@ -66,7 +205,8 @@ export default function AdminSettings() {
                 app_store_url: s.app_store_url || '',
             });
             setSavedBuild(s.app_latest_build || 1);
-            setCurrentLogoUrl(res.logo_url || '/images/logo.svg');
+            setBrandAssets(res.brand_assets || {});
+            setBrandUploaded(res.brand_uploaded || {});
             setServerInfo(res.server_info || {});
         } catch (err) {
             showToast(err.message || 'সেটিংস লোড করতে ব্যর্থ হয়েছে', 'error');
@@ -79,34 +219,26 @@ export default function AdminSettings() {
         fetchSettings();
     }, []);
 
-    const handleFileSelect = (file) => {
+    const handleBrandSelect = (slot, file) => {
         if (!file) return;
-        if (!file.type.match(/^image\/(svg\+xml|png|jpeg|jpg|webp)$/)) {
-            showToast('শুধুমাত্র SVG, PNG, JPG বা WEBP ইমেজ ফাইল গ্রহণযোগ্য', 'error');
+        if (!file.type.match(slot.types)) {
+            showToast(`এই ফাইল গ্রহণযোগ্য নয় — অনুমোদিত: ${slot.accept.replaceAll('.', ' ').toUpperCase()}`, 'error');
             return;
         }
-        if (file.size > 3 * 1024 * 1024) {
-            showToast('ফাইলের আকার সর্বোচ্চ 3 মেগাবাইট হতে পারবে', 'error');
+        if (file.size > slot.maxMb * 1024 * 1024) {
+            showToast(`ফাইলের আকার সর্বোচ্চ ${slot.maxMb} মেগাবাইট হতে পারবে`, 'error');
             return;
         }
-        setLogoFile(file);
-        setRemoveLogo(false);
-        setPreviewUrl(URL.createObjectURL(file));
+        setBrandFiles((prev) => ({ ...prev, [slot.key]: file }));
+        setBrandPreviews((prev) => ({ ...prev, [slot.key]: URL.createObjectURL(file) }));
+        setBrandRemoved((prev) => ({ ...prev, [slot.key]: false }));
     };
 
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleFileSelect(e.dataTransfer.files[0]);
-        }
-    };
-
-    const handleRemoveLogo = () => {
-        setLogoFile(null);
-        setPreviewUrl(null);
-        setRemoveLogo(true);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+    const handleBrandRemove = (slot) => {
+        setBrandFiles((prev) => ({ ...prev, [slot.key]: null }));
+        setBrandPreviews((prev) => ({ ...prev, [slot.key]: null }));
+        // Discarding a new pick keeps the live image; otherwise the live upload is removed on save
+        setBrandRemoved((prev) => ({ ...prev, [slot.key]: !brandFiles[slot.key] && !!brandUploaded[slot.key] }));
     };
 
     const handleSubmit = async (e) => {
@@ -122,11 +254,13 @@ export default function AdminSettings() {
             Object.entries(appVersion).forEach(([key, value]) => formData.append(key, value ?? ''));
             formData.append('notify_app_update', notifyAppUpdate ? '1' : '0');
 
-            if (removeLogo) {
-                formData.append('remove_logo', '1');
-            } else if (logoFile) {
-                formData.append('logo', logoFile);
-            }
+            BRAND_SLOTS.forEach(({ key }) => {
+                if (brandRemoved[key]) {
+                    formData.append(`remove_${key}`, '1');
+                } else if (brandFiles[key]) {
+                    formData.append(key, brandFiles[key]);
+                }
+            });
 
             const res = await apiPost('/admin/settings', formData);
             showToast(res.message || 'সকল সেটিংস এবং ব্র্যান্ড লোগো সফলভাবে সংরক্ষণ করা হয়েছে!');
@@ -134,14 +268,17 @@ export default function AdminSettings() {
                 setSavedBuild(res.settings.app_latest_build);
             }
 
-            if (res.logo_url) {
-                setCurrentLogoUrl(res.logo_url);
-                setPreviewUrl(null);
-                setLogoFile(null);
-                setRemoveLogo(false);
+            if (res.brand_assets) {
+                setBrandAssets(res.brand_assets);
+                setBrandUploaded(res.brand_uploaded || {});
+                setBrandFiles({});
+                setBrandPreviews({});
+                setBrandRemoved({});
                 if (window.AdminConfig) {
                     window.AdminConfig.logoUrl = res.logo_url;
+                    window.AdminConfig.brand = res.brand_assets;
                 }
+                window.dispatchEvent(new CustomEvent('hasana-logo-updated', { detail: res.brand_assets }));
             }
         } catch (err) {
             showToast(err.message || 'সংরক্ষণ ব্যর্থ হয়েছে', 'error');
@@ -149,8 +286,6 @@ export default function AdminSettings() {
             setSubmitting(false);
         }
     };
-
-    const displayLogo = previewUrl || (removeLogo ? '/images/logo.svg' : currentLogoUrl);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-300">
@@ -175,109 +310,28 @@ export default function AdminSettings() {
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-[#14302b] dark:text-[#e4ebe9]">
-                                ব্র্যান্ড লোগো ও প্রিভিউ স্টেজ
+                                লোগো, ফেভিকন ও OG ইমেজ
                             </h3>
                             <p className="text-xs text-[#546e6a] dark:text-[#8aa39f]">
-                                রিয়েল-টাইম ড্র্যাগ অ্যান্ড ড্রপ লোগো আপলোডার (SVG, PNG, WEBP, JPG)
+                                অ্যাপ ও ওয়েবসাইটের জন্য আলাদা লোগো, ডার্ক মোড লোগো, ব্রাউজার আইকন ও শেয়ার ইমেজ — প্রিভিউতে ক্লিক বা ফাইল টেনে এনে আপলোড করুন
                             </p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        {/* Live Previews Stage (5 cols) */}
-                        <div className="lg:col-span-5 space-y-4">
-                            <span className="text-xs font-bold text-[#546e6a] dark:text-[#8aa39f] block">
-                                লাইভ স্টেজ প্রিভিউ (ডার্ক ও লাইট ব্যাকগ্রাউন্ড)
-                            </span>
-
-                            {/* Light preview card */}
-                            <div className="p-6 rounded-2xl bg-[#f8f7f2] border border-[#e2dfd5] flex flex-col items-center justify-center text-center shadow-inner relative overflow-hidden group">
-                                <span className="absolute top-3 left-3 text-[10px] font-bold text-[#546e6a] bg-white px-2 py-0.5 rounded-md">
-                                    লাইট মোড
-                                </span>
-                                <div className="w-32 h-20 flex items-center justify-center p-2">
-                                    <img 
-                                        src={displayLogo} 
-                                        alt="Logo Preview Light" 
-                                        className="max-h-full max-w-full object-contain filter drop-shadow-sm transition-transform group-hover:scale-105"
-                                    />
-                                </div>
-                                <span className="text-xs font-bold text-[#14302b] mt-2">
-                                    {siteTitleBn} — {siteName}
-                                </span>
-                            </div>
-
-                            {/* Dark preview card */}
-                            <div className="p-6 rounded-2xl bg-[#0d1715] border border-[#233e38] flex flex-col items-center justify-center text-center shadow-inner relative overflow-hidden group">
-                                <span className="absolute top-3 left-3 text-[10px] font-bold text-[#8aa39f] bg-[#1a2f2b] px-2 py-0.5 rounded-md">
-                                    ডার্ক মোড
-                                </span>
-                                <div className="w-32 h-20 flex items-center justify-center p-2">
-                                    <img 
-                                        src={displayLogo} 
-                                        alt="Logo Preview Dark" 
-                                        className="max-h-full max-w-full object-contain filter drop-shadow-sm transition-transform group-hover:scale-105"
-                                    />
-                                </div>
-                                <span className="text-xs font-bold text-[#e4ebe9] mt-2">
-                                    {siteTitleBn} — {siteName}
-                                </span>
-                            </div>
-
-                            {/* Logo action row */}
-                            <div className="flex items-center justify-between text-xs pt-1">
-                                <span className="text-[11px] text-[#546e6a] dark:text-[#8aa39f]">
-                                    {logoFile ? `নতুন ফাইল: ${logoFile.name}` : (removeLogo ? 'ডিফল্ট লোগোতে রিসেট করা হবে' : 'বর্তমান লোগো সক্রিয়')}
-                                </span>
-                                {(logoFile || !removeLogo) && (
-                                    <button
-                                        type="button"
-                                        onClick={handleRemoveLogo}
-                                        className="flex items-center gap-1.5 text-red-600 dark:text-red-400 font-semibold hover:underline"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                        <span>লোগো রিমুভ করুন</span>
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Dropzone (7 cols) */}
-                        <div className="lg:col-span-7">
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept=".svg,.png,.jpg,.jpeg,.webp"
-                                onChange={(e) => handleFileSelect(e.target.files[0])}
-                                className="hidden"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {BRAND_SLOTS.map((slot) => (
+                            <BrandImageCard
+                                key={slot.key}
+                                slot={slot}
+                                currentUrl={brandAssets[slot.key]}
+                                isUploaded={!!brandUploaded[slot.key]}
+                                file={brandFiles[slot.key]}
+                                previewUrl={brandPreviews[slot.key]}
+                                removed={!!brandRemoved[slot.key]}
+                                onSelect={(file) => handleBrandSelect(slot, file)}
+                                onRemove={() => handleBrandRemove(slot)}
                             />
-
-                            <div
-                                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                                onDragLeave={() => setIsDragging(false)}
-                                onDrop={handleDrop}
-                                onClick={() => fileInputRef.current?.click()}
-                                className={`border-2 border-dashed rounded-3xl p-8 sm:p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
-                                    isDragging 
-                                        ? 'border-[#dfab3b] bg-[#dfab3b]/5 scale-99' 
-                                        : 'border-[#e2dfd5] dark:border-[#233e38] hover:border-[#125e54] dark:hover:border-[#dfab3b] bg-[#f8f7f2]/50 dark:bg-[#162724]/40'
-                                }`}
-                            >
-                                <div className="w-16 h-16 rounded-2xl bg-[#125e54]/10 dark:bg-[#125e54]/20 text-[#125e54] dark:text-[#dfab3b] flex items-center justify-center mb-4 shadow-sm">
-                                    <UploadCloud className="w-8 h-8" />
-                                </div>
-                                <h4 className="text-base font-bold text-[#14302b] dark:text-[#e4ebe9] mb-1">
-                                    ক্লিক করুন অথবা নতুন লোগো ফাইল টেনে আনুন
-                                </h4>
-                                <p className="text-xs text-[#546e6a] dark:text-[#8aa39f] max-w-sm mb-4 leading-relaxed">
-                                    স্বচ্ছ ব্যাকগ্রাউন্ডের SVG বা উচ্চ মানের PNG লোগো সবচেয়ে ভালো দেখাবে। ফাইল সাইজ সর্বোচ্চ 3 MB.
-                                </p>
-                                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#125e54] text-white text-xs font-semibold shadow-md shadow-[#125e54]/20 hover:bg-[#187468] transition-colors">
-                                    <Image className="w-4 h-4 text-[#dfab3b]" />
-                                    <span>ফাইল ব্রাউজ করুন</span>
-                                </span>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
