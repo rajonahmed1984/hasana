@@ -132,18 +132,22 @@
             width: 120px;
             height: 120px;
             margin-bottom: 20px;
-            padding: 3px;
+            padding: 4px;
             border-radius: 28px;
             background: linear-gradient(135deg, #f6dc8f, #dfab3b, #b07a1c);
             box-shadow: 0 0 45px rgba(223, 171, 59, 0.4), 0 12px 30px rgba(0, 0, 0, 0.6);
             animation: hs-glow 2.4s ease-in-out infinite alternate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
         .hs-splash-logo img {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            border-radius: 25px;
+            object-fit: contain;
+            border-radius: 24px;
         }
         @keyframes hs-glow {
             0% { box-shadow: 0 0 25px rgba(223, 171, 59, 0.3), 0 10px 24px rgba(0, 0, 0, 0.5); transform: scale(0.98); }
@@ -217,7 +221,7 @@
     <div id="root">
         @php
             $brandAssets = brand_assets();
-            $splashLogo = $brandAssets['app_logo'] ?? $brandAssets['logo'] ?? asset('images/hasana-app-logo.png');
+            $splashLogo = asset('images/hasana-app-logo.png') . '?v=' . (file_exists(public_path('images/hasana-app-logo.png')) ? filemtime(public_path('images/hasana-app-logo.png')) : time());
         @endphp
         <!-- Native-like initial splash while React loads -->
         <div class="hs-splash-screen" aria-label="হাসানা লোড হচ্ছে...">
