@@ -20,9 +20,7 @@ import {
     Compass,
     X,
     Search,
-    RotateCcw,
-    ShieldCheck,
-    HandCoins
+    RotateCcw
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
@@ -59,45 +57,6 @@ const features = [
     { title: 'বুকমার্ক সংরক্ষণ', desc: 'পছন্দের আয়াত ও দোয়া বুকমার্ক করুন', icon: Bookmark, to: '/bookmarks' },
     { title: 'আয়াত ও দোয়া শেয়ার', desc: 'সহজেই শেয়ার করুন বন্ধুমহলে', icon: Share2 },
     { title: 'ডার্ক মোড সমর্থন', desc: 'চোখের আরামের জন্য আধুনিক ডার্ক মোড', icon: Moon },
-];
-
-const masnoonCategories = [
-    { 
-        title: 'সকাল-সন্ধ্যার দোয়া', 
-        slug: 'morning-evening-adhkar', 
-        icon: Sun,
-        desc: 'দিনের শুরু ও সমাপ্তির শ্রেষ্ঠ আমল' 
-    },
-    { 
-        title: 'বিপদ মুক্তির দোয়া', 
-        slug: 'distress-and-protection', 
-        icon: ShieldCheck,
-        desc: 'কষ্ট, ভয় ও দুশ্চিন্তা থেকে মুক্তির আশ্রয়' 
-    },
-    { 
-        title: 'সালাতের পর দোয়া', 
-        slug: 'salah-and-adhkar', 
-        icon: DuaHandsIcon,
-        desc: 'ফরজ নামাজের পর পঠিতব্য মাসনুন জিকির' 
-    },
-    { 
-        title: 'কুরআনের দুআসমূহ', 
-        slug: 'quranic-duas', 
-        icon: BookOpen,
-        desc: 'পবিত্র কুরআনে বর্ণিত রব্বানা দোয়াসমূহ' 
-    },
-    { 
-        title: 'দৈনন্দিন জিকির', 
-        slug: 'daily-life-duas', 
-        icon: Sparkles,
-        desc: 'খাওয়া, শোয়া ও ঘরের প্রয়োজনীয় দোয়া' 
-    },
-    { 
-        title: 'রিজিক ও মাগফিরাত', 
-        slug: 'tawbah-and-forgiveness', 
-        icon: HandCoins,
-        desc: 'বরকত, প্রাচুর্য ও ক্ষমা প্রার্থনার আমল' 
-    },
 ];
 
 const dhikrOptions = [
@@ -525,51 +484,6 @@ export function HomePage() {
                             <span>কপি করুন</span>
                         </button>
                     </div>
-                </div>
-            </section>
-
-            {/* মাসনুন দোয়া (Masnoon Dua 6-Grid) matching Image 1 */}
-            <section className="mx-auto max-w-3xl px-4 mt-8">
-                <div className="flex items-center justify-between mb-4">
-                    <div>
-                        <h2 className="text-lg md:text-xl font-bold text-foreground flex items-center gap-2">
-                            <DuaHandsIcon className="w-5 h-5 text-gold" />
-                            মাসনুন দোয়া (Masnoon Dua)
-                        </h2>
-                        <p className="text-xs text-muted-foreground">দৈনন্দিন জীবনের বরকতময় দোয়াসমূহ</p>
-                    </div>
-                    <Link
-                        to="/duas"
-                        onClick={() => hapticImpact()}
-                        className="text-xs font-bold text-gold hover:underline flex items-center gap-0.5"
-                    >
-                        <span>সব দেখুন</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {masnoonCategories.map((cat) => {
-                        const CatIcon = cat.icon;
-                        return (
-                            <Link
-                                key={cat.slug}
-                                to={`/duas?cat=${cat.slug}`}
-                                onClick={() => hapticImpact()}
-                                className="rounded-2xl bg-card border border-gold/25 hover:border-gold/55 p-3.5 sm:p-4 shadow-sm card-hover flex flex-col items-center text-center group native-press select-none"
-                            >
-                                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#0a4232] to-[#041f17] border border-gold/40 text-gold flex items-center justify-center shadow-md group-hover:scale-105 transition-transform mb-2.5">
-                                    <CatIcon className="w-5 h-5 text-gold" />
-                                </div>
-                                <h3 className="font-bold text-xs sm:text-sm text-foreground group-hover:text-gold transition-colors leading-snug">
-                                    {cat.title}
-                                </h3>
-                                <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">
-                                    {cat.desc}
-                                </p>
-                            </Link>
-                        );
-                    })}
                 </div>
             </section>
 
