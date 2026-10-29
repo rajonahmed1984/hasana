@@ -15,7 +15,8 @@ import {
     ExternalLink,
     LogOut,
     WifiOff,
-    Search
+    Search,
+    Clock
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from './IslamicIcons';
 import { hapticImpact, isNative } from '../native';
@@ -272,6 +273,14 @@ export function Layout({ children }) {
                         {/* Drawer Links */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-1">
                             <p className="text-xs font-semibold text-muted-foreground uppercase px-3 py-2">মূল পেজ সমূহ</p>
+                            <Link
+                                to="/prayer-times"
+                                onClick={() => setSidebarOpen(false)}
+                                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-muted font-medium text-sm transition"
+                            >
+                                <Clock className="w-5 h-5 text-primary" />
+                                <span>নামাজের সময়সূচী</span>
+                            </Link>
                             {navItems.map(({ to, label, icon: Icon }) => (
                                 <Link
                                     key={to}

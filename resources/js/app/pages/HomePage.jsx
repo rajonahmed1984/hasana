@@ -55,8 +55,8 @@ const quickAccess = [
 ];
 
 const features = [
-    { title: 'নামাজের সময়সূচী', desc: 'প্রতিদিন সঠিক সময়ে নামাজের সময়', icon: Clock },
-    { title: 'বুকমার্ক সংরক্ষণ', desc: 'পছন্দের আয়াত ও দোয়া বুকমার্ক করুন', icon: Bookmark },
+    { title: 'নামাজের সময়সূচী', desc: 'প্রতিদিন সঠিক সময়ে নামাজের সময়', icon: Clock, to: '/prayer-times' },
+    { title: 'বুকমার্ক সংরক্ষণ', desc: 'পছন্দের আয়াত ও দোয়া বুকমার্ক করুন', icon: Bookmark, to: '/bookmarks' },
     { title: 'আয়াত ও দোয়া শেয়ার', desc: 'সহজেই শেয়ার করুন বন্ধুমহলে', icon: Share2 },
     { title: 'ডার্ক মোড সমর্থন', desc: 'চোখের আরামের জন্য আধুনিক ডার্ক মোড', icon: Moon },
 ];
@@ -377,187 +377,104 @@ export function HomePage() {
 
                             {/* View All Button */}
                             <div className="mt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        hapticImpact();
-                                        document.getElementById('prayer-schedule-card')?.scrollIntoView({ behavior: 'smooth' });
-                                    }}
+                                <Link
+                                    to="/prayer-times"
+                                    onClick={() => hapticImpact()}
                                     className="gold-gradient-btn px-5 py-2 rounded-full text-xs font-bold shadow-lg inline-flex items-center gap-1.5 native-press cursor-pointer"
                                 >
                                     <span>সকল ওয়াক্ত দেখুন</span>
                                     <ChevronRight className="w-3.5 h-3.5" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Play Store App Update Alert & Location Prompt Banners */}
+            {((isNative() && appUpdateInfo?.hasUpdate) || showLocationBanner) && (
+                <section className="mx-auto max-w-3xl px-4 mt-5 relative z-20 space-y-3">
+                    {/* Play Store App Update Alert Banner (Native Android only) */}
+                    {isNative() && appUpdateInfo && appUpdateInfo.hasUpdate && (
+                        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-900 border border-gold/50 shadow-xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-fade-scale">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-9 h-9 rounded-xl bg-gold/25 border border-gold/50 text-gold flex items-center justify-center shrink-0 shadow-xs">
+                                    <Sparkles className="w-5 h-5 text-gold animate-pulse" />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 flex-wrap">
+                                        <span>নতুন সংস্করণ এসেছে (v{appUpdateInfo.latestVersion})</span>
+                                        <span className="text-[10px] bg-gold text-primary font-extrabold px-1.5 py-0.2 rounded-full">Play Store</span>
+                                    </p>
+                                    <p className="text-[11px] text-white/80 line-clamp-1">
+                                        {appUpdateInfo.message || 'নতুন ফিচার ও পারফরম্যান্স উন্নয়নের জন্য এখনই আপডেট করুন।'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                                <a
+                                    href={appUpdateInfo.storeUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={() => hapticImpact()}
+                                    className="px-3.5 py-1.5 rounded-xl bg-gold text-primary text-xs font-bold shadow-md hover:bg-gold/90 active:scale-95 transition"
+                                >
+                                    আপডেট
+                                </a>
+                                <button
+                                    type="button"
+                                    onClick={() => setAppUpdateInfo(null)}
+                                    className="p-1 text-white/60 hover:text-white"
+                                    title="বাতিল করুন"
+                                >
+                                    <X className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+                    )}
 
-            {/* Prayer Times Floating Card */}
-            <section className="mx-auto max-w-5xl px-4 -mt-8 relative z-20">
-                {/* Play Store App Update Alert Banner (Native Android only) */}
-                {isNative() && appUpdateInfo && appUpdateInfo.hasUpdate && (
-                    <div className="mb-3.5 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-900 border border-gold/50 shadow-xl backdrop-blur-md flex items-center justify-between gap-3 text-white animate-fade-scale">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-9 h-9 rounded-xl bg-gold/25 border border-gold/50 text-gold flex items-center justify-center shrink-0 shadow-xs">
-                                <Sparkles className="w-5 h-5 text-gold animate-pulse" />
-                            </div>
-                            <div className="min-w-0">
-                                <p className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 flex-wrap">
-                                    <span>নতুন সংস্করণ এসেছে (v{appUpdateInfo.latestVersion})</span>
-                                    <span className="text-[10px] bg-gold text-primary font-extrabold px-1.5 py-0.2 rounded-full">Play Store</span>
-                                </p>
-                                <p className="text-[11px] text-white/80 line-clamp-1">
-                                    {appUpdateInfo.message || 'নতুন ফিচার ও পারফরম্যান্স উন্নয়নের জন্য এখনই আপডেট করুন।'}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                            <a
-                                href={appUpdateInfo.storeUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={() => hapticImpact()}
-                                className="px-3.5 py-1.5 rounded-xl bg-gold text-primary text-xs font-bold shadow-md hover:bg-gold/90 active:scale-95 transition"
-                            >
-                                আপডেট
-                            </a>
-                            <button
-                                type="button"
-                                onClick={() => setAppUpdateInfo(null)}
-                                className="p-1 text-white/60 hover:text-white"
-                                title="বাতিল করুন"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Location Detection Banner for First Open / Install */}
-                {showLocationBanner && (
-                    <div className="mb-3 p-3.5 rounded-2xl bg-card border-2 border-primary/30 shadow-lg backdrop-blur-md flex items-center justify-between gap-3 animate-fade-scale">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-primary text-gold flex items-center justify-center shrink-0 shadow-xs">
-                                <Navigation className="w-4 h-4 animate-pulse" />
-                            </div>
-                            <div>
-                                <p className="text-xs sm:text-sm font-bold text-foreground">
-                                    আপনার এলাকার সঠিক নামাজের সময়সূচী চান?
-                                </p>
-                                <p className="text-[11px] text-muted-foreground">
-                                    লোকেশন অনুমতি দিলে আপনার বর্তমান শহরের ওয়াক্ত অনুযায়ী সঠিক সময় ও আজান নোটিফিকেশন সেট হবে।
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                            <button
-                                type="button"
-                                onClick={() => handleDetectLocation(true)}
-                                disabled={locationLoading}
-                                className="px-3 py-1.5 rounded-xl bg-primary text-gold text-xs font-bold shadow-xs hover:brightness-110 native-press flex items-center gap-1"
-                            >
-                                {locationLoading && <Loader2 className="w-3 h-3 animate-spin" />}
-                                <span>অনুমতি দিন</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setShowLocationBanner(false);
-                                    localStorage.setItem('hasana-location-prompted', 'true');
-                                }}
-                                className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg transition"
-                                title="পরে করবো"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Full 5-Waqt Prayer Schedule Card */}
-                <div id="prayer-schedule-card" className="rounded-3xl bg-card border-2 border-gold/40 p-4 sm:p-5 md:p-7 shadow-xl backdrop-blur-md">
-                    <div className="mb-4 space-y-2.5">
-                        <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-8 h-8 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-                                    <Clock className="w-4 h-4 text-primary" />
+                    {/* Location Detection Banner for First Open / Install */}
+                    {showLocationBanner && (
+                        <div className="p-3.5 rounded-2xl bg-card border-2 border-primary/30 shadow-lg backdrop-blur-md flex items-center justify-between gap-3 animate-fade-scale">
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-xl bg-primary text-gold flex items-center justify-center shrink-0 shadow-xs">
+                                    <Navigation className="w-4 h-4 animate-pulse" />
                                 </div>
-                                <h2 className="font-bold text-base md:text-lg whitespace-nowrap truncate">আজকের নামাজের সময়</h2>
+                                <div>
+                                    <p className="text-xs sm:text-sm font-bold text-foreground">
+                                        আপনার এলাকার সঠিক নামাজের সময়সূচী চান?
+                                    </p>
+                                    <p className="text-[11px] text-muted-foreground">
+                                        লোকেশন অনুমতি দিলে আপনার বর্তমান শহরের ওয়াক্ত অনুযায়ী সঠিক সময় ও আজান নোটিফিকেশন সেট হবে।
+                                    </p>
+                                </div>
                             </div>
-                            <span className="shrink-0 whitespace-nowrap text-sm md:text-base font-bold text-primary tabular-nums">
-                                {currentTime}
-                            </span>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-2">
-                            <button
-                                type="button"
-                                onClick={() => handleDetectLocation(true)}
-                                disabled={locationLoading}
-                                title="বর্তমান জিপিএস লোকেশন আপডেট করতে ক্লিক করুন"
-                                className="min-w-0 text-xs text-muted-foreground hover:text-primary flex items-center gap-1.5 transition native-press group"
-                            >
-                                {locationLoading ? (
-                                    <Loader2 className="w-3.5 h-3.5 shrink-0 animate-spin text-primary" />
-                                ) : (
-                                    <MapPin className="w-3.5 h-3.5 shrink-0 text-primary group-hover:scale-110 transition-transform" />
-                                )}
-                                <span className="font-semibold text-foreground/90 group-hover:underline truncate">
-                                    {locationData.cityName}
-                                </span>
-                                {locationData.isDefault && (
-                                    <span className="shrink-0 whitespace-nowrap text-[10px] px-2 py-0.5 rounded-full font-medium text-amber-600 bg-amber-500/10 border border-amber-500/20">
-                                        অটো-ডিটেক্ট করুন
-                                    </span>
-                                )}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={handleToggleNotification}
-                                title={notifActive ? "নামাজের নোটিফিকেশন সক্রিয় আছে (ক্লিক করে বন্ধ করুন)" : "নামাজের নোটিফিকেশন চালু করুন"}
-                                aria-label={notifActive ? 'নোটিফিকেশন বন্ধ করুন' : 'নোটিফিকেশন চালু করুন'}
-                                className={`shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition border ${
-                                    notifActive 
-                                        ? 'bg-primary/10 text-primary border-primary/30 shadow-xs' 
-                                        : 'bg-muted text-muted-foreground border-border hover:bg-muted-foreground/15'
-                                }`}
-                            >
-                                {notifActive ? (
-                                    <BellRing className="w-3.5 h-3.5 text-gold animate-pulse" />
-                                ) : (
-                                    <Bell className="w-3.5 h-3.5" />
-                                )}
-                                <span className="hidden sm:inline whitespace-nowrap">
-                                    {notifActive ? 'নোটিফিকেশন চালু' : 'নোটিফিকেশন পান'}
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-5 gap-1.5 md:gap-3 text-center">
-                        {prayerTimes.map((prayer, i) => {
-                            const active = i === activePrayerIndex;
-                            return (
-                                <div
-                                    key={prayer.name}
-                                    className={`min-w-0 rounded-2xl px-1 py-2.5 md:py-4 md:px-2 border transition-colors ${
-                                        active
-                                            ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/25'
-                                            : 'bg-muted/70 hover:bg-muted border-border/50'
-                                    }`}
+                            <div className="flex items-center gap-1.5 shrink-0">
+                                <button
+                                    type="button"
+                                    onClick={() => handleDetectLocation(true)}
+                                    disabled={locationLoading}
+                                    className="px-3 py-1.5 rounded-xl bg-primary text-gold text-xs font-bold shadow-xs hover:brightness-110 native-press flex items-center gap-1"
                                 >
-                                    <p className={`text-xs md:text-sm font-semibold whitespace-nowrap ${active ? 'text-primary-foreground/90' : 'text-muted-foreground'}`}>{prayer.name}</p>
-                                    <p className={`mt-1 font-bold tabular-nums whitespace-nowrap text-[13px] sm:text-sm md:text-lg ${active ? 'text-gold' : 'text-primary'}`}>{prayer.start}</p>
-                                    <p className={`mt-1 text-[9px] sm:text-[10px] md:text-xs leading-tight ${active ? 'text-primary-foreground/80' : 'text-muted-foreground/75'}`}>শেষ<span className="block tabular-nums whitespace-nowrap">{prayer.end}</span></p>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
+                                    {locationLoading && <Loader2 className="w-3 h-3 animate-spin" />}
+                                    <span>অনুমতি দিন</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowLocationBanner(false);
+                                        localStorage.setItem('hasana-location-prompted', 'true');
+                                    }}
+                                    className="p-1.5 text-muted-foreground hover:text-foreground rounded-lg transition"
+                                    title="পরে করবো"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </section>
+            )}
 
             {/* আজকের হাদিস (Hadith of the Day) Card matching Image 1 */}
             <section className="mx-auto max-w-3xl px-4 mt-8">
@@ -863,15 +780,25 @@ export function HomePage() {
                 {/* Features Section */}
                 <h2 className="text-xl md:text-2xl font-bold mt-12 mb-5">অ্যাপ্লিকেশন বৈশিষ্ট্য</h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
-                    {features.map(({ title, desc, icon: Icon }) => (
-                        <div key={title} className="rounded-2xl bg-card border border-border/80 p-4 md:p-6 shadow-xs">
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs mb-3">
-                                <Icon className="w-5 h-5 text-primary" />
+                    {features.map(({ title, desc, icon: Icon, to }) => {
+                        const cardContent = (
+                            <div className="rounded-2xl bg-card border border-border/80 hover:border-gold/45 p-4 md:p-6 shadow-xs transition group h-full">
+                                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs mb-3 group-hover:scale-105 transition-transform">
+                                    <Icon className="w-5 h-5 text-primary" />
+                                </div>
+                                <h3 className="font-bold text-sm md:text-base group-hover:text-gold transition-colors">{title}</h3>
+                                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{desc}</p>
                             </div>
-                            <h3 className="font-bold text-sm md:text-base">{title}</h3>
-                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{desc}</p>
-                        </div>
-                    ))}
+                        );
+
+                        return to ? (
+                            <Link key={title} to={to} onClick={() => hapticImpact()} className="block native-press">
+                                {cardContent}
+                            </Link>
+                        ) : (
+                            <div key={title}>{cardContent}</div>
+                        );
+                    })}
                 </div>
             </section>
 
