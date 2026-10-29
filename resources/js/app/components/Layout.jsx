@@ -73,26 +73,32 @@ export function Layout({ children }) {
     const location = useLocation();
     const navigate = useNavigate();
     const [isOffline, setIsOffline] = useState(() => typeof navigator !== 'undefined' && !navigator.onLine);
+    const [isHomeSearchOpen, setIsHomeSearchOpen] = useState(false);
 
     const handleSearchClick = () => {
         hapticImpact();
         if (location.pathname === '/') {
-            const form = document.getElementById('home-search-form');
-            const input = document.getElementById('home-search-input');
-            if (form) {
-                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                form.classList.add('ring-4', 'ring-gold/60', 'scale-[1.01]', 'shadow-2xl');
-                setTimeout(() => {
-                    form.classList.remove('ring-4', 'ring-gold/60', 'scale-[1.01]', 'shadow-2xl');
-                }, 1800);
-            }
-            if (input) {
-                setTimeout(() => input.focus(), 350);
-            }
+            window.dispatchEvent(new CustomEvent('hasana:toggle-search'));
         } else {
             navigate('/explore');
         }
     };
+
+    useEffect(() => {
+        const handleSearchState = (e) => {
+            if (e?.detail?.open !== undefined) {
+                setIsHomeSearchOpen(Boolean(e.detail.open));
+            }
+        };
+        window.addEventListener('hasana:search-state', handleSearchState);
+        return () => window.removeEventListener('hasana:search-state', handleSearchState);
+    }, []);
+
+    useEffect(() => {
+        if (location.pathname !== '/') {
+            setIsHomeSearchOpen(false);
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         const update = () => setIsOffline(!navigator.onLine);
@@ -184,7 +190,9 @@ export function Layout({ children }) {
                             type="button"
                             aria-label="অনুসন্ধান"
                             onClick={handleSearchClick}
-                            className="p-2 rounded-xl text-gold hover:bg-primary-foreground/10 active:scale-95 transition"
+                            className={`p-2 rounded-xl text-gold hover:bg-primary-foreground/10 active:scale-95 transition ${
+                                isHomeSearchOpen && location.pathname === '/' ? 'bg-gold/25 ring-1 ring-gold shadow-xs' : ''
+                            }`}
                             title="অনুসন্ধান (কুরআন, হাদিস ও দোয়া)"
                         >
                             <Search className="w-5 h-5 text-gold" />

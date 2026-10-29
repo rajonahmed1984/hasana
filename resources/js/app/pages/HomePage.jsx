@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
     BookOpen, 
     ScrollText, 
@@ -59,6 +59,7 @@ const toBnDigits = (num) => String(num).replace(/[0-9]/g, (d) => '০১২৩�
 
 export function HomePage() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [currentTime, setCurrentTime] = useState('');
     const [currentDate, setCurrentDate] = useState('');
     const [nowTime, setNowTime] = useState(() => new Date());
@@ -68,6 +69,53 @@ export function HomePage() {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [shareCardData, setShareCardData] = useState(null);
     const [appUpdateInfo, setAppUpdateInfo] = useState(null);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+    // Toggle search card when header search button is clicked or ?search=open in URL
+    useEffect(() => {
+        const handleToggle = (e) => {
+            setIsSearchOpen((prev) => {
+                const next = e?.detail?.open !== undefined ? Boolean(e.detail.open) : !prev;
+                window.dispatchEvent(new CustomEvent('hasana:search-state', { detail: { open: next } }));
+                if (next) {
+                    setTimeout(() => {
+                        const form = document.getElementById('home-search-form');
+                        const input = document.getElementById('home-search-input');
+                        if (form) {
+                            form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        if (input) {
+                            input.focus();
+                        }
+                    }, 80);
+                }
+                return next;
+            });
+        };
+
+        window.addEventListener('hasana:toggle-search', handleToggle);
+        return () => window.removeEventListener('hasana:toggle-search', handleToggle);
+    }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('search') === 'open' || params.get('search') === '1' || location.hash === '#search') {
+            setIsSearchOpen(true);
+            window.dispatchEvent(new CustomEvent('hasana:search-state', { detail: { open: true } }));
+            setTimeout(() => {
+                const form = document.getElementById('home-search-form');
+                const input = document.getElementById('home-search-input');
+                if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (input) input.focus();
+            }, 100);
+        }
+    }, [location.search, location.hash]);
+
+    const handleCloseSearch = () => {
+        hapticImpact();
+        setIsSearchOpen(false);
+        window.dispatchEvent(new CustomEvent('hasana:search-state', { detail: { open: false } }));
+    };
 
     useEffect(() => {
         return subscribeToUpdateState((info) => setAppUpdateInfo(info));
@@ -510,36 +558,56 @@ export function HomePage() {
 
             {/* Ask / Explore & Daily Quiz */}
             <section className="mx-auto max-w-3xl px-4 mt-8 space-y-5">
-                <form
-                    id="home-search-form"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        const q = e.currentTarget.elements.q.value.trim();
-                        hapticImpact();
-                        navigate(q ? `/explore?q=${encodeURIComponent(q)}` : '/explore');
-                    }}
-                    className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-md border border-gold/30 relative overflow-hidden scroll-mt-24 transition-all duration-300"
-                >
-                    <div className="absolute inset-0 pattern opacity-30 pointer-events-none" />
-                    <div className="relative">
-                        <h2 className="font-bold text-lg md:text-xl text-white">কোনো বিষয়ে জানতে চান?</h2>
-                        <p className="text-xs md:text-sm opacity-85 mt-1 text-emerald-100">প্রশ্ন লিখুন — কুরআন, হাদিস ও দোয়া থেকে খুঁজে দেখানো হবে</p>
-                        <div className="mt-4 flex items-center gap-2 rounded-2xl bg-card border border-gold/30 p-1.5 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/40 transition">
-                            <Search className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
-                            <input
-                                id="home-search-input"
-                                name="q"
-                                type="search"
-                                maxLength={200}
-                                placeholder="যেমন: মন খারাপ হলে কী করব?"
-                                className="flex-1 min-w-0 bg-transparent outline-none text-sm text-foreground py-2"
-                            />
-                            <button type="submit" className="shrink-0 px-4 py-2 rounded-xl gold-gradient-btn font-bold text-xs native-press cursor-pointer">
-                                খুঁজুন
-                            </button>
+                {isSearchOpen && (
+                    <form
+                        id="home-search-form"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            const q = e.currentTarget.elements.q.value.trim();
+                            hapticImpact();
+                            navigate(q ? `/explore?q=${encodeURIComponent(q)}` : '/explore');
+                        }}
+                        className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-2xl border-2 border-gold/50 relative overflow-hidden scroll-mt-24 transition-all duration-300 animate-in fade-in slide-in-from-top-3"
+                    >
+                        <div className="absolute inset-0 pattern opacity-30 pointer-events-none" />
+                        <div className="relative">
+                            <div className="flex items-start justify-between gap-3 mb-2">
+                                <div>
+                                    <h2 className="font-bold text-lg md:text-xl text-white flex items-center gap-2">
+                                        <Search className="w-5 h-5 text-gold" />
+                                        <span>কোনো বিষয়ে জানতে চান?</span>
+                                    </h2>
+                                    <p className="text-xs md:text-sm opacity-90 mt-1 text-emerald-100">
+                                        প্রশ্ন লিখুন — কুরআন, হাদিস ও দোয়া থেকে খুঁজে দেখানো হবে
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleCloseSearch}
+                                    className="p-1.5 rounded-full bg-black/30 hover:bg-black/50 text-emerald-100 hover:text-white transition native-press shrink-0 border border-white/10"
+                                    title="সার্চ বন্ধ করুন"
+                                    aria-label="সার্চ বন্ধ করুন"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <div className="mt-4 flex items-center gap-2 rounded-2xl bg-card border-2 border-gold/40 p-1.5 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/50 shadow-inner transition">
+                                <Search className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
+                                <input
+                                    id="home-search-input"
+                                    name="q"
+                                    type="search"
+                                    maxLength={200}
+                                    placeholder="যেমন: মন খারাপ হলে কী করব?"
+                                    className="flex-1 min-w-0 bg-transparent outline-none text-sm text-foreground py-2"
+                                />
+                                <button type="submit" className="shrink-0 px-4 py-2 rounded-xl gold-gradient-btn font-bold text-xs native-press cursor-pointer">
+                                    খুঁজুন
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                )}
 
                 <DailyQuiz />
             </section>
