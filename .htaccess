@@ -1,18 +1,20 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
-        Options -MultiViews
+        Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
 
-    RewriteCond %{REQUEST_FILENAME} -d [OR]
-    RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule ^ ^$1 [N]
+    # Prevent rewrite loop if request is already inside /public/
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^ - [L]
 
-    RewriteCond %{REQUEST_URI} (\.\w+$) [NC]
-    RewriteRule ^(.*)$ public/$1 
+    # Handle storage files fallback to public/uploads/ if storage symlink is missing on cPanel
+    RewriteCond %{REQUEST_URI} ^/storage/(.*)$ [NC]
+    RewriteCond %{DOCUMENT_ROOT}/public/storage/$1 !-f
+    RewriteCond %{DOCUMENT_ROOT}/public/uploads/$1 -f
+    RewriteRule ^storage/(.*)$ public/uploads/$1 [L]
 
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ server.php
+    # Rewrite all requests to public/
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>

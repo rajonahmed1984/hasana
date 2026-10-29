@@ -214,12 +214,16 @@
 </head>
 <body>
     <div id="root">
+        @php
+            $brandAssets = brand_assets();
+            $splashLogo = $brandAssets['app_logo'] ?? $brandAssets['logo'] ?? asset('images/hasana-app-logo.png');
+        @endphp
         <!-- Native-like initial splash while React loads -->
         <div class="hs-splash-screen" aria-label="হাসানা লোড হচ্ছে...">
             <div class="hs-splash-top"></div>
             <div class="hs-splash-center">
                 <div class="hs-splash-logo">
-                    <img src="{{ asset('images/hasana-app-logo.png') }}" alt="হাসানা">
+                    <img src="{{ $splashLogo }}" alt="হাসানা" onerror="this.onerror=null; this.src='{{ asset('favicon.png') }}';">
                 </div>
                 <h1 class="hs-splash-title">হাসানা</h1>
                 <p class="hs-splash-subtitle">পবিত্র কুরআন, হাদিস ও দোয়া</p>
@@ -230,7 +234,7 @@
             <div class="hs-splash-bottom">
                 <div class="hs-splash-devby">DEVELOPED BY</div>
                 <div class="hs-splash-badge">
-                    <img src="{{ asset('images/apptimatic_logo.png') }}" alt="Apptimatic">
+                    <img src="{{ asset('images/apptimatic_logo.png') }}" alt="Apptimatic" onerror="this.parentElement.style.display='none';">
                 </div>
             </div>
         </div>
