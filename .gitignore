@@ -40,3 +40,7 @@ temp.ps1
 # Signing keys
 *.jks
 *.keystore
+
+# Built app bundles for the Play Store
+release/
+*.aab

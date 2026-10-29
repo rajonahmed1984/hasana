@@ -146,6 +146,8 @@ export const calculateSolarPrayerTimes = (latitude, longitude, date = new Date()
             startMin: fajr.minute,
             start: fajr.formatted,
             end: sunrise.formatted,
+            endHour: sunrise.hour,
+            endMin: sunrise.minute,
             title: 'ফজরের নামাজের সময় হয়েছে 🌅',
             body: 'আস-সালাতু খাইরুম মিনান নাওম — ঘুম থেকে নামাজ উত্তম। আসুন জামায়াতে নামাজ আদায় করি।',
         },
@@ -208,7 +210,9 @@ export const getAccuratePrayerTimes = async (latitude, longitude, date = new Dat
     try {
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
-            return JSON.parse(cached);
+            const schedule = JSON.parse(cached);
+            // Older cached schedules lack Fajr's sunrise end time; refetch those
+            if (schedule?.[0]?.endHour != null) return schedule;
         }
     } catch {
         // Continue
@@ -252,6 +256,8 @@ export const getAccuratePrayerTimes = async (latitude, longitude, date = new Dat
                         startMin: fajr.minute,
                         start: fajr.formatted,
                         end: sunrise.formatted,
+                        endHour: sunrise.hour,
+                        endMin: sunrise.minute,
                         title: 'ফজরের নামাজের সময় হয়েছে 🌅',
                         body: 'আস-সালাতু খাইরুম মিনান নাওম — ঘুম থেকে নামাজ উত্তম। আসুন জামায়াতে নামাজ আদায় করি।',
                     },

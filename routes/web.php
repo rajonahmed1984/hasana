@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\HadithController as ApiHadithController;
 use App\Http\Controllers\Api\DuaController as ApiDuaController;
 use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
 use App\Http\Controllers\Api\OfflineController as ApiOfflineController;
+use App\Http\Controllers\Api\StudyController as ApiStudyController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
@@ -35,6 +36,10 @@ Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(functio
     Route::get('/dua/categories', [ApiDuaController::class, 'categories'])->name('hasana.duas.categories');
     Route::get('/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
     Route::get('/app/version', [ApiAppVersionController::class, 'show'])->name('app.version');
+    Route::get('/explore/topics', [ApiStudyController::class, 'topics'])->name('explore.topics');
+    Route::get('/explore', [ApiStudyController::class, 'explore'])->middleware('throttle:20,1')->name('explore');
+    Route::get('/quran/words/{surah}/{ayah}', [ApiStudyController::class, 'words'])->whereNumber(['surah', 'ayah'])->name('quran.words');
+    Route::get('/quiz', [ApiStudyController::class, 'quiz'])->name('quiz');
 });
 
 // Offline data packs (large, one request each) — separate limit so a full download doesn't hit the API limit
@@ -54,6 +59,7 @@ Route::view('/bookmarks', 'spa')->name('hasana.bookmarks');
 Route::get('/bookmarks/data', [HasanaController::class, 'bookmarkData'])->name('hasana.bookmarks.data');
 Route::view('/settings', 'spa')->name('hasana.settings');
 Route::view('/about', 'spa')->name('hasana.about');
+Route::view('/explore', 'spa')->name('hasana.explore');
 Route::get('/share', [HasanaController::class, 'share'])->name('hasana.share');
 
 // Admin login routes with rate limiting

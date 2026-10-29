@@ -36,7 +36,7 @@ class SecurityHeaders
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com; " .
             "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " .
             "img-src 'self' data: https:; " .
-            "connect-src 'self' https://ipapi.co https://api.aladhan.com https://api.bigdatacloud.net;"
+            "connect-src 'self' https://ipapi.co https://api.aladhan.com https://api.bigdatacloud.net https://api.quran.com;"
         );
         
         // Referrer Policy

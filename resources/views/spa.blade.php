@@ -115,7 +115,7 @@
             color: #ffffff;
             z-index: 9999;
             text-align: center;
-            padding: 48px 24px calc(36px + env(safe-area-inset-bottom, 0px));
+            padding: 48px 24px calc(36px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
             overflow: hidden;
         }
         .hs-splash-top { height: 10px; }

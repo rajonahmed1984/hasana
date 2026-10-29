@@ -427,9 +427,9 @@ export function SettingsPage() {
                 {/* App Info Card */}
                 <div className="rounded-2xl bg-muted/60 border border-border p-5 text-center text-xs text-muted-foreground space-y-1">
                     <p className="font-semibold text-primary text-sm">হাসানা ইসলামিক অ্যাপ্লিকেশন</p>
-                    <p>ভার্সন: 2.5 (নেটিভ স্পা + ক্যাপাসিটর মোবাইল রেডি)</p>
+                    <p>ভার্সন: 2.5</p>
                     <p className="pt-1">
-                        Developed with dedication by{' '}
+                        Developed by{' '}
                         <a
                             href="https://apptimatic.com"
                             target="_blank"

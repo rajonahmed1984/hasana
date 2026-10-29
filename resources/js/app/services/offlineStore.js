@@ -7,6 +7,8 @@ import { isNative } from '../native';
 const OFFLINE_DATA = 'hasana-offline-data'; // must match public/sw.js
 const META_KEY = '/__offline/meta';
 const QURAN_MAX_AGE_DAYS = 30;
+// Bump when downloaded texts were corrected on the server, so the app refreshes its copy right away
+const DATA_VERSION = 2;
 
 const supported = () => typeof window !== 'undefined' && 'caches' in window;
 
@@ -61,7 +63,7 @@ export const downloadQuran = async (onProgress = () => {}) => {
         onProgress(0.6 + (0.4 * (i + 1)) / pack.surahs.length);
     }
 
-    await updateMeta(cache, 'quran', { at: Date.now(), count: pack.surahs.length });
+    await updateMeta(cache, 'quran', { at: Date.now(), count: pack.surahs.length, v: DATA_VERSION });
 };
 
 /**
@@ -77,7 +79,7 @@ export const downloadDuas = async (onProgress = () => {}) => {
     const cache = await caches.open(OFFLINE_DATA);
     await putJson(cache, 'dua/categories', categories.data || []);
     await putJson(cache, 'dua/all', pack.data || []);
-    await updateMeta(cache, 'duas', { at: Date.now(), count: (pack.data || []).length });
+    await updateMeta(cache, 'duas', { at: Date.now(), count: (pack.data || []).length, v: DATA_VERSION });
     onProgress(1);
 };
 
@@ -99,7 +101,7 @@ export const downloadHadiths = async (onProgress = () => {}) => {
 
     // Saved last, so a half-finished download never looks complete
     await putJson(cache, 'hadith/categories', categories);
-    await updateMeta(cache, 'hadith', { at: Date.now(), count, categories: categories.length });
+    await updateMeta(cache, 'hadith', { at: Date.now(), count, categories: categories.length, v: DATA_VERSION });
 };
 
 /**
@@ -153,7 +155,9 @@ export const autoDownloadForOffline = async () => {
     if (!isNative() || !supported() || !navigator.onLine) return;
 
     const status = await getOfflineStatus();
-    const stale = (pack, days) => !status[pack] || Date.now() - status[pack].at > days * 86400000;
+    const stale = (pack, days) => !status[pack]
+        || (status[pack].v || 1) < DATA_VERSION
+        || Date.now() - status[pack].at > days * 86400000;
 
     try {
         if (stale('quran', QURAN_MAX_AGE_DAYS)) await downloadQuran();

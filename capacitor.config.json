@@ -25,6 +25,10 @@
     "backgroundColor": "#125e54"
   },
   "plugins": {
+    "SystemBars": {
+      "style": "DARK",
+      "insetsHandling": "css"
+    },
     "SplashScreen": {
       "launchShowDuration": 8000,
       "launchAutoHide": true,

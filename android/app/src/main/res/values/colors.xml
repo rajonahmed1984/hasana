@@ -2,4 +2,6 @@
 <resources>
     <color name="hasana_notification">#125E54</color>
     <color name="hasana_splash_background">#0D3B34</color>
+    <!-- Behind the status / navigation bars when the WebView can't draw under them (same as the app header) -->
+    <color name="hasana_system_bars">#125E54</color>
 </resources>

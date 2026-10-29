@@ -393,7 +393,7 @@ function ShareCardDialog({ onClose, data }) {
 
             {/* Floating Toast inside modal */}
             {toast && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-primary text-primary-foreground px-5 py-2.5 shadow-2xl flex items-center gap-2 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-150">
+                <div className="fixed bottom-above-nav left-1/2 -translate-x-1/2 z-50 bg-primary text-primary-foreground px-5 py-2.5 shadow-2xl flex items-center gap-2 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-150">
                     <Sparkles className="w-4 h-4 text-gold" />
                     <span>{toast}</span>
                 </div>

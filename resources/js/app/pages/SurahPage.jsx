@@ -8,9 +8,11 @@ import {
     Feather, 
     Check, 
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Languages
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
+import { WordByWord } from '../components/WordByWord';
 import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
 import { ShareCardModal } from '../components/ShareCardModal';
 import { hapticImpact } from '../native';
@@ -31,6 +33,7 @@ export function SurahPage() {
     const [copiedAyah, setCopiedAyah] = useState(null);
     const [shareCardData, setShareCardData] = useState(null);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [wordsOpen, setWordsOpen] = useState({});
     const textSettings = useArabicSettings();
 
     useEffect(() => {
@@ -241,6 +244,7 @@ export function SurahPage() {
                     const key = `${surahData.number}:${ayah.number}`;
                     const isBookmarked = bookmarks.some((b) => b.key === key);
                     const isCopied = copiedAyah === key;
+                    const showWords = !!wordsOpen[ayah.number];
 
                     return (
                         <article 
@@ -255,6 +259,26 @@ export function SurahPage() {
                                 </span>
 
                                 <div className="flex items-center gap-1.5">
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            // A double click would open and close it again
+                                            if (e.detail > 1) return;
+                                            hapticImpact();
+                                            setWordsOpen((prev) => ({ ...prev, [ayah.number]: !prev[ayah.number] }));
+                                        }}
+                                        onMouseDown={(e) => e.preventDefault()}
+                                        aria-pressed={showWords}
+                                        className={`native-press h-8 px-2.5 rounded-full flex items-center gap-1 text-xs font-semibold transition ${
+                                            showWords
+                                                ? 'bg-primary text-gold shadow-sm'
+                                                : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                                        }`}
+                                        title="প্রতিটি শব্দের অর্থ দেখুন"
+                                    >
+                                        <Languages className="w-4 h-4" />
+                                        <span>শব্দার্থ</span>
+                                    </button>
 
                                     <button
                                         type="button"
@@ -291,6 +315,8 @@ export function SurahPage() {
                                 >
                                     {ayah.text_ar}
                                 </p>
+
+                                {showWords && <WordByWord surah={surahData.number} ayah={ayah.number} />}
 
                                 {/* Bengali Translation */}
                                 <p className="text-base md:text-lg text-foreground font-normal leading-relaxed select-text pt-2">

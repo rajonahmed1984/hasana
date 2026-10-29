@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hasana — Facebook Social Photo Cards & Posts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-dark: #071915;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --primary-emerald: #10b981;
+    --primary-teal: #125e54;
+    --accent-gold: #fbbf24;
+    --text-white: #ffffff;
+    --text-gray: #94a3b8;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: 'Hind Siliguri', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-image: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
+                      radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 40%);
+}
+.wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+h1 {
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #ffffff 0%, #a7f3d0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+p.subtitle {
+    font-size: 18px;
+    color: var(--text-gray);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Tabs */
+.tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+.tab-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: #cbd5e1;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+.tab-btn.active, .tab-btn:hover {
+    background: var(--primary-emerald);
+    color: #032d23;
+    border-color: var(--primary-emerald);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+}
+
+/* Cards Section */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+.card-preview-box {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.card-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-title-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+}
+.card-dim-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #cbd5e1;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.img-container {
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.img-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.img-container img:hover {
+    transform: scale(1.01);
+}
+.card-actions {
+    display: flex;
+    gap: 12px;
+}
+.btn-download {
+    flex: 1;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+.btn-download:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+/* Post Copy Section */
+.post-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 35px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 40px;
+}
+.post-section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--accent-gold);
+}
+.post-section p.sec-sub {
+    color: var(--text-gray);
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+.post-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 25px;
+    position: relative;
+}
+.post-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 12px;
+}
+.post-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #34d399;
+}
+.copy-btn {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid #10b981;
+    color: #6ee7b7;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.copy-btn:hover {
+    background: #10b981;
+    color: #032d23;
+}
+.copy-btn.copied {
+    background: #fbbf24;
+    border-color: #fbbf24;
+    color: #1e1b4b;
+}
+.post-text-box {
+    white-space: pre-wrap;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #e2e8f0;
+    font-family: inherit;
+}
+.post-text-box a {
+    color: #38bdf8;
+    text-decoration: underline;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #10b981;
+    color: #032d23;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="badge">✨ Hasana Social Promo Assets</div>
+        <h1>ফেসবুক সোশ্যাল ফটো কার্ড ও পোস্ট কনটেন্ট</h1>
+        <p class="subtitle">নিচের ফটো কার্ডগুলো সরাসরি ডাউনলোড করে আপনার ফেসবুক পেজ অথবা প্রোফাইলে শেয়ার করতে পারবেন। সাথে প্রস্তুতকৃত পোস্ট কপিও যুক্ত করা হয়েছে।</p>
+    </header>
+
+    <!-- Cards Section -->
+    <div class="cards-grid">
+        <!-- Square Card (1:1) -->
+        <div class="card-preview-box">
+            <div class="card-header-bar">
+                <span class="card-title-text">১. স্কয়ার ফটো কার্ড (Square Post)</span>
+                <span class="card-dim-badge">1200 × 1200 px</span>
+            </div>
+            <div class="img-container">
+                <img src="facebook_card_square.png" alt="Hasana Facebook Square Card">
+            </div>
+            <p style="font-size: 14px; color: #94a3b8;">★ ফেসবুক মোবাইল ও ডেস্কটপ ফিডের জন্য সবচেয়ে কার্যকর ফরম্যাট।</p>
+            <div class="card-actions">
+                <a href="facebook_card_square.png" download="Hasana_Facebook_Square_Card.png" class="btn-download">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    HD ইমেজ ডাউনলোড করুন
+                </a>
+            </div>
+        </div>
+
+        <!-- Landscape Card (1.91:1) -->
+        <div class="card-preview-box">
+            <div class="card-header-bar">
+                <span class="card-title-text">২. ল্যান্ডস্কেপ ফটো কার্ড (Landscape / Banner)</span>
+                <span class="card-dim-badge">1200 × 630 px</span>
+            </div>
+            <div class="img-container">
+                <img src="facebook_card_landscape.png" alt="Hasana Facebook Landscape Card">
+            </div>
+            <p style="font-size: 14px; color: #94a3b8;">★ ফেসবুক স্ট্যান্ডার্ড লিংক প্রিভিউ ও ওয়াইড ফটো পোস্টের জন্য উপযুক্ত।</p>
+            <div class="card-actions">
+                <a href="facebook_card_landscape.png" download="Hasana_Facebook_Landscape_Card.png" class="btn-download">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    HD ইমেজ ডাউনলোড করুন
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ready Facebook Post Copies -->
+    <div class="post-section">
+        <h2>📝 রেডিমেড ফেসবুক পোস্ট কনটেন্ট (ক্যাপশন)</h2>
+        <p class="sec-sub">আপনার পছন্দমতো যেকোনো একটি পোস্ট টেক্সট কপি করে ছবির সাথে পোস্ট করুন:</p>
+
+        <!-- Post 1 -->
+        <div class="post-card">
+            <div class="post-card-top">
+                <span class="post-card-title">অপশন ১: পূর্ণাঙ্গ ও তথ্যবহুল পোস্ট (সর্বোচ্চ রেসপন্সের জন্য সেরা)</span>
+                <button class="copy-btn" onclick="copyPost('post1', this)">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>কপি করুন</span>
+                </button>
+            </div>
+            <div class="post-text-box" id="post1">স্মার্টফোনে আপনার প্রতিদিনের দ্বীনি সঙ্গী — "হাসানা" (Hasana) 🌙✨
+
+বিজ্ঞাপনের কোনো বিরক্তি নেই, ১০০% ফ্রি এবং অত্যন্ত পরিষ্কার ইন্টারফেসে তৈরি একটি পরিপূর্ণ ইসলামিক লাইফস্টাইল অ্যাপ! কুরআন তিলাওয়াত, নামাজের সঠিক ওয়াক্ত থেকে শুরু করে সহিহ হাদিস ও উমরাহ সহায়িকা — সবই পাবেন এক প্ল্যাটফর্মে।
+
+🌟 হাসানা অ্যাপের বিশেষ সুবিধাসমূহ:
+📖 পূর্ণাঙ্গ আল-কুরআন: সহজ বাংলা অনুবাদ, তাফসির ও হৃদয়স্পর্শী অডিও তিলাওয়াত।
+🕌 নির্ভুল নামাজের সময়সূচী: আপনার লোকেশন অনুযায়ী সঠিক ওয়াক্ত ও আজানের অ্যালার্ট।
+📜 সহিহ হাদিস সম্ভার: বিষয়ভিত্তিক সহিহ বুখারী, মুসলিমসহ নির্ভরযোগ্য হাদিসের সংগ্রহ।
+🤲 প্রাত্যহিক মাসনুন দোয়া: প্রতিদিনের সকাল-সন্ধ্যার জিকির ও জরুরি দোয়াসমূহ।
+🕋 ডিজিটাল উমরাহ সহায়িকা: উমরাহ পালনের সহজ গাইড এবং লাইভ তাওয়াফ কাউন্টার।
+📿 ডিজিটাল তাসবিহ ও কিবলা কম্পাস: প্রতিদিনের ইবাদতকে আরও সহজ ও শৃঙ্খলিত করতে।
+📴 সম্পূর্ণ অফলাইন মোড: ইন্টারনেট কানেকশন ছাড়াও কুরআন ও হাদিস পড়ার পূর্ণ সুবিধা।
+
+🚫 কোনো বিরক্তিকর বিজ্ঞাপন নেই (১০০% Ad-free)। 
+আলহামদুলিল্লাহ, প্রতিদিনের আমলকে সুন্দর ও সুশৃঙ্খল করতে আজই আপনার ফোনে ইনস্টল করে নিন।
+
+📲 গুগল প্লে-স্টোর থেকে ডাউনলোড করুন:
+👉 https://play.google.com/store/apps/details?id=com.hasanaa.app
+
+(ভালো কাজের পথ দেখানোও একটি সদকায়ে জারিয়া — আপনার পরিবার ও বন্ধুদের সাথে পোস্টটি শেয়ার করতে ভুলবেন না!) 🌿
+
+#HasanaApp #IslamicApp #QuranBangla #PrayerTimes #Hadith #UmrahGuide #নামাজের_সময়সূচি #কুরআন #হাসানা</div>
+        </div>
+
+        <!-- Post 2 -->
+        <div class="post-card">
+            <div class="post-card-top">
+                <span class="post-card-title">অপশন ২: সংক্ষিপ্ত ও আকর্ষক পোস্ট (Quick Engagement)</span>
+                <button class="copy-btn" onclick="copyPost('post2', this)">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>কপি করুন</span>
+                </button>
+            </div>
+            <div class="post-text-box" id="post2">ফোনে একটি পরিচ্ছন্ন, বিজ্ঞাপনমুক্ত ও নির্ভরযোগ্য ইসলামিক অ্যাপ খুঁজছেন? 📱🤍
+
+"হাসানা" (Hasana) অ্যাপে রয়েছে আপনার প্রতিদিনের ইবাদতের সব সমাধান:
+✅ আল-কুরআন (বাংলা অর্থ, তাফসির ও অডিও)
+✅ নির্ভুল নামাজের সময়সূচী ও আজান
+✅ সহিহ হাদিস ও মাসনুন দোয়া
+✅ উমরাহ সহায়িকা ও তাওয়াফ ট্র্যাকার
+✅ ইন্টারনেট ছাড়াই অফলাইনে পড়ার সুবিধা
+
+সম্পূর্ণ ফ্রি ও বিজ্ঞাপনমুক্ত! আজই প্লে-স্টোর থেকে ইনস্টল করুন:
+📥 ডাউনলোড লিংক: https://play.google.com/store/apps/details?id=com.hasanaa.app
+
+#Hasana #কুরআন #হাদিস #নামাজ #IslamicApp</div>
+        </div>
+
+        <!-- Post 3 -->
+        <div class="post-card">
+            <div class="post-card-top">
+                <span class="post-card-title">অপশন ৩: দাওয়াতি ও অনুপ্রেরণামূলক পোস্ট (সদকায়ে জারিয়া)</span>
+                <button class="copy-btn" onclick="copyPost('post3', this)">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>কপি করুন</span>
+                </button>
+            </div>
+            <div class="post-text-box" id="post3">রাসূলুল্লাহ ﷺ বলেছেন: "যে ব্যক্তি ভালো কাজের পথ প্রদর্শন করে, সে ওই কাজ সম্পাদনকারীর সমান সওয়াব লাভ করে।" (সহিহ মুসলিম) 🌸
+
+দ্বীনের সঠিক জ্ঞান অর্জন ও প্রতিদিনের আমলকে সহজ করার উদ্দেশ্যে তৈরি করা হয়েছে "হাসানা" (Hasana) অ্যাপ। 
+
+এখানে কুরআন তিলাওয়াত, সহিহ হাদিস, নামাজের ওয়াক্ত ও উমরাহ গাইড—সবকিছু সম্পূর্ণ বিজ্ঞাপনমুক্তভাবে সাজানো হয়েছে। কোনো বাড়তি বিজ্ঞাপন নেই, যাতে ইবাদতে একাগ্রতা বজায় থাকে।
+
+আসুন আমরা নিজেরা অ্যাপটি ব্যবহার করি এবং প্রিয়জনদের সাথে শেয়ার করে সদকায়ে জারিয়ার অংশীদার হই।
+
+📲 গুগল প্লে-স্টোর লিংক:
+👉 https://play.google.com/store/apps/details?id=com.hasanaa.app
+
+জাযাকুমুল্লাহু খাইরান! 🤲
+
+#Hasana #সদকায়ে_জারিয়া #IslamicLifestyle #Quran #Hadith</div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">টেক্সট কপি হয়েছে!</div>
+
+<script>
+function copyPost(elementId, btn) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2500);
+
+        const originalHTML = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '<span>✓ কপি সফল!</span>';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = originalHTML;
+        }, 2000);
+    });
+}
+</script>
+
+</body>
+</html>

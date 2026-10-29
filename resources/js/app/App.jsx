@@ -9,6 +9,7 @@ import { UmrahGuidePage } from './pages/UmrahGuidePage';
 import { BookmarksPage } from './pages/BookmarksPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { AboutPage } from './pages/AboutPage';
+import { ExplorePage } from './pages/ExplorePage';
 import { initNativeAppHandlers } from './native';
 import { initPrayerScheduler, showPrayerNotification } from './services/prayerNotifications';
 import { setupForegroundNotifications } from './services/firebase';
@@ -87,6 +88,7 @@ export function App() {
             <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

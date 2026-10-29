@@ -14,7 +14,8 @@ import {
     Share2,
     ExternalLink,
     LogOut,
-    WifiOff
+    WifiOff,
+    Search
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from './IslamicIcons';
 import { hapticImpact, isNative } from '../native';
@@ -31,8 +32,9 @@ const navItems = [
 ];
 
 // Logo uploaded from Admin → Settings (separate ones for the app / website and light / dark mode);
-// falls back to the Arabic wordmark when none is set or it can't load (e.g. offline)
-function BrandLogo({ isDark, size, fallbackClass }) {
+// falls back to the Arabic wordmark when none is set or it can't load (e.g. offline).
+// `children` (e.g. the site name) is shown only with the fallback, since the logo already has it.
+function BrandLogo({ isDark, size, fallbackClass, children }) {
     const brand = window.HasanaConfig?.brand || {};
     const logoUrl = isNative()
         ? (isDark ? brand.app_logo_dark : brand.app_logo)
@@ -40,7 +42,12 @@ function BrandLogo({ isDark, size, fallbackClass }) {
     const [failedUrl, setFailedUrl] = useState(null);
 
     if (!logoUrl || failedUrl === logoUrl) {
-        return <span className={`font-arabic text-gold font-bold ${fallbackClass}`}>حسنة</span>;
+        return (
+            <>
+                <span className={`font-arabic text-gold font-bold ${fallbackClass}`}>حسنة</span>
+                {children}
+            </>
+        );
     }
     return (
         <img
@@ -96,9 +103,9 @@ export function Layout({ children }) {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-background text-foreground pb-20 md:pb-0">
-            {/* Sticky Top Header */}
-            <header className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-md transition-colors">
+        <div className="min-h-screen flex flex-col bg-background text-foreground pb-bottom-nav">
+            {/* Sticky Top Header (extends under the status bar in the edge-to-edge app) */}
+            <header className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-md transition-colors pt-safe">
                 <div className="mx-auto max-w-6xl flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
                         <button
@@ -114,8 +121,7 @@ export function Layout({ children }) {
                             className="flex items-center gap-2 select-none group"
                             onClick={() => hapticImpact()}
                         >
-                            <BrandLogo isDark={isDark} size="h-9" fallbackClass="text-3xl transition-transform group-hover:scale-105" />
-                            <span className="font-bold text-lg text-primary-foreground tracking-wide">হাসানা</span>
+                            <span className="font-bold text-xl text-primary-foreground tracking-wide transition-transform group-hover:scale-105">হাসানা</span>
                         </Link>
                     </div>
 
@@ -225,22 +231,6 @@ export function Layout({ children }) {
             {/* Desktop Footer */}
             <footer className="hidden md:block bg-primary text-primary-foreground/80 text-center py-8 text-sm mt-12 border-t border-gold/20">
                 <p className="font-arabic text-2xl text-gold mb-2 font-bold">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-                
-                {/* Official Facebook Community Link */}
-                <div className="flex items-center justify-center gap-3 my-3">
-                    <a
-                        href="https://www.facebook.com/page.hasana"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 text-gold hover:text-white text-xs font-semibold transition-all border border-gold/30 shadow-xs group"
-                    >
-                        <svg className="w-4 h-4 fill-current text-[#1877F2] group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
-                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                        </svg>
-                        <span>অফিসিয়াল ফেসবুক পেজে যুক্ত থাকুন (page.hasana)</span>
-                        <ExternalLink className="w-3 h-3 opacity-70" />
-                    </a>
-                </div>
 
                 <p className="text-primary-foreground/75 text-xs">© 2026 হাসানা — ইসলামিক অ্যাপ্লিকেশন • সর্বস্বত্ব সংরক্ষিত</p>
             </footer>
@@ -252,9 +242,15 @@ export function Layout({ children }) {
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
                         onClick={() => setSidebarOpen(false)}
                     />
-                    <div className="relative w-80 max-w-[85vw] bg-card text-card-foreground shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
-                        {/* Drawer Header */}
-                        <div className="bg-hero p-5 text-primary-foreground relative overflow-hidden">
+                    <div
+                        className="relative w-80 max-w-[85vw] bg-card text-card-foreground shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200"
+                        style={{ paddingBottom: 'var(--safe-bottom)' }}
+                    >
+                        {/* Drawer Header (extends under the status bar) */}
+                        <div
+                            className="bg-hero p-5 text-primary-foreground relative overflow-hidden"
+                            style={{ paddingTop: 'calc(1.25rem + var(--safe-top))' }}
+                        >
                             <div className="absolute inset-0 pattern opacity-30" />
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -290,6 +286,14 @@ export function Layout({ children }) {
 
                             <div className="my-3 border-t border-border" />
                             <p className="text-xs font-semibold text-muted-foreground uppercase px-3 py-2">অন্যান্য ও সোশ্যাল</p>
+                            <Link
+                                to="/explore"
+                                onClick={() => setSidebarOpen(false)}
+                                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-muted font-medium text-sm transition"
+                            >
+                                <Search className="w-5 h-5 text-primary" />
+                                <span>জানুন (প্রশ্ন করুন)</span>
+                            </Link>
                             <Link
                                 to="/bookmarks"
                                 onClick={() => setSidebarOpen(false)}
@@ -351,7 +355,7 @@ export function Layout({ children }) {
                         {/* Drawer Footer */}
                         <div className="p-4 border-t border-border bg-muted/30 space-y-2">
                             <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span>ভার্সন: 2.4 (নেটিভ স্পা)</span>
+                                <span>ভার্সন: 2.5</span>
                                 <button
                                     onClick={toggleTheme}
                                     className="flex items-center gap-1.5 font-medium text-primary hover:underline"

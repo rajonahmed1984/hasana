@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
     BookOpen, 
     ScrollText, 
@@ -17,10 +17,12 @@ import {
     Loader2,
     Navigation,
     Compass,
-    X
+    X,
+    Search
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
+import { DailyQuiz } from '../components/DailyQuiz';
 import { ShareCardModal } from '../components/ShareCardModal';
 import { hapticImpact } from '../native';
 import { 
@@ -54,6 +56,7 @@ const features = [
 ];
 
 export function HomePage() {
+    const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState('');
     const [currentDate, setCurrentDate] = useState('');
     const [notifActive, setNotifActive] = useState(false);
@@ -68,6 +71,22 @@ export function HomePage() {
         return calculateSolarPrayerTimes(loc.latitude, loc.longitude);
     });
     const [locationLoading, setLocationLoading] = useState(false);
+
+    // Index of the prayer whose waqt is running now (-1 between sunrise and Dhuhr).
+    // Recomputed on every render; the clock below re-renders every second.
+    const activePrayerIndex = (() => {
+        const now = new Date();
+        const nowMin = now.getHours() * 60 + now.getMinutes();
+        const starts = prayerTimes.map((p) => p.startHour * 60 + p.startMin);
+        const last = prayerTimes.length - 1;
+        if (nowMin >= starts[last] || nowMin < starts[0]) return last; // Isha runs until Fajr
+        for (let i = 0; i < last; i++) {
+            const p = prayerTimes[i];
+            const end = p.endHour != null ? p.endHour * 60 + p.endMin : starts[i + 1];
+            if (nowMin >= starts[i] && nowMin < end) return i;
+        }
+        return -1;
+    })();
     const [showLocationBanner, setShowLocationBanner] = useState(() => {
         return localStorage.getItem('hasana-location-prompted') !== 'true' && 
                getStoredLocation().isDefault;
@@ -312,16 +331,23 @@ export function HomePage() {
                     </div>
 
                     <div className="grid grid-cols-5 gap-1.5 md:gap-3 text-center">
-                        {prayerTimes.map((prayer) => (
-                            <div 
-                                key={prayer.name} 
-                                className="min-w-0 rounded-2xl bg-muted/70 hover:bg-muted px-1 py-2.5 md:py-4 md:px-2 border border-border/50 transition-colors"
-                            >
-                                <p className="text-xs md:text-sm font-semibold text-muted-foreground whitespace-nowrap">{prayer.name}</p>
-                                <p className="mt-1 font-bold text-primary tabular-nums whitespace-nowrap text-[13px] sm:text-sm md:text-lg">{prayer.start}</p>
-                                <p className="mt-1 text-[9px] sm:text-[10px] md:text-xs text-muted-foreground/75 leading-tight">শেষ<span className="block tabular-nums whitespace-nowrap">{prayer.end}</span></p>
-                            </div>
-                        ))}
+                        {prayerTimes.map((prayer, i) => {
+                            const active = i === activePrayerIndex;
+                            return (
+                                <div
+                                    key={prayer.name}
+                                    className={`min-w-0 rounded-2xl px-1 py-2.5 md:py-4 md:px-2 border transition-colors ${
+                                        active
+                                            ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/25'
+                                            : 'bg-muted/70 hover:bg-muted border-border/50'
+                                    }`}
+                                >
+                                    <p className={`text-xs md:text-sm font-semibold whitespace-nowrap ${active ? 'text-primary-foreground/90' : 'text-muted-foreground'}`}>{prayer.name}</p>
+                                    <p className={`mt-1 font-bold tabular-nums whitespace-nowrap text-[13px] sm:text-sm md:text-lg ${active ? 'text-gold' : 'text-primary'}`}>{prayer.start}</p>
+                                    <p className={`mt-1 text-[9px] sm:text-[10px] md:text-xs leading-tight ${active ? 'text-primary-foreground/80' : 'text-muted-foreground/75'}`}>শেষ<span className="block tabular-nums whitespace-nowrap">{prayer.end}</span></p>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -380,6 +406,40 @@ export function HomePage() {
                         </Link>
                     </div>
                 </div>
+            </section>
+
+            {/* Ask / Explore & Daily Quiz */}
+            <section className="mx-auto max-w-3xl px-4 mt-8 space-y-5">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const q = e.currentTarget.elements.q.value.trim();
+                        hapticImpact();
+                        navigate(q ? `/explore?q=${encodeURIComponent(q)}` : '/explore');
+                    }}
+                    className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-md relative overflow-hidden"
+                >
+                    <div className="absolute inset-0 pattern opacity-30 pointer-events-none" />
+                    <div className="relative">
+                        <h2 className="font-bold text-lg md:text-xl">কোনো বিষয়ে জানতে চান?</h2>
+                        <p className="text-xs md:text-sm opacity-85 mt-1">প্রশ্ন লিখুন — কুরআন, হাদিস ও দোয়া থেকে খুঁজে দেখানো হবে</p>
+                        <div className="mt-4 flex items-center gap-2 rounded-2xl bg-card p-1.5">
+                            <Search className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
+                            <input
+                                name="q"
+                                type="search"
+                                maxLength={200}
+                                placeholder="যেমন: মন খারাপ হলে কী করব?"
+                                className="flex-1 min-w-0 bg-transparent outline-none text-sm text-foreground py-2"
+                            />
+                            <button type="submit" className="shrink-0 px-4 py-2 rounded-xl bg-primary text-gold font-bold text-sm native-press">
+                                খুঁজুন
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <DailyQuiz />
             </section>
 
             {/* Quick Access Grid */}
