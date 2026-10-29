@@ -103,7 +103,7 @@ export function Layout({ children }) {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-background text-foreground pb-bottom-nav">
+        <div className="min-h-screen min-h-[100dvh] flex flex-col bg-background text-foreground pb-bottom-nav">
             {/* Sticky Top Header (extends under the status bar in the edge-to-edge app) */}
             <header className="sticky top-0 z-40 bg-gradient-to-r from-[#063b2c] via-[#084c39] to-[#063b2c] text-primary-foreground border-b border-gold/30 shadow-[0_2px_15px_rgba(0,0,0,0.25)] transition-colors pt-safe">
                 <div className="mx-auto max-w-6xl flex items-center justify-between px-4 py-3">

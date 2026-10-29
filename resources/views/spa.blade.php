@@ -94,6 +94,7 @@
             padding: 0;
             width: 100%;
             min-height: 100%;
+            min-height: 100dvh;
             background-color: #faf8f3;
             color: #09281f;
             font-family: 'Hind Siliguri', sans-serif;
