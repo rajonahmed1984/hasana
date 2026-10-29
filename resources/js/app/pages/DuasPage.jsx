@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Bookmark, Share2, Loader2, Check, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
@@ -80,10 +81,28 @@ const curatedDuas = [
 ];
 
 export function DuasPage() {
+    const location = useLocation();
     const [duas, setDuas] = useState([]);
     const [categories, setCategories] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
-    const [activeCategory, setActiveCategory] = useState('all');
+    const [activeCategory, setActiveCategory] = useState(() => {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('cat') || params.get('category') || 'all';
+        } catch {
+            return 'all';
+        }
+    });
+
+    useEffect(() => {
+        try {
+            const params = new URLSearchParams(location.search);
+            const cat = params.get('cat') || params.get('category');
+            if (cat) {
+                setActiveCategory(cat);
+            }
+        } catch {}
+    }, [location.search]);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const [loading, setLoading] = useState(true);
@@ -303,8 +322,8 @@ export function DuasPage() {
                             onClick={(e) => handleTabClick(e, 'all')}
                             className={`native-press px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition ${
                                 activeCategory === 'all'
-                                    ? 'bg-primary text-gold shadow-sm'
-                                    : 'bg-muted text-muted-foreground hover:text-foreground'
+                                    ? 'gold-gradient-btn text-primary font-bold shadow-sm'
+                                    : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                             }`}
                         >
                             সকল দোয়া ({totalCount ? totalCount.toLocaleString('bn-BD-u-nu-latn') : duas.length.toLocaleString('bn-BD-u-nu-latn')})
@@ -316,8 +335,8 @@ export function DuasPage() {
                                 onClick={(e) => handleTabClick(e, cat.slug)}
                                 className={`native-press px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition ${
                                     activeCategory === cat.slug
-                                        ? 'bg-primary text-gold shadow-sm'
-                                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                                        ? 'gold-gradient-btn text-primary font-bold shadow-sm'
+                                        : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                                 }`}
                             >
                                 {cat.name} ({cat.items_count?.toLocaleString('bn-BD-u-nu-latn') || 0})
@@ -351,7 +370,7 @@ export function DuasPage() {
                         <p className="text-sm">দোয়া লোড হচ্ছে...</p>
                     </div>
                 ) : filteredDuas.length === 0 ? (
-                    <div className="text-center py-16 px-4 bg-card rounded-2xl border border-border">
+                    <div className="text-center py-16 px-4 bg-card rounded-2xl border border-gold/30">
                         <p className="text-base font-semibold text-foreground mb-1">কোনো দোয়া পাওয়া যায়নি</p>
                         <p className="text-xs text-muted-foreground mb-4">
                             অনুসন্ধানের শব্দ পরিবর্তন করে চেষ্টা করুন অথবা অন্য ক্যাটাগরি নির্বাচন করুন
@@ -359,7 +378,7 @@ export function DuasPage() {
                         <button
                             type="button"
                             onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
-                            className="px-4 py-1.5 text-xs font-semibold rounded-full bg-primary text-gold hover:opacity-90 transition"
+                            className="px-4 py-1.5 text-xs font-semibold rounded-full gold-gradient-btn text-primary hover:opacity-90 transition"
                         >
                             সকল দোয়া দেখুন
                         </button>
@@ -373,12 +392,12 @@ export function DuasPage() {
                             return (
                                 <article
                                     key={item.id || idx}
-                                    className="rounded-2xl bg-card border border-border p-5 md:p-6 shadow-sm card-hover flex flex-col justify-between"
+                                    className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-5 md:p-6 shadow-sm card-hover flex flex-col justify-between"
                                 >
                                     <div>
                                         <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-3">
                                             <div className="flex items-center gap-2.5">
-                                                <span className="w-8 h-8 rounded-full bg-primary text-gold flex items-center justify-center text-xs font-bold shrink-0">
+                                                <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0c4a3b] to-[#041a13] border border-gold/45 text-gold flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
                                                     {(idx + 1).toLocaleString('bn-BD-u-nu-latn')}
                                                 </span>
                                                 <h3 className="font-bold text-base md:text-lg text-foreground">
@@ -414,7 +433,7 @@ export function DuasPage() {
 
                                         {item.text_ar && (
                                             <p 
-                                                className={`font-arabic ${textSettings.sizeClass} text-primary font-bold text-right my-3 ${textSettings.leadClass}`}
+                                                className={`font-arabic ${textSettings.sizeClass} text-gold font-bold text-right my-3 ${textSettings.leadClass} drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]`}
                                                 dir="rtl"
                                             >
                                                 {item.text_ar}

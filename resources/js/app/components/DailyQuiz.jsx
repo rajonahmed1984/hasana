@@ -77,10 +77,10 @@ export function DailyQuiz() {
     const showResult = done && current >= questions.length;
 
     return (
-        <div className="rounded-3xl bg-card border border-border p-5 md:p-7 shadow-md">
+        <div className="rounded-3xl bg-card border border-gold/30 p-5 md:p-7 shadow-md">
             <div className="flex items-center justify-between mb-4">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
-                    <CircleHelp className="w-3.5 h-3.5" /> আজকের কুইজ
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/15 text-gold border border-gold/30 text-xs font-bold">
+                    <CircleHelp className="w-3.5 h-3.5 text-gold" /> আজকের কুইজ
                 </span>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     {streak.count > 0 && (
@@ -152,7 +152,7 @@ export function DailyQuiz() {
                             <button
                                 type="button"
                                 onClick={() => { hapticImpact(); setCurrent(index + 1); }}
-                                className="ml-auto px-4 py-2 rounded-full bg-primary text-gold text-sm font-bold native-press"
+                                className="ml-auto px-4 py-2 rounded-full gold-gradient-btn text-primary text-xs font-bold native-press"
                             >
                                 {index + 1 < questions.length ? 'পরের প্রশ্ন' : 'ফলাফল দেখুন'}
                             </button>

@@ -105,7 +105,7 @@ export function Layout({ children }) {
     return (
         <div className="min-h-screen flex flex-col bg-background text-foreground pb-bottom-nav">
             {/* Sticky Top Header (extends under the status bar in the edge-to-edge app) */}
-            <header className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-md transition-colors pt-safe">
+            <header className="sticky top-0 z-40 bg-gradient-to-r from-[#063b2c] via-[#084c39] to-[#063b2c] text-primary-foreground border-b border-gold/30 shadow-[0_2px_15px_rgba(0,0,0,0.25)] transition-colors pt-safe">
                 <div className="mx-auto max-w-6xl flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
                         <button
@@ -114,14 +114,14 @@ export function Layout({ children }) {
                             onClick={() => { hapticImpact(); setSidebarOpen(true); }}
                             className="p-2 rounded-xl hover:bg-primary-foreground/10 active:scale-95 transition"
                         >
-                            <Menu className="w-5 h-5 text-primary-foreground" />
+                            <Menu className="w-5 h-5 text-gold" />
                         </button>
                         <Link 
                             to="/" 
                             className="flex items-center gap-2 select-none group"
                             onClick={() => hapticImpact()}
                         >
-                            <span className="font-bold text-xl text-primary-foreground tracking-wide transition-transform group-hover:scale-105">হাসানা</span>
+                            <span className="font-bold text-xl text-gold tracking-wide transition-transform group-hover:scale-105 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">হাসানা</span>
                         </Link>
                     </div>
 
@@ -136,7 +136,7 @@ export function Layout({ children }) {
                                 className={({ isActive }) =>
                                     `px-4 py-1.5 rounded-full transition-all ${
                                         isActive
-                                            ? 'bg-gold text-primary font-bold shadow-sm'
+                                            ? 'gold-gradient-btn text-primary font-bold shadow-sm'
                                             : 'text-primary-foreground/85 hover:bg-primary-foreground/10 hover:text-primary-foreground'
                                     }`
                                 }
@@ -152,10 +152,10 @@ export function Layout({ children }) {
                             type="button"
                             aria-label="ডার্ক মোড পরিবর্তন"
                             onClick={toggleTheme}
-                            className="p-2 rounded-xl text-primary-foreground/90 hover:bg-primary-foreground/10 active:scale-95 transition"
+                            className="p-2 rounded-xl text-gold hover:bg-primary-foreground/10 active:scale-95 transition"
                             title={isDark ? 'লাইট মোড' : 'ডার্ক মোড'}
                         >
-                            {isDark ? <Sun className="w-5 h-5 text-gold" /> : <Moon className="w-5 h-5" />}
+                            {isDark ? <Sun className="w-5 h-5 text-gold animate-spin-slow" /> : <Moon className="w-5 h-5 text-gold" />}
                         </button>
                         <Link
                             to="/bookmarks"
@@ -184,7 +184,7 @@ export function Layout({ children }) {
             </main>
 
             {/* Mobile Bottom Navigation Bar with Ultra-Clean Native Capsule UI/UX */}
-            <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-primary/95 backdrop-blur-xl text-primary-foreground border-t border-gold/25 grid grid-cols-5 px-1 py-1 pb-safe shadow-[0_-8px_25px_rgba(0,0,0,0.3)]">
+            <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#06241a]/95 dark:bg-[#03150e]/95 backdrop-blur-2xl text-primary-foreground border-t border-gold/30 grid grid-cols-5 px-1 py-1 pb-safe shadow-[0_-8px_25px_rgba(0,0,0,0.4)]">
                 {navItems.map(({ to, label, icon: Icon }) => (
                     <NavLink
                         key={to}
@@ -195,7 +195,7 @@ export function Layout({ children }) {
                             `relative flex flex-col items-center justify-center select-none native-press py-1 transition-all duration-300 ${
                                 isActive
                                     ? 'text-gold'
-                                    : 'text-primary-foreground/65 hover:text-primary-foreground/90'
+                                    : 'text-emerald-100/65 dark:text-emerald-200/55 hover:text-white'
                             }`
                         }
                     >
@@ -204,21 +204,21 @@ export function Layout({ children }) {
                                 {/* Elevated Frosted Pill Capsule for Active Tab */}
                                 <div className={`relative px-3.5 py-1 rounded-full transition-all duration-300 flex items-center justify-center ${
                                     isActive
-                                        ? 'bg-gradient-to-b from-gold/25 to-gold/10 border border-gold/40 shadow-[0_2px_12px_rgba(223,171,59,0.35)] -translate-y-0.5 scale-105'
+                                        ? 'bg-gradient-to-b from-gold/30 to-gold/10 border border-gold/55 shadow-[0_2px_14px_rgba(212,175,55,0.4)] -translate-y-0.5 scale-105'
                                         : 'bg-transparent border border-transparent'
                                 }`}>
                                     <Icon className={`w-5 h-5 transition-transform duration-300 ${
                                         isActive 
-                                            ? 'text-gold scale-110 drop-shadow-[0_1px_4px_rgba(223,171,59,0.4)]' 
-                                            : 'text-primary-foreground/65'
+                                            ? 'text-gold scale-110 drop-shadow-[0_1px_6px_rgba(212,175,55,0.6)]' 
+                                            : 'text-emerald-100/65 dark:text-emerald-200/55'
                                     }`} />
                                 </div>
 
                                 {/* Label */}
                                 <span className={`text-[11px] tracking-tight transition-all duration-200 ${
                                     isActive
-                                        ? 'font-bold text-gold drop-shadow-xs'
-                                        : 'font-medium text-primary-foreground/70'
+                                        ? 'font-bold text-gold drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
+                                        : 'font-medium text-emerald-100/70 dark:text-emerald-200/60'
                                 }`}>
                                     {label}
                                 </span>

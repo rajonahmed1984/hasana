@@ -228,13 +228,13 @@ export function BookmarksPage() {
                         onClick={() => { hapticImpact(); setActiveTab('ayahs'); }}
                         className={`flex items-center gap-1.5 px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-semibold transition ${
                             activeTab === 'ayahs'
-                                ? 'bg-primary text-gold shadow-sm scale-105'
-                                : 'bg-muted text-muted-foreground hover:text-foreground'
+                                ? 'gold-gradient-btn text-primary shadow-sm scale-105 font-bold'
+                                : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                         }`}
                     >
                         <BookOpen className="w-3.5 h-3.5" />
                         <span>কুরআনের আয়াত</span>
-                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[11px] bg-primary-foreground/20">
+                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[11px] bg-primary/20 text-gold font-bold">
                             {bookmarks.length}
                         </span>
                     </button>
@@ -243,13 +243,13 @@ export function BookmarksPage() {
                         onClick={() => { hapticImpact(); setActiveTab('hadiths'); }}
                         className={`flex items-center gap-1.5 px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-semibold transition ${
                             activeTab === 'hadiths'
-                                ? 'bg-primary text-gold shadow-sm scale-105'
-                                : 'bg-muted text-muted-foreground hover:text-foreground'
+                                ? 'gold-gradient-btn text-primary shadow-sm scale-105 font-bold'
+                                : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                         }`}
                     >
                         <ScrollText className="w-3.5 h-3.5" />
                         <span>হাদিস</span>
-                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[11px] bg-primary-foreground/20">
+                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[11px] bg-primary/20 text-gold font-bold">
                             {hadithBookmarks.length}
                         </span>
                     </button>
@@ -258,13 +258,13 @@ export function BookmarksPage() {
                         onClick={() => { hapticImpact(); setActiveTab('duas'); }}
                         className={`flex items-center gap-1.5 px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-semibold transition ${
                             activeTab === 'duas'
-                                ? 'bg-primary text-gold shadow-sm scale-105'
-                                : 'bg-muted text-muted-foreground hover:text-foreground'
+                                ? 'gold-gradient-btn text-primary shadow-sm scale-105 font-bold'
+                                : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                         }`}
                     >
                         <DuaHandsIcon className="w-3.5 h-3.5" />
                         <span>দোয়া</span>
-                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[11px] bg-primary-foreground/20">
+                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[11px] bg-primary/20 text-gold font-bold">
                             {duaBookmarks.length}
                         </span>
                     </button>

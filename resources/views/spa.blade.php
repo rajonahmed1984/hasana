@@ -64,7 +64,7 @@
     <link rel="preload" href="{{ asset('images/apptimatic_logo.png') }}" as="image">
 
     <!-- PWA & Mobile Meta Tags -->
-    <meta name="theme-color" content="#125e54">
+    <meta name="theme-color" content="#064e3b">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -94,14 +94,14 @@
             padding: 0;
             width: 100%;
             min-height: 100%;
-            background-color: #f8f7f2;
-            color: #14302b;
+            background-color: #faf8f3;
+            color: #09281f;
             font-family: 'Hind Siliguri', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         html.dark, html[data-theme='dark'], html[data-theme='dark'] body {
-            background-color: #0d1715;
-            color: #e4ebe9;
+            background-color: #041710;
+            color: #f1f6f3;
         }
 
         /* Native-style boot splash screen (same look as the Android launch splash) */
@@ -114,7 +114,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            background: radial-gradient(circle at 50% 36%, #177a6d 0%, #0f4a41 55%, #082a25 100%);
+            background: radial-gradient(ellipse at 50% 30%, #0c5c46 0%, #07382a 60%, #041c14 100%);
             color: #ffffff;
             z-index: 9999;
             text-align: center;

@@ -134,7 +134,7 @@ export function QuranPage() {
                             onClick={() => { hapticImpact(); setViewMode('surah'); }}
                             className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all ${
                                 viewMode === 'surah'
-                                    ? 'bg-primary text-gold shadow-md'
+                                    ? 'gold-gradient-btn text-primary shadow-md'
                                     : 'text-muted-foreground hover:text-foreground'
                             }`}
                         >
@@ -146,7 +146,7 @@ export function QuranPage() {
                             onClick={() => { hapticImpact(); setViewMode('para'); }}
                             className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all ${
                                 viewMode === 'para'
-                                    ? 'bg-primary text-gold shadow-md'
+                                    ? 'gold-gradient-btn text-primary shadow-md'
                                     : 'text-muted-foreground hover:text-foreground'
                             }`}
                         >
@@ -165,8 +165,8 @@ export function QuranPage() {
                                 onClick={() => { hapticImpact(); setFilterType('all'); }}
                                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                                     filterType === 'all'
-                                        ? 'bg-primary text-gold shadow-sm'
-                                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                                        ? 'gold-gradient-btn text-primary shadow-sm'
+                                        : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                                 }`}
                             >
                                 সকল সূরা ({surahs.length})
@@ -176,8 +176,8 @@ export function QuranPage() {
                                 onClick={() => { hapticImpact(); setFilterType('meccan'); }}
                                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                                     filterType === 'meccan'
-                                        ? 'bg-primary text-gold shadow-sm'
-                                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                                        ? 'gold-gradient-btn text-primary shadow-sm'
+                                        : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                                 }`}
                             >
                                 মাক্কী ({meccanCount})
@@ -187,8 +187,8 @@ export function QuranPage() {
                                 onClick={() => { hapticImpact(); setFilterType('medinan'); }}
                                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                                     filterType === 'medinan'
-                                        ? 'bg-primary text-gold shadow-sm'
-                                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                                        ? 'gold-gradient-btn text-primary shadow-sm'
+                                        : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                                 }`}
                             >
                                 মাদানী ({medinanCount})
@@ -196,7 +196,7 @@ export function QuranPage() {
                         </div>
 
                         <p className="text-xs text-muted-foreground">
-                            প্রদর্শন: <span className="font-bold text-primary">{filteredSurahs.length}টি</span> সূরা
+                            প্রদর্শন: <span className="font-bold text-gold">{filteredSurahs.length}টি</span> সূরা
                         </p>
                     </div>
                 )}
@@ -205,7 +205,7 @@ export function QuranPage() {
                 {viewMode === 'para' && (
                     <div className="flex items-center justify-between pb-3 border-b border-border text-xs text-muted-foreground">
                         <span>পবিত্র কুরআনের সম্পূর্ণ 30 পারা (Juz) সূচিপত্র</span>
-                        <span>প্রদর্শন: <strong className="text-primary">{filteredParas.length}টি</strong> পারা</span>
+                        <span>প্রদর্শন: <strong className="text-gold">{filteredParas.length}টি</strong> পারা</span>
                     </div>
                 )}
             </div>
@@ -220,8 +220,8 @@ export function QuranPage() {
                 ) : viewMode === 'surah' ? (
                     /* Surahs Grid */
                     filteredSurahs.length === 0 ? (
-                        <div className="text-center py-16 text-muted-foreground">
-                            <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                        <div className="text-center py-16 text-muted-foreground bg-card rounded-2xl border border-gold/30">
+                            <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40 text-gold" />
                             <p className="font-semibold text-lg">কোন সূরা পাওয়া যায়নি</p>
                             <p className="text-xs mt-1">অনুসন্ধান পরিবর্তন করে পুনরায় চেষ্টা করুন</p>
                         </div>
@@ -236,15 +236,15 @@ export function QuranPage() {
                                         key={surah.id || surah.number}
                                         to={`/surah/${surah.slug}`}
                                         onClick={() => hapticImpact()}
-                                        className="rounded-2xl bg-card border border-border p-4 md:p-5 shadow-sm card-hover flex flex-col justify-between group native-press select-none"
+                                        className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-4 md:p-5 shadow-sm card-hover flex flex-col justify-between group native-press select-none"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex items-center gap-3">
-                                                <span className="w-10 h-10 rounded-full bg-primary text-gold flex items-center justify-center text-sm font-bold shadow-sm shrink-0">
+                                                <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c4a3b] to-[#041a13] border border-gold/45 text-gold flex items-center justify-center text-sm font-bold shadow-xs shrink-0">
                                                     {surah.number_bn || surah.number}
                                                 </span>
                                                 <div>
-                                                    <h3 className="font-bold text-base md:text-lg group-hover:text-primary transition-colors">
+                                                    <h3 className="font-bold text-base md:text-lg text-foreground group-hover:text-gold transition-colors">
                                                         {surah.name_bn || surah.name_en}
                                                     </h3>
                                                     <p className="text-xs text-muted-foreground">
@@ -253,7 +253,7 @@ export function QuranPage() {
                                                 </div>
                                             </div>
 
-                                            <p className="font-arabic text-2xl text-primary font-bold text-right shrink-0">
+                                            <p className="font-arabic text-2xl text-gold font-bold text-right shrink-0 drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]">
                                                 {surah.name_ar}
                                             </p>
                                         </div>
@@ -262,12 +262,8 @@ export function QuranPage() {
                                             <p className="truncate max-w-[65%]">
                                                 {surah.meaning_bn ? `অর্থ: "${surah.meaning_bn}"` : ''}
                                             </p>
-                                            <p className="font-medium text-primary">
-                                                <span className={`inline-block px-2 py-0.5 rounded-md text-[11px] mr-1.5 font-semibold ${
-                                                    surah.revelation_type === 'meccan'
-                                                        ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
-                                                        : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-                                                }`}>
+                                            <p className="font-medium text-gold flex items-center">
+                                                <span className="inline-block px-2 py-0.5 rounded-md text-[11px] mr-1.5 font-semibold bg-gold/15 text-gold border border-gold/30">
                                                     {revLabel}
                                                 </span>
                                                 {ayahCount} আয়াত
@@ -294,12 +290,12 @@ export function QuranPage() {
                                 return (
                                     <div
                                         key={para.number}
-                                        className="rounded-2xl bg-card border border-border p-5 shadow-sm card-hover flex flex-col justify-between"
+                                        className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-5 shadow-sm card-hover flex flex-col justify-between"
                                     >
                                         <div>
                                             <div className="flex items-start justify-between gap-3 pb-3 border-b border-border/60">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="w-11 h-11 rounded-2xl bg-primary text-gold flex flex-col items-center justify-center font-bold shadow-sm shrink-0">
+                                                    <span className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#0c4a3b] to-[#041a13] border border-gold/45 text-gold flex flex-col items-center justify-center font-bold shadow-xs shrink-0">
                                                         <span className="text-[10px] uppercase font-normal leading-none opacity-80">পারা</span>
                                                         <span className="text-base leading-none font-bold mt-0.5">{para.number_bn}</span>
                                                     </span>
@@ -313,7 +309,7 @@ export function QuranPage() {
                                                     </div>
                                                 </div>
 
-                                                <p className="font-arabic text-2xl text-primary font-bold text-right shrink-0">
+                                                <p className="font-arabic text-2xl text-gold font-bold text-right shrink-0 drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]">
                                                     {para.name_ar}
                                                 </p>
                                             </div>
@@ -335,7 +331,7 @@ export function QuranPage() {
                                                                 key={num}
                                                                 to={`/surah/${s.slug}`}
                                                                 onClick={() => hapticImpact()}
-                                                                className="px-2.5 py-1 rounded-lg bg-muted text-[11px] font-medium text-foreground hover:bg-primary hover:text-gold transition-colors inline-flex items-center gap-1"
+                                                                className="px-2.5 py-1 rounded-lg bg-card border border-border text-[11px] font-medium text-foreground hover:border-gold/40 hover:text-gold transition-colors inline-flex items-center gap-1"
                                                             >
                                                                 <span>{s.number_bn}. {s.name_bn}</span>
                                                             </Link>
@@ -357,7 +353,7 @@ export function QuranPage() {
                                             <Link
                                                 to={`/surah/${targetSlug}`}
                                                 onClick={() => hapticImpact()}
-                                                className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-gold transition"
+                                                className="inline-flex items-center gap-1.5 text-xs font-bold text-gold hover:underline transition"
                                             >
                                                 <span>পাঠ শুরু করুন</span>
                                                 <ChevronRight className="w-3.5 h-3.5" />

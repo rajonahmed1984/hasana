@@ -229,11 +229,12 @@ export function SurahPage() {
 
                 {/* Bismillah Header */}
                 {isBismillahShown && (
-                    <div className="text-center py-6">
-                        <p className="font-arabic text-3xl md:text-4xl text-primary font-bold">
+                    <div className="text-center py-6 px-4 rounded-3xl bg-card border border-gold/35 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-12 bg-gold/15 blur-2xl pointer-events-none rounded-full" />
+                        <p className="font-arabic text-3xl md:text-5xl text-gold font-bold drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)] relative z-10">
                             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
                         </p>
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-xs text-muted-foreground mt-2 relative z-10">
                             পরম করুণাময় ও অসীম দয়ালু আল্লাহ তায়ালার নামে শুরু করছি
                         </p>
                     </div>
@@ -250,11 +251,11 @@ export function SurahPage() {
                         <article 
                             key={ayah.number} 
                             id={`ayah-${ayah.number}`}
-                            className="rounded-2xl bg-card border border-border p-5 md:p-6 shadow-sm hover:shadow-md transition-shadow relative"
+                            className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-5 md:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                         >
                             {/* Ayah Header Bar */}
                             <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-4">
-                                <span className="inline-flex items-center justify-center rounded-full bg-primary text-gold px-3 py-1 text-xs font-bold tracking-wider shadow-sm">
+                                <span className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-[#0c4a3b] to-[#041a13] border border-gold/45 text-gold px-3.5 py-1 text-xs font-bold tracking-wider shadow-xs">
                                     {surahData.number_bn || surahData.number}:{ayah.number_bn || ayah.number}
                                 </span>
 
@@ -271,7 +272,7 @@ export function SurahPage() {
                                         aria-pressed={showWords}
                                         className={`native-press h-8 px-2.5 rounded-full flex items-center gap-1 text-xs font-semibold transition ${
                                             showWords
-                                                ? 'bg-primary text-gold shadow-sm'
+                                                ? 'gold-gradient-btn text-primary shadow-sm'
                                                 : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
                                         }`}
                                         title="প্রতিটি শব্দের অর্থ দেখুন"
@@ -310,7 +311,7 @@ export function SurahPage() {
                             <div className="space-y-4">
                                 {/* Arabic Text */}
                                 <p 
-                                    className={`font-arabic text-primary font-bold text-right ${textSettings.sizeClass} ${textSettings.leadClass} select-text`}
+                                    className={`font-arabic text-gold font-bold text-right ${textSettings.sizeClass} ${textSettings.leadClass} select-text drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]`}
                                     dir="rtl"
                                 >
                                     {ayah.text_ar}

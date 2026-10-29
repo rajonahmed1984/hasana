@@ -439,14 +439,14 @@ export function SettingsPage() {
                 </div>
 
                 {/* App Version & Check Updates Card */}
-                <div className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3">
+                <div className="rounded-2xl bg-card border-2 border-gold/40 p-5 shadow-sm space-y-3">
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                                <RefreshCw className={`w-5 h-5 text-primary ${checkingUpdate ? 'animate-spin' : ''}`} />
+                            <div className="w-10 h-10 rounded-xl bg-gold/15 border border-gold/30 text-gold flex items-center justify-center shrink-0">
+                                <RefreshCw className={`w-5 h-5 text-gold ${checkingUpdate ? 'animate-spin' : ''}`} />
                             </div>
                             <div>
-                                <h3 className="font-bold text-base">অ্যাপ সংস্করণ ও আপডেট</h3>
+                                <h3 className="font-bold text-base text-foreground">অ্যাপ সংস্করণ ও আপডেট</h3>
                                 <p className="text-xs text-muted-foreground">
                                     বর্তমান ইনস্টলড সংস্করণ: v{installedVer}
                                 </p>
@@ -457,7 +457,7 @@ export function SettingsPage() {
                             type="button"
                             onClick={handleManualUpdateCheck}
                             disabled={checkingUpdate}
-                            className="px-3.5 py-2 rounded-xl bg-primary text-gold hover:brightness-110 font-bold text-xs transition active:scale-95 flex items-center gap-1.5 shadow-xs shrink-0"
+                            className="px-4 py-2 rounded-xl gold-gradient-btn text-primary font-bold text-xs transition active:scale-95 flex items-center gap-1.5 shadow-md shrink-0 cursor-pointer"
                         >
                             {checkingUpdate ? (
                                 <>

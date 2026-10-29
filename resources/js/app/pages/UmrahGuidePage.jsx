@@ -421,10 +421,10 @@ export function UmrahGuidePage() {
                                         onClick={() => { hapticImpact(); setActiveStepIndex(idx); }}
                                         className={`py-2 px-1 text-center rounded-2xl text-xs font-bold transition-all native-press flex flex-col items-center gap-0.5 ${
                                             activeStepIndex === idx
-                                                ? 'bg-primary text-gold shadow-md scale-105 border border-gold/40'
+                                                ? 'gold-gradient-btn text-primary shadow-md scale-105 border border-gold/60'
                                                 : idx < activeStepIndex
-                                                ? 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20'
-                                                : 'bg-muted/70 text-muted-foreground hover:bg-muted border border-border/50'
+                                                ? 'bg-gold/15 text-gold border border-gold/30'
+                                                : 'bg-card text-muted-foreground hover:bg-muted border border-border/50'
                                         }`}
                                     >
                                         <span>ধাপ {s.step}</span>
@@ -437,7 +437,7 @@ export function UmrahGuidePage() {
                         {/* Active Step Card with native mobile slide transition */}
                         <article 
                             key={currentStep.step} 
-                            className="rounded-3xl bg-card border border-border overflow-hidden shadow-md transition-all duration-300 animate-slide-up"
+                            className="rounded-3xl bg-card border border-gold/30 overflow-hidden shadow-md transition-all duration-300 animate-slide-up"
                         >
                             {/* Step Image Artwork */}
                             {currentStep.image && (

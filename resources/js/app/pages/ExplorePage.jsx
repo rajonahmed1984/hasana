@@ -58,11 +58,11 @@ function Section({ icon: Icon, title, count, children }) {
     return (
         <section className="space-y-3">
             <h2 className="flex items-center gap-2 font-bold text-base md:text-lg">
-                <span className="w-8 h-8 rounded-xl bg-primary text-gold flex items-center justify-center shadow-sm">
-                    <Icon className="w-4 h-4" />
+                <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0c4a3b] to-[#041a13] border border-gold/45 text-gold flex items-center justify-center shadow-xs">
+                    <Icon className="w-4 h-4 text-gold" />
                 </span>
-                {title}
-                <span className="text-xs font-semibold text-muted-foreground">({count}টি)</span>
+                <span className="text-foreground">{title}</span>
+                <span className="text-xs font-semibold text-gold">({count}টি)</span>
             </h2>
             {children}
         </section>
@@ -123,10 +123,10 @@ export function ExplorePage() {
         ayah: (
             <Section key="ayah" icon={BookOpen} title="কুরআনের আয়াত" count={result?.ayahs.length}>
                 {result?.ayahs.map((a) => (
-                    <article key={a.id} className="rounded-2xl bg-card border border-border p-4 md:p-5 shadow-sm space-y-3">
-                        <p className="font-arabic text-2xl text-primary font-bold text-right leading-loose" dir="rtl">{a.text_ar}</p>
-                        <p className="text-sm md:text-base leading-relaxed"><Highlight text={a.text_bn} terms={terms} /></p>
-                        <Link to={a.link} className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+                    <article key={a.id} className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-4 md:p-5 shadow-sm space-y-3">
+                        <p className="font-arabic text-2xl text-gold font-bold text-right leading-loose drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">{a.text_ar}</p>
+                        <p className="text-sm md:text-base leading-relaxed text-foreground"><Highlight text={a.text_bn} terms={terms} /></p>
+                        <Link to={a.link} className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline">
                             {a.reference} <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                     </article>
@@ -136,11 +136,11 @@ export function ExplorePage() {
         hadith: (
             <Section key="hadith" icon={ScrollText} title="হাদিস" count={result?.hadiths.length}>
                 {result?.hadiths.map((h) => (
-                    <article key={h.id} className="rounded-2xl bg-card border border-border p-4 md:p-5 shadow-sm space-y-2">
+                    <article key={h.id} className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-4 md:p-5 shadow-sm space-y-2">
                         {h.category && (
-                            <span className="inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{h.category}</span>
+                            <span className="inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gold/15 text-gold border border-gold/30">{h.category}</span>
                         )}
-                        <p className="text-sm md:text-base leading-relaxed"><ClampText text={h.text_bn} terms={terms} /></p>
+                        <p className="text-sm md:text-base leading-relaxed text-foreground"><ClampText text={h.text_bn} terms={terms} /></p>
                         <p className="text-xs text-muted-foreground">{h.reference}</p>
                     </article>
                 ))}
@@ -149,12 +149,12 @@ export function ExplorePage() {
         dua: (
             <Section key="dua" icon={DuaHandsIcon} title="দোয়া" count={result?.duas.length}>
                 {result?.duas.map((d) => (
-                    <article key={d.id} className="rounded-2xl bg-card border border-border p-4 md:p-5 shadow-sm space-y-2">
-                        <h3 className="font-bold text-primary"><Highlight text={d.title} terms={terms} /></h3>
-                        {d.text_ar && <p className="font-arabic text-2xl text-primary text-right leading-loose" dir="rtl">{d.text_ar}</p>}
+                    <article key={d.id} className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-4 md:p-5 shadow-sm space-y-2">
+                        <h3 className="font-bold text-foreground text-base"><Highlight text={d.title} terms={terms} /></h3>
+                        {d.text_ar && <p className="font-arabic text-2xl text-gold font-bold text-right leading-loose drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">{d.text_ar}</p>}
                         {d.transliteration && <p className="text-sm italic text-muted-foreground">{d.transliteration}</p>}
-                        <p className="text-sm md:text-base leading-relaxed"><Highlight text={d.text_bn} terms={terms} /></p>
-                        {d.reference && <p className="text-xs text-muted-foreground">সূত্র: {d.reference}</p>}
+                        <p className="text-sm md:text-base leading-relaxed text-foreground"><Highlight text={d.text_bn} terms={terms} /></p>
+                        {d.reference && <p className="text-xs text-gold font-medium">সূত্র: {d.reference}</p>}
                     </article>
                 ))}
             </Section>

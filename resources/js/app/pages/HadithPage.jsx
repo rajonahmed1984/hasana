@@ -218,8 +218,8 @@ export function HadithPage() {
                             onClick={(e) => handleTabClick(e, 'all')}
                             className={`native-press px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition ${
                                 activeCategory === 'all'
-                                    ? 'bg-primary text-gold shadow-sm'
-                                    : 'bg-muted text-muted-foreground hover:text-foreground'
+                                    ? 'gold-gradient-btn text-primary font-bold shadow-sm'
+                                    : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                             }`}
                         >
                             সকল হাদিস ({totalCount.toLocaleString('bn-BD-u-nu-latn')})
@@ -231,8 +231,8 @@ export function HadithPage() {
                                 onClick={(e) => handleTabClick(e, cat.slug)}
                                 className={`native-press px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition ${
                                     activeCategory === cat.slug
-                                        ? 'bg-primary text-gold shadow-sm'
-                                        : 'bg-muted text-muted-foreground hover:text-foreground'
+                                        ? 'gold-gradient-btn text-primary font-bold shadow-sm'
+                                        : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-gold/30'
                                 }`}
                             >
                                 {cat.name} ({cat.items_count?.toLocaleString('bn-BD-u-nu-latn') || 0})
@@ -266,8 +266,8 @@ export function HadithPage() {
                         <p className="text-sm">হাদিস লোড হচ্ছে...</p>
                     </div>
                 ) : hadiths.length === 0 ? (
-                    <div className="text-center py-16 text-muted-foreground">
-                        <ScrollText className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                    <div className="text-center py-16 text-muted-foreground bg-card rounded-2xl border border-gold/30">
+                        <ScrollText className="w-12 h-12 mx-auto mb-3 opacity-40 text-gold" />
                         <p className="font-semibold text-lg">কোন হাদিস পাওয়া যায়নি</p>
                         <p className="text-sm mt-1">ভিন্ন শব্দ বা অন্য ক্যাটাগরি নির্বাচন করে চেষ্টা করুন।</p>
                     </div>
@@ -281,12 +281,12 @@ export function HadithPage() {
                                 return (
                                     <article
                                         key={item.id || idx}
-                                        className="rounded-2xl bg-card border border-border p-5 md:p-6 shadow-sm card-hover flex flex-col justify-between"
+                                        className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-5 md:p-6 shadow-sm card-hover flex flex-col justify-between"
                                     >
                                         <div>
                                             <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-3">
                                                 <div className="flex items-center gap-2.5">
-                                                    <span className="w-8 h-8 rounded-full bg-primary text-gold flex items-center justify-center text-xs font-bold shrink-0">
+                                                    <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0c4a3b] to-[#041a13] border border-gold/45 text-gold flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
                                                         {(idx + 1).toLocaleString('bn-BD-u-nu-latn')}
                                                     </span>
                                                     <h3 className="font-bold text-base md:text-lg text-foreground">
@@ -322,7 +322,7 @@ export function HadithPage() {
 
                                             {item.text_ar && (
                                                 <p 
-                                                    className={`font-arabic ${textSettings.sizeClass} text-primary font-bold text-right my-3 ${textSettings.leadClass}`}
+                                                    className={`font-arabic ${textSettings.sizeClass} text-gold font-bold text-right my-3 ${textSettings.leadClass} drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]`}
                                                     dir="rtl"
                                                 >
                                                     {item.text_ar}
@@ -336,10 +336,10 @@ export function HadithPage() {
 
                                         {item.reference && (
                                             <div className="mt-4 pt-3 border-t border-border/50 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-                                                <span className="font-medium text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
+                                                <span className="font-semibold text-gold bg-gold/15 border border-gold/30 px-2.5 py-0.5 rounded-full">
                                                     {item.category || 'হাদিস'}
                                                 </span>
-                                                <span className="text-right">{item.reference}</span>
+                                                <span className="text-right text-muted-foreground font-medium">{item.reference}</span>
                                             </div>
                                         )}
                                     </article>
@@ -354,7 +354,7 @@ export function HadithPage() {
                                     type="button"
                                     onClick={handleLoadMore}
                                     disabled={loadingMore}
-                                    className="px-6 py-2.5 rounded-xl bg-primary text-gold font-medium text-sm hover:opacity-90 transition inline-flex items-center gap-2 shadow-sm disabled:opacity-50"
+                                    className="px-6 py-2.5 rounded-full gold-gradient-btn text-primary font-bold text-sm hover:opacity-95 transition inline-flex items-center gap-2 shadow-md disabled:opacity-50 native-press"
                                 >
                                     {loadingMore ? (
                                         <>

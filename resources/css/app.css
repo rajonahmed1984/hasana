@@ -17,38 +17,42 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-card-border: var(--card-border);
 }
 
 :root {
-  --radius: 1rem;
-  --background: #f8f7f2;
-  --foreground: #14302b;
+  --radius: 1.125rem;
+  --background: #faf8f3;
+  --foreground: #09281f;
   --card: #ffffff;
-  --primary: #125e54;
+  --card-border: rgba(212, 175, 55, 0.25);
+  --primary: #064e3b;
   --primary-foreground: #fbf9f4;
-  --gold: #dfab3b;
-  --gold-light: #fef5e0;
-  --muted: #eeede6;
-  --muted-foreground: #546e6a;
-  --border: #e2dfd5;
-  --hero: radial-gradient(circle at 70% 20%, #177a6d, #0d3b34);
+  --gold: #c89823;
+  --gold-light: #fef7e2;
+  --muted: #f1ede3;
+  --muted-foreground: #4a685e;
+  --border: #e3ded1;
+  --hero: radial-gradient(ellipse at 50% -10%, #0c5c46 0%, #064433 60%, #032b20 100%);
 }
 
 [data-theme="dark"], .dark {
-  --background: #0d1715;
-  --foreground: #e4ebe9;
-  --card: #13221f;
-  --primary: #187468;
+  --background: #041710;
+  --foreground: #f1f6f3;
+  --card: #08261e;
+  --card-border: rgba(212, 175, 55, 0.28);
+  --primary: #0a4d3b;
   --primary-foreground: #ffffff;
-  --gold: #e5b64c;
-  --gold-light: rgba(229, 182, 76, 0.15);
-  --muted: #1a2f2b;
-  --muted-foreground: #8aa39f;
-  --border: #233e38;
-  --hero: radial-gradient(circle at 70% 20%, #1a4d45, #081a17);
+  --gold: #e5c365;
+  --gold-light: rgba(229, 195, 101, 0.14);
+  --muted: #0b2c22;
+  --muted-foreground: #8aa99c;
+  --border: #133d31;
+  --hero: radial-gradient(ellipse at 50% -10%, #0e523f 0%, #072a1f 65%, #03140e 100%);
 }
 
 @layer base {
@@ -75,8 +79,8 @@
 }
 
 .pattern {
-  background-image: radial-gradient(circle, rgba(223, 171, 59, 0.3) 1.5px, transparent 1.5px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(circle, rgba(212, 175, 55, 0.22) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
 }
 
 .font-arabic {
@@ -87,13 +91,62 @@
   font-family: 'Hind Siliguri', sans-serif;
 }
 
-/* Custom Islamic Card Animation */
+/* Islamic Luxury Card & Glow System */
+.islamic-card {
+  background-color: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -2px rgba(6, 78, 59, 0.08);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.dark .islamic-card {
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.5);
+}
+
 .card-hover {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
 }
 .card-hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px -6px rgba(18, 94, 84, 0.15);
+  box-shadow: 0 14px 32px -6px rgba(6, 78, 59, 0.18);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+.dark .card-hover:hover {
+  box-shadow: 0 14px 36px -6px rgba(0, 0, 0, 0.7);
+  border-color: rgba(229, 195, 101, 0.55);
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px -2px rgba(212, 175, 55, 0.32);
+}
+
+.gold-text-glow {
+  text-shadow: 0 1px 8px rgba(212, 175, 55, 0.35);
+}
+
+.gold-gradient-btn {
+  background: linear-gradient(135deg, #f7e499 0%, #d4af37 50%, #b8860b 100%);
+  color: #062319 !important;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.gold-gradient-btn:hover {
+  filter: brightness(1.06);
+}
+.gold-gradient-btn:active {
+  transform: scale(0.97);
+}
+
+.emerald-gradient-card {
+  background: radial-gradient(ellipse at 50% 0%, #0d4a3b 0%, #062b20 70%, #031812 100%);
+  border: 1px solid rgba(212, 175, 55, 0.32);
+}
+
+.mihrab-arch {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
 }
 
 /* Text Settings Bar Helper */
