@@ -7,6 +7,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { isNative } from '../native';
 import { getStoredLocation, calculateSolarPrayerTimes } from './locationService';
+import { playNotificationSound } from './soundService';
 
 const DAYS_AHEAD = 7;
 const ID_BASE = 1000;
@@ -21,8 +22,9 @@ const DUROOD_MIN = 30;
 const HADITH_HOUR = 20;
 const HADITH_MIN = 30;
 
-const PRAYER_CHANNEL = 'hasana-prayer';
-const GENERAL_CHANNEL = 'hasana-general';
+const PRAYER_CHANNEL = 'hasana-prayer-soothing';
+const GENERAL_CHANNEL = 'hasana-general-soothing';
+const NOTIFICATION_SOUND = 'hasana_notification.wav';
 const SMALL_ICON = 'ic_stat_hasana';
 
 let channelsReady = false;
@@ -156,7 +158,7 @@ const ensureChannels = async () => {
             importance: 5, // High importance for heads-up alert + sound
             visibility: 1, // Visible on lockscreen
             vibration: true,
-            sound: 'default',
+            sound: NOTIFICATION_SOUND,
         });
         await LocalNotifications.createChannel({
             id: GENERAL_CHANNEL,
@@ -164,7 +166,7 @@ const ensureChannels = async () => {
             description: 'হাসানা থেকে গুরুত্বপূর্ণ ঘোষণা ও আপডেট',
             importance: 4,
             visibility: 1,
-            sound: 'default',
+            sound: NOTIFICATION_SOUND,
         });
     } catch {
         // Android only
@@ -294,7 +296,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                         largeBody: body,
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
-                        sound: 'default',
+                        sound: NOTIFICATION_SOUND,
                         schedule: { at, allowWhileIdle: true },
                         extra: { url: '/', type: 'prayer' },
                     });
@@ -313,7 +315,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                         largeBody: `পবিত্র কুরআনে আল্লাহ তাআলা বলেছেন :\n"${ayah.text_bn}"\n— ${ayah.reference}`,
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
-                        sound: 'default',
+                        sound: NOTIFICATION_SOUND,
                         schedule: { at: ayahAt, allowWhileIdle: true },
                         extra: { url: ayah?.deep_link || '/quran', type: 'daily_ayah' },
                     });
@@ -329,7 +331,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                         largeBody: 'সারাদিন ব্যাপী দুরূদ পড়ার অভ্যাস গড়তে দুরূদ রিমাইন্ডার ফিচারটি চালু করুন। আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ।',
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
-                        sound: 'default',
+                        sound: NOTIFICATION_SOUND,
                         schedule: { at: duroodAt, allowWhileIdle: true },
                         extra: { url: '/duas', type: 'durood' },
                     });
@@ -346,7 +348,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                         largeBody: `${hadith.narrator} থেকে বর্ণিত, রাসূলুল্লাহ ﷺ বলেছেন :\n"${hadith.text_bn}"\n— ${hadith.reference}`,
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
-                        sound: 'default',
+                        sound: NOTIFICATION_SOUND,
                         schedule: { at: hadithAt, allowWhileIdle: true },
                         extra: { url: '/hadith', type: 'daily_hadith' },
                     });
@@ -368,6 +370,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
 export const showNativeNotificationNow = async (title, body) => {
     try {
         await ensureChannels();
+        playNotificationSound();
         await LocalNotifications.schedule({
             notifications: [{
                 id: Math.floor(Math.random() * 100000) + 5000,
@@ -376,7 +379,7 @@ export const showNativeNotificationNow = async (title, body) => {
                 largeBody: body,
                 channelId: PRAYER_CHANNEL,
                 smallIcon: SMALL_ICON,
-                sound: 'default',
+                sound: NOTIFICATION_SOUND,
                 schedule: { at: new Date(Date.now() + 500), allowWhileIdle: true },
             }],
         });

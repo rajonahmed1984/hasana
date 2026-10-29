@@ -6,6 +6,7 @@ import { requestNotificationPermission } from './firebase';
 import { isNative } from '../native';
 import { getStoredLocation, calculateSolarPrayerTimes } from './locationService';
 import { syncDeviceWithBackend, savePushToken } from './deviceRegistration';
+import { playNotificationSound } from './soundService';
 import {
     requestNativeNotificationPermission,
     rescheduleNativeNotifications,
@@ -190,6 +191,9 @@ export const requestNotifPermission = async () => {
  * Trigger a browser, service worker or native notification right away
  */
 export const showPrayerNotification = async (title, body, tag = 'namaz-alert', url = '/') => {
+    // Play soothing Islamic notification chime
+    playNotificationSound();
+
     if (isNative()) return showNativeNotificationNow(title, body);
 
     if (typeof window === 'undefined' || !('Notification' in window)) return false;
@@ -202,6 +206,7 @@ export const showPrayerNotification = async (title, body, tag = 'namaz-alert', u
         tag,
         renotify: false,
         vibrate: [300, 150, 300, 150, 400],
+        sound: '/sounds/notification-soothing.wav',
         data: { url },
     };
 

@@ -15,6 +15,7 @@ import { TasbihPage } from './pages/TasbihPage';
 import { FeaturesPage } from './pages/FeaturesPage';
 import { initNativeAppHandlers } from './native';
 import { initPrayerScheduler, showPrayerNotification } from './services/prayerNotifications';
+import { playNotificationSound } from './services/soundService';
 import { setupForegroundNotifications } from './services/firebase';
 import { useModal } from './context/ModalContext';
 import { useWebBackGuard } from './services/backHandler';
@@ -53,6 +54,7 @@ export function App() {
                 return;
             }
 
+            playNotificationSound();
             customConfirm({
                 title,
                 message: body,

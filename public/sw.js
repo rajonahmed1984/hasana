@@ -12,7 +12,7 @@ const OFFLINE_DATA = 'hasana-offline-data'; // written by resources/js/app/servi
 const API_CACHE_LIMIT = 300;
 const NETWORK_TIMEOUT_MS = 6000;
 const APP_ENTRIES = ['resources/js/app/main.jsx', 'resources/css/app.css'];
-const SPA_ROUTES = ['/', '/quran', '/hadith', '/duas', '/umrah-guide', '/bookmarks', '/settings', '/about'];
+const SPA_ROUTES = ['/', '/quran', '/hadith', '/duas', '/umrah-guide', '/bookmarks', '/settings', '/about', '/prayer-times', '/tasbih', '/features'];
 
 // ---------------------------------------------------------------------------
 // Firebase Cloud Messaging (background push on the website)
@@ -43,6 +43,7 @@ try {
       // The open tab may already have shown this same prayer (same tag): replace it silently
       renotify: false,
       vibrate: [300, 150, 300, 150, 400],
+      sound: '/sounds/notification-soothing.wav',
       data: { url: payload.data?.url || payload.data?.deep_link || '/' },
     });
   });

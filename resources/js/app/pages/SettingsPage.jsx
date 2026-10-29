@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, ShieldCheck, RefreshCw, Code2, ExternalLink, Bell, BellRing, BellOff, Check, Send, Sparkles, BookOpen, LogOut } from 'lucide-react';
+import { Moon, Sun, ShieldCheck, RefreshCw, Code2, ExternalLink, Bell, BellRing, BellOff, Check, Send, Sparkles, BookOpen, LogOut, Volume2 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
 import { OfflineDownloadsCard } from '../components/OfflineDownloadsCard';
 import { hapticImpact } from '../native';
+import { playNotificationSound } from '../services/soundService';
 import { 
     isPrayerNotificationEnabled, 
     enablePrayerNotifications, 
@@ -309,15 +310,30 @@ export function SettingsPage() {
                             <span>{notificationsActive ? 'নোটিফিকেশন সক্রিয়' : 'নোটিফিকেশন বন্ধ'}</span>
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={handleTestNotification}
-                            disabled={isTestingNotification}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gold/15 text-primary hover:bg-gold/25 font-bold text-xs transition border border-gold/40"
-                        >
-                            <Send className="w-3.5 h-3.5" />
-                            <span>{isTestingNotification ? 'পাঠানো হচ্ছে...' : 'টেস্ট নোটিফিকেশন'}</span>
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    hapticImpact();
+                                    playNotificationSound();
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 font-bold text-xs transition border border-primary/25 native-press"
+                                title="প্রশান্তিদায়ক নোটিফিকেশন সাউন্ড শুনুন"
+                            >
+                                <Volume2 className="w-3.5 h-3.5 text-gold" />
+                                <span>সাউন্ড শুনুন</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleTestNotification}
+                                disabled={isTestingNotification}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gold/15 text-primary hover:bg-gold/25 font-bold text-xs transition border border-gold/40 native-press"
+                            >
+                                <Send className="w-3.5 h-3.5" />
+                                <span>{isTestingNotification ? 'পাঠানো হচ্ছে...' : 'টেস্ট নোটিফিকেশন'}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
