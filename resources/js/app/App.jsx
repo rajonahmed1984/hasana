@@ -11,6 +11,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { AboutPage } from './pages/AboutPage';
 import { ExplorePage } from './pages/ExplorePage';
 import { PrayerTimesPage } from './pages/PrayerTimesPage';
+import { TasbihPage } from './pages/TasbihPage';
 import { initNativeAppHandlers } from './native';
 import { initPrayerScheduler, showPrayerNotification } from './services/prayerNotifications';
 import { setupForegroundNotifications } from './services/firebase';
@@ -90,6 +91,8 @@ export function App() {
             <Route path="/prayer-times" element={<PrayerTimesPage />} />
             <Route path="/namaz-times" element={<PrayerTimesPage />} />
             <Route path="/prayer" element={<PrayerTimesPage />} />
+            <Route path="/tasbih" element={<TasbihPage />} />
+            <Route path="/tasbeeh" element={<TasbihPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/explore" element={<ExplorePage />} />

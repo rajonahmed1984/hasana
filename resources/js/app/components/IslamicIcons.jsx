@@ -55,3 +55,42 @@ export function DuaHandsIcon({ className = "w-5 h-5", ...props }) {
 // Aliases
 export const DuaIcon = DuaHandsIcon;
 export const UmrahIcon = KaabaIcon;
+
+/**
+ * Islamic Tasbih / Misbaha Icon (Prayer beads with Imam bead and tassel)
+ */
+export function TasbihIcon({ className = "w-5 h-5", strokeWidth = 2, ...props }) {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+            {...props}
+        >
+            {/* Subtle connecting thread */}
+            <ellipse cx="12" cy="11.5" rx="7.2" ry="7" stroke="currentColor" strokeWidth="1" strokeDasharray="1 1.5" opacity="0.5" />
+            
+            {/* Beads along the misbaha circle */}
+            <circle cx="12" cy="4.5" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="16.5" cy="6" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="19.2" cy="9.8" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="19.2" cy="14" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="16.2" cy="17.3" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="12" cy="18.5" r="1.6" fill="currentColor" stroke="none" />
+            <circle cx="7.8" cy="17.3" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="4.8" cy="14" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="4.8" cy="9.8" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="7.5" cy="6" r="1.4" fill="currentColor" stroke="none" />
+            
+            {/* Imam bead connector & tassel */}
+            <path d="M12 18.5v3" stroke="currentColor" strokeWidth="1.6" />
+            <circle cx="12" cy="22" r="1" fill="currentColor" stroke="none" />
+            <path d="M10.2 23.5h3.6" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+    );
+}
+

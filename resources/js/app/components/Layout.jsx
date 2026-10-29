@@ -18,7 +18,7 @@ import {
     Search,
     Clock
 } from 'lucide-react';
-import { DuaHandsIcon, KaabaIcon } from './IslamicIcons';
+import { DuaHandsIcon, KaabaIcon, TasbihIcon } from './IslamicIcons';
 import { hapticImpact, isNative } from '../native';
 import { trackPageView } from '../services/analytics';
 import { useModal } from '../context/ModalContext';
@@ -170,6 +170,15 @@ export function Layout({ children }) {
 
                     {/* Header Right Actions */}
                     <div className="flex items-center gap-1 sm:gap-1.5">
+                        <Link
+                            to="/tasbih"
+                            onClick={() => hapticImpact()}
+                            aria-label="তসবিহ কাউন্টার"
+                            className="p-2 rounded-xl text-gold hover:bg-primary-foreground/10 active:scale-95 transition"
+                            title="তসবিহ কাউন্টার"
+                        >
+                            <TasbihIcon className="w-5 h-5 text-gold" />
+                        </Link>
                         <button
                             type="button"
                             aria-label="অনুসন্ধান"
@@ -310,6 +319,14 @@ export function Layout({ children }) {
                             >
                                 <Clock className="w-5 h-5 text-primary" />
                                 <span>নামাজের সময়সূচী</span>
+                            </Link>
+                            <Link
+                                to="/tasbih"
+                                onClick={() => setSidebarOpen(false)}
+                                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-muted font-medium text-sm transition"
+                            >
+                                <TasbihIcon className="w-5 h-5 text-primary" />
+                                <span>তসবিহ কাউন্টার</span>
                             </Link>
                             {navItems.map(({ to, label, icon: Icon }) => (
                                 <Link

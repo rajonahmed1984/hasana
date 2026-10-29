@@ -19,10 +19,9 @@ import {
     Navigation,
     Compass,
     X,
-    Search,
-    RotateCcw
+    Search
 } from 'lucide-react';
-import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
+import { DuaHandsIcon, KaabaIcon, TasbihIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
 import { DailyQuiz } from '../components/DailyQuiz';
 import { ShareCardModal } from '../components/ShareCardModal';
@@ -54,17 +53,10 @@ const quickAccess = [
 
 const features = [
     { title: 'নামাজের সময়সূচী', desc: 'প্রতিদিন সঠিক সময়ে নামাজের সময়', icon: Clock, to: '/prayer-times' },
+    { title: 'ডিজিটাল তসবিহ', desc: 'দৈনন্দিন জিকির ও তাসবিহ গণনা', icon: TasbihIcon, to: '/tasbih' },
     { title: 'বুকমার্ক সংরক্ষণ', desc: 'পছন্দের আয়াত ও দোয়া বুকমার্ক করুন', icon: Bookmark, to: '/bookmarks' },
     { title: 'আয়াত ও দোয়া শেয়ার', desc: 'সহজেই শেয়ার করুন বন্ধুমহলে', icon: Share2 },
     { title: 'ডার্ক মোড সমর্থন', desc: 'চোখের আরামের জন্য আধুনিক ডার্ক মোড', icon: Moon },
-];
-
-const dhikrOptions = [
-    { id: 'subhanallah', title_ar: 'سُبْحَانَ اللَّهِ', title_bn: 'সুবহানাল্লাহ', title_en: 'SubhanAllah' },
-    { id: 'alhamdulillah', title_ar: 'الْحَمْدُ لِلَّهِ', title_bn: 'আলহামদুলিল্লাহ', title_en: 'Alhamdulillah' },
-    { id: 'allahuakbar', title_ar: 'اللَّهُ أَكْبَرُ', title_bn: 'আল্লাহু আকবার', title_en: 'Allahu Akbar' },
-    { id: 'astaghfirullah', title_ar: 'أَسْتَغْفِرُ اللَّهَ', title_bn: 'আস্তাগফিরুল্লাহ', title_en: 'Astaghfirullah' },
-    { id: 'lailahaillallah', title_ar: 'لَا إِلَهَ إِلَّا اللَّهُ', title_bn: 'লা ইলাহা ইল্লাল্লাহ', title_en: 'La ilaha illallah' },
 ];
 
 const dailyHadith = {
@@ -87,37 +79,6 @@ export function HomePage() {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [shareCardData, setShareCardData] = useState(null);
     const [appUpdateInfo, setAppUpdateInfo] = useState(null);
-
-    // Tasbih Widget State
-    const [tasbihCount, setTasbihCount] = useState(() => {
-        try {
-            return parseInt(localStorage.getItem('hasana-home-tasbih') || '198', 10);
-        } catch {
-            return 198;
-        }
-    });
-    const [tasbihDhikrIndex, setTasbihDhikrIndex] = useState(0);
-
-    const handleTasbihIncrement = () => {
-        hapticImpact();
-        setTasbihCount((prev) => {
-            const next = prev + 1;
-            try { localStorage.setItem('hasana-home-tasbih', String(next)); } catch (e) {}
-            return next;
-        });
-    };
-
-    const handleTasbihReset = () => {
-        hapticImpact();
-        setTasbihCount(0);
-        try { localStorage.setItem('hasana-home-tasbih', '0'); } catch (e) {}
-    };
-
-    const handleTasbihSetTarget = (target) => {
-        hapticImpact();
-        setTasbihCount(target);
-        try { localStorage.setItem('hasana-home-tasbih', String(target)); } catch (e) {}
-    };
 
     useEffect(() => {
         return subscribeToUpdateState((info) => setAppUpdateInfo(info));
@@ -554,89 +515,6 @@ export function HomePage() {
                             <BookOpen className="w-3.5 h-3.5" />
                             <span>হাদিস সম্ভার পড়ুন</span>
                         </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* তসবিহ কাউন্টার (Interactive Digital Tasbih Counter widget) matching Image 1 */}
-            <section className="mx-auto max-w-3xl px-4 mt-8">
-                <div className="rounded-3xl bg-gradient-to-b from-[#0c3f32] via-[#072c22] to-[#041a13] border border-gold/40 p-5 sm:p-7 shadow-xl relative overflow-hidden">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-4">
-                        <div>
-                            <h3 className="font-bold text-lg md:text-xl text-gold flex items-center gap-2">
-                                <Sparkles className="w-4 h-4 text-gold" />
-                                তসবিহ কাউন্টার
-                            </h3>
-                            <p className="text-xs text-emerald-100/80 mt-0.5">
-                                {dhikrOptions[tasbihDhikrIndex].title_en} • {dhikrOptions[tasbihDhikrIndex].title_ar}
-                            </p>
-                        </div>
-
-                        {/* Dhikr Switcher */}
-                        <select
-                            value={tasbihDhikrIndex}
-                            onChange={(e) => {
-                                hapticImpact();
-                                setTasbihDhikrIndex(Number(e.target.value));
-                            }}
-                            className="bg-[#052119] border border-gold/40 text-gold text-xs rounded-xl px-2.5 py-1.5 outline-none font-medium cursor-pointer"
-                        >
-                            {dhikrOptions.map((opt, idx) => (
-                                <option key={opt.id} value={idx} className="bg-[#08281e] text-emerald-100">
-                                    {opt.title_bn} ({opt.title_ar})
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Counter Display & Tap Button */}
-                    <div className="flex items-center justify-between gap-4 py-3">
-                        <div className="min-w-0">
-                            <p className="text-xs text-emerald-200/70 font-medium">মোট জিকির সংখ্যা</p>
-                            <div className="text-5xl sm:text-6xl font-black text-white tabular-nums tracking-tight mt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-                                {toBnDigits(tasbihCount)}
-                            </div>
-                        </div>
-
-                        {/* Tap to Count Big Golden Circle */}
-                        <button
-                            type="button"
-                            onClick={handleTasbihIncrement}
-                            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full gold-gradient-btn flex flex-col items-center justify-center text-center shadow-[0_6px_25px_rgba(212,175,55,0.45)] border-2 border-gold/60 active:scale-90 transition-transform select-none cursor-pointer"
-                        >
-                            <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#06241a]">Tap to</span>
-                            <span className="text-base sm:text-lg font-black uppercase text-[#06241a]">Count</span>
-                        </button>
-                    </div>
-
-                    {/* Presets: 33, 99, Reset */}
-                    <div className="flex items-center justify-between gap-2 pt-3 border-t border-gold/20 mt-2">
-                        <div className="flex items-center gap-1.5">
-                            <button
-                                type="button"
-                                onClick={() => handleTasbihSetTarget(33)}
-                                className="px-3 py-1 rounded-xl bg-gold/15 hover:bg-gold/25 border border-gold/40 text-gold text-xs font-bold transition native-press"
-                            >
-                                ৩৩
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handleTasbihSetTarget(99)}
-                                className="px-3 py-1 rounded-xl bg-gold/15 hover:bg-gold/25 border border-gold/40 text-gold text-xs font-bold transition native-press"
-                            >
-                                ৯৯
-                            </button>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={handleTasbihReset}
-                            className="px-3 py-1 rounded-xl bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-300 text-xs font-bold transition native-press flex items-center gap-1"
-                        >
-                            <RotateCcw className="w-3.5 h-3.5" />
-                            <span>রিসেট</span>
-                        </button>
                     </div>
                 </div>
             </section>
