@@ -5,10 +5,7 @@ import {
     ScrollText, 
     Heart, 
     MapPin, 
-    Clock, 
-    Bookmark, 
     Share2, 
-    Moon, 
     Sun,
     ChevronRight, 
     Calendar,
@@ -21,7 +18,7 @@ import {
     X,
     Search
 } from 'lucide-react';
-import { DuaHandsIcon, KaabaIcon, TasbihIcon } from '../components/IslamicIcons';
+import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
 import { DailyQuiz } from '../components/DailyQuiz';
 import { ShareCardModal } from '../components/ShareCardModal';
@@ -49,14 +46,6 @@ const quickAccess = [
     { to: '/hadith', title: 'হাদিস শরীফ', desc: 'নির্বাচিত হাদিস পড়ুন', icon: ScrollText },
     { to: '/duas', title: 'দোয়া সমূহ', desc: 'দৈনন্দিন প্রয়োজনীয় দোয়া', icon: DuaHandsIcon },
     { to: '/umrah-guide', title: 'উমরা গাইড', desc: 'উমরার পূর্ণাঙ্গ নিয়মাবলী', icon: KaabaIcon },
-];
-
-const features = [
-    { title: 'নামাজের সময়সূচী', desc: 'প্রতিদিন সঠিক সময়ে নামাজের সময়', icon: Clock, to: '/prayer-times' },
-    { title: 'ডিজিটাল তসবিহ', desc: 'দৈনন্দিন জিকির ও তাসবিহ গণনা', icon: TasbihIcon, to: '/tasbih' },
-    { title: 'বুকমার্ক সংরক্ষণ', desc: 'পছন্দের আয়াত ও দোয়া বুকমার্ক করুন', icon: Bookmark, to: '/bookmarks' },
-    { title: 'আয়াত ও দোয়া শেয়ার', desc: 'সহজেই শেয়ার করুন বন্ধুমহলে', icon: Share2 },
-    { title: 'ডার্ক মোড সমর্থন', desc: 'চোখের আরামের জন্য আধুনিক ডার্ক মোড', icon: Moon },
 ];
 
 const dailyHadith = {
@@ -562,6 +551,14 @@ export function HomePage() {
                         <h2 className="text-xl md:text-2xl font-bold">দ্রুত অ্যাক্সেস</h2>
                         <span className="text-xs text-muted-foreground">মূল ইসলামিক বিভাগসমূহ</span>
                     </div>
+                    <Link
+                        to="/features"
+                        onClick={() => hapticImpact()}
+                        className="text-xs font-semibold text-primary hover:text-gold transition flex items-center gap-1 group native-press"
+                    >
+                        <span>সকল বৈশিষ্ট্য</span>
+                        <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
                 </div>
                 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
@@ -584,30 +581,6 @@ export function HomePage() {
                             </div>
                         </Link>
                     ))}
-                </div>
-
-                {/* Features Section */}
-                <h2 className="text-xl md:text-2xl font-bold mt-12 mb-5">অ্যাপ্লিকেশন বৈশিষ্ট্য</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
-                    {features.map(({ title, desc, icon: Icon, to }) => {
-                        const cardContent = (
-                            <div className="rounded-2xl bg-card border border-border/80 hover:border-gold/45 p-4 md:p-6 shadow-xs transition group h-full">
-                                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs mb-3 group-hover:scale-105 transition-transform">
-                                    <Icon className="w-5 h-5 text-primary" />
-                                </div>
-                                <h3 className="font-bold text-sm md:text-base group-hover:text-gold transition-colors">{title}</h3>
-                                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{desc}</p>
-                            </div>
-                        );
-
-                        return to ? (
-                            <Link key={title} to={to} onClick={() => hapticImpact()} className="block native-press">
-                                {cardContent}
-                            </Link>
-                        ) : (
-                            <div key={title}>{cardContent}</div>
-                        );
-                    })}
                 </div>
             </section>
 

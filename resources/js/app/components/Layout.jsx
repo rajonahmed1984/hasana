@@ -16,7 +16,8 @@ import {
     LogOut,
     WifiOff,
     Search,
-    Clock
+    Clock,
+    Sparkles
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon, TasbihIcon } from './IslamicIcons';
 import { hapticImpact, isNative } from '../native';
@@ -357,6 +358,14 @@ export function Layout({ children }) {
                             >
                                 <Bookmark className="w-5 h-5 text-primary" />
                                 <span>বুকমার্কস</span>
+                            </Link>
+                            <Link
+                                to="/features"
+                                onClick={() => setSidebarOpen(false)}
+                                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-muted font-medium text-sm transition"
+                            >
+                                <Sparkles className="w-5 h-5 text-primary" />
+                                <span>অ্যাপ্লিকেশন বৈশিষ্ট্য</span>
                             </Link>
                             <Link
                                 to="/settings"
