@@ -715,28 +715,30 @@ export function HomePage() {
             {/* Ask / Explore & Daily Quiz */}
             <section className="mx-auto max-w-3xl px-4 mt-8 space-y-5">
                 <form
+                    id="home-search-form"
                     onSubmit={(e) => {
                         e.preventDefault();
                         const q = e.currentTarget.elements.q.value.trim();
                         hapticImpact();
                         navigate(q ? `/explore?q=${encodeURIComponent(q)}` : '/explore');
                     }}
-                    className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-md border border-gold/30 relative overflow-hidden"
+                    className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-md border border-gold/30 relative overflow-hidden scroll-mt-24 transition-all duration-300"
                 >
                     <div className="absolute inset-0 pattern opacity-30 pointer-events-none" />
                     <div className="relative">
                         <h2 className="font-bold text-lg md:text-xl text-white">কোনো বিষয়ে জানতে চান?</h2>
                         <p className="text-xs md:text-sm opacity-85 mt-1 text-emerald-100">প্রশ্ন লিখুন — কুরআন, হাদিস ও দোয়া থেকে খুঁজে দেখানো হবে</p>
-                        <div className="mt-4 flex items-center gap-2 rounded-2xl bg-card border border-gold/30 p-1.5">
+                        <div className="mt-4 flex items-center gap-2 rounded-2xl bg-card border border-gold/30 p-1.5 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/40 transition">
                             <Search className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
                             <input
+                                id="home-search-input"
                                 name="q"
                                 type="search"
                                 maxLength={200}
                                 placeholder="যেমন: মন খারাপ হলে কী করব?"
                                 className="flex-1 min-w-0 bg-transparent outline-none text-sm text-foreground py-2"
                             />
-                            <button type="submit" className="shrink-0 px-4 py-2 rounded-xl gold-gradient-btn font-bold text-xs native-press">
+                            <button type="submit" className="shrink-0 px-4 py-2 rounded-xl gold-gradient-btn font-bold text-xs native-press cursor-pointer">
                                 খুঁজুন
                             </button>
                         </div>

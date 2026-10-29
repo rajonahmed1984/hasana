@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
     Home, 
     BookOpen, 
@@ -70,7 +70,28 @@ export function Layout({ children }) {
     });
 
     const location = useLocation();
+    const navigate = useNavigate();
     const [isOffline, setIsOffline] = useState(() => typeof navigator !== 'undefined' && !navigator.onLine);
+
+    const handleSearchClick = () => {
+        hapticImpact();
+        if (location.pathname === '/') {
+            const form = document.getElementById('home-search-form');
+            const input = document.getElementById('home-search-input');
+            if (form) {
+                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                form.classList.add('ring-4', 'ring-gold/60', 'scale-[1.01]', 'shadow-2xl');
+                setTimeout(() => {
+                    form.classList.remove('ring-4', 'ring-gold/60', 'scale-[1.01]', 'shadow-2xl');
+                }, 1800);
+            }
+            if (input) {
+                setTimeout(() => input.focus(), 350);
+            }
+        } else {
+            navigate('/explore');
+        }
+    };
 
     useEffect(() => {
         const update = () => setIsOffline(!navigator.onLine);
@@ -148,7 +169,16 @@ export function Layout({ children }) {
                     </nav>
 
                     {/* Header Right Actions */}
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                        <button
+                            type="button"
+                            aria-label="অনুসন্ধান"
+                            onClick={handleSearchClick}
+                            className="p-2 rounded-xl text-gold hover:bg-primary-foreground/10 active:scale-95 transition"
+                            title="অনুসন্ধান (কুরআন, হাদিস ও দোয়া)"
+                        >
+                            <Search className="w-5 h-5 text-gold" />
+                        </button>
                         <button
                             type="button"
                             aria-label="ডার্ক মোড পরিবর্তন"
