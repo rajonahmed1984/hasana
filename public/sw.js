@@ -25,7 +25,7 @@ try {
     projectId: 'apptimatic-f509c',
     appId: '1:1021648500578:android:ac8cecc83012c449a05e3b',
     storageBucket: 'apptimatic-f509c.firebasestorage.app',
-    apiKey: 'AIzaSyBfKF39sjZkrMExahRp8eMY86dKwsmGRC8',
+    apiKey: 'AIzaSyDMHS1fN8WRhl6hFg-nK13mB9g2CpKEJV4',
     authDomain: 'apptimatic-f509c.firebaseapp.com',
     messagingSenderId: '1021648500578',
     measurementId: 'G-5KSZPSQZ6S',
