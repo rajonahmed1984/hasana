@@ -85,6 +85,7 @@ export function HomePage() {
     const [dailyAyah, setDailyAyah] = useState(null);
     const [dailyAyahNotifActive, setDailyAyahNotifActive] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [shareCardData, setShareCardData] = useState(null);
     const [appUpdateInfo, setAppUpdateInfo] = useState(null);
 
     // Tasbih Widget State
@@ -269,9 +270,31 @@ export function HomePage() {
         surah_name: 'আল-ফাতিহা',
     };
 
-    // Same photo card share as the Quran ayah share
+    // Photo card share for Ayah of the day
     const handleShareVerse = () => {
         hapticImpact();
+        setShareCardData({
+            type: 'ayah',
+            title: activeVerse.title || 'আজকের দিনের আয়াত',
+            reference: activeVerse.reference,
+            text_ar: activeVerse.text_ar,
+            text_bn: activeVerse.text_bn,
+            url: window.location.origin + (activeVerse.deep_link || '/quran'),
+        });
+        setIsShareModalOpen(true);
+    };
+
+    // Photo card share for Hadith of the day
+    const handleShareHadith = () => {
+        hapticImpact();
+        setShareCardData({
+            type: 'hadith',
+            title: 'আজকের হাদিস',
+            reference: dailyHadith.reference,
+            text_ar: dailyHadith.text_ar,
+            text_bn: dailyHadith.text_bn,
+            url: `${window.location.origin}/hadith`,
+        });
         setIsShareModalOpen(true);
     };
 
@@ -435,54 +458,102 @@ export function HomePage() {
                 </section>
             )}
 
-            {/* আজকের হাদিস (Hadith of the Day) Card matching Image 1 */}
+            {/* Verse of the Day Card (আজকের দিনের আয়াত) */}
             <section className="mx-auto max-w-3xl px-4 mt-8">
-                <div className="rounded-3xl bg-card border border-gold/35 p-5 sm:p-7 shadow-md relative overflow-hidden">
+                <div className="rounded-3xl bg-card border border-gold/35 p-6 md:p-8 text-center shadow-md relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gold uppercase tracking-wider bg-gold/15 border border-gold/30 px-3.5 py-1.5 rounded-full">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            {activeVerse.title}
+                        </span>
+
+                        <div className="flex items-center gap-1.5">
+                            <button
+                                type="button"
+                                onClick={handleToggleDailyAyahNotif}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition native-press ${
+                                    dailyAyahNotifActive 
+                                        ? 'bg-primary/10 text-primary border border-primary/30' 
+                                        : 'bg-muted text-foreground/70 hover:bg-muted-foreground/20'
+                                }`}
+                                title={dailyAyahNotifActive ? "প্রতিদিনের আয়াত নোটিফিকেশন সচল আছে" : "প্রতিদিনের আয়াত নোটিফিকেশন চালু করুন"}
+                            >
+                                {dailyAyahNotifActive ? <BellRing className="w-4 h-4 text-gold" /> : <Bell className="w-4 h-4" />}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleShareVerse}
+                                className="w-8 h-8 rounded-full bg-muted text-foreground/80 hover:bg-muted-foreground/20 flex items-center justify-center transition native-press"
+                                title="আয়াতটি শেয়ার করুন"
+                            >
+                                <Share2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <p className="font-arabic text-2xl md:text-4xl text-primary font-bold my-4 leading-loose">
+                        {activeVerse.text_ar}
+                    </p>
+                    <p className="text-base md:text-lg text-foreground font-medium leading-relaxed max-w-2xl mx-auto">
+                        "{activeVerse.text_bn}"
+                    </p>
+                    <p className="text-xs md:text-sm text-gold font-bold mt-3">
+                        — {activeVerse.reference}
+                    </p>
+
+                    <div className="mt-5 flex items-center justify-center gap-3">
+                        <Link
+                            to={activeVerse.deep_link || '/quran'}
+                            onClick={() => hapticImpact()}
+                            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full gold-gradient-btn text-xs font-bold transition shadow-md native-press"
+                        >
+                            <BookOpen className="w-3.5 h-3.5" />
+                            <span>কুরআনে সম্পূর্ণ সূরা পড়ুন</span>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* আজকের হাদিস (Hadith of the Day) Card */}
+            <section className="mx-auto max-w-3xl px-4 mt-8">
+                <div className="rounded-3xl bg-card border border-gold/35 p-6 md:p-8 text-center shadow-md relative overflow-hidden">
                     <div className="flex items-center justify-between mb-3">
                         <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gold uppercase tracking-wider bg-gold/15 border border-gold/30 px-3.5 py-1.5 rounded-full">
                             <ScrollText className="w-3.5 h-3.5 text-gold" />
                             আজকের হাদিস
                         </span>
 
-                        <div className="w-9 h-9 rounded-xl bg-primary/15 border border-gold/40 text-gold flex items-center justify-center shrink-0 shadow-xs">
-                            <BookOpen className="w-5 h-5 text-gold" />
+                        <div className="flex items-center gap-1.5">
+                            <button
+                                type="button"
+                                onClick={handleShareHadith}
+                                className="w-8 h-8 rounded-full bg-muted text-foreground/80 hover:bg-muted-foreground/20 flex items-center justify-center transition native-press"
+                                title="হাদিসটি শেয়ার করুন"
+                            >
+                                <Share2 className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
 
-                    <p className="font-arabic text-xl md:text-2xl text-gold font-bold my-3 text-right drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">
+                    <p className="font-arabic text-2xl md:text-4xl text-gold font-bold my-4 leading-loose drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">
                         {dailyHadith.text_ar}
                     </p>
-                    <p className="text-sm md:text-base text-foreground font-medium leading-relaxed">
-                        {dailyHadith.text_bn}
+                    <p className="text-base md:text-lg text-foreground font-medium leading-relaxed max-w-2xl mx-auto">
+                        "{dailyHadith.text_bn}"
                     </p>
-                    <p className="text-xs text-gold font-semibold mt-2.5">
+                    <p className="text-xs md:text-sm text-gold font-bold mt-3">
                         — {dailyHadith.reference}
                     </p>
 
-                    <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+                    <div className="mt-5 flex items-center justify-center gap-3">
                         <Link
                             to="/hadith"
                             onClick={() => hapticImpact()}
-                            className="text-xs font-bold text-primary hover:text-gold flex items-center gap-1 transition"
+                            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full gold-gradient-btn text-xs font-bold transition shadow-md native-press"
                         >
+                            <BookOpen className="w-3.5 h-3.5" />
                             <span>হাদিস সম্ভার পড়ুন</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
-
-                        <button
-                            type="button"
-                            onClick={() => {
-                                hapticImpact();
-                                if (navigator.clipboard) {
-                                    navigator.clipboard.writeText(`${dailyHadith.text_bn}\n— ${dailyHadith.reference}`);
-                                    alert('হাদিসটি কপি করা হয়েছে');
-                                }
-                            }}
-                            className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 native-press"
-                        >
-                            <Share2 className="w-3.5 h-3.5" />
-                            <span>কপি করুন</span>
-                        </button>
                     </div>
                 </div>
             </section>
@@ -566,62 +637,6 @@ export function HomePage() {
                             <RotateCcw className="w-3.5 h-3.5" />
                             <span>রিসেট</span>
                         </button>
-                    </div>
-                </div>
-            </section>
-
-            {/* Verse of the Day Card */}
-            <section className="mx-auto max-w-3xl px-4 mt-8">
-                <div className="rounded-3xl bg-card border border-gold/35 p-6 md:p-8 text-center shadow-md relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gold uppercase tracking-wider bg-gold/15 border border-gold/30 px-3.5 py-1.5 rounded-full">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            {activeVerse.title}
-                        </span>
-
-                        <div className="flex items-center gap-1.5">
-                            <button
-                                type="button"
-                                onClick={handleToggleDailyAyahNotif}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center transition ${
-                                    dailyAyahNotifActive 
-                                        ? 'bg-primary/10 text-primary border border-primary/30' 
-                                        : 'bg-muted text-foreground/70 hover:bg-muted-foreground/20'
-                                }`}
-                                title={dailyAyahNotifActive ? "প্রতিদিনের আয়াত নোটিফিকেশন সচল আছে" : "প্রতিদিনের আয়াত নোটিফিকেশন চালু করুন"}
-                            >
-                                {dailyAyahNotifActive ? <BellRing className="w-4 h-4 text-gold" /> : <Bell className="w-4 h-4" />}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleShareVerse}
-                                className="w-8 h-8 rounded-full bg-muted text-foreground/80 hover:bg-muted-foreground/20 flex items-center justify-center transition"
-                                title="আয়াতটি শেয়ার করুন"
-                            >
-                                <Share2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <p className="font-arabic text-2xl md:text-4xl text-primary font-bold my-4 leading-loose">
-                        {activeVerse.text_ar}
-                    </p>
-                    <p className="text-base md:text-lg text-foreground font-medium leading-relaxed max-w-2xl mx-auto">
-                        "{activeVerse.text_bn}"
-                    </p>
-                    <p className="text-xs md:text-sm text-gold font-bold mt-3">
-                        — {activeVerse.reference}
-                    </p>
-
-                    <div className="mt-5 flex items-center justify-center gap-3">
-                        <Link
-                            to={activeVerse.deep_link || '/quran'}
-                            onClick={() => hapticImpact()}
-                            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full gold-gradient-btn text-xs font-bold transition shadow-md"
-                        >
-                            <BookOpen className="w-3.5 h-3.5" />
-                            <span>কুরআনে সম্পূর্ণ সূরা পড়ুন</span>
-                        </Link>
                     </div>
                 </div>
             </section>
@@ -718,18 +733,16 @@ export function HomePage() {
                 </div>
             </section>
 
-            <ShareCardModal
-                isOpen={isShareModalOpen}
-                onClose={() => setIsShareModalOpen(false)}
-                data={{
-                    type: 'ayah',
-                    title: activeVerse.title,
-                    reference: activeVerse.reference,
-                    text_ar: activeVerse.text_ar,
-                    text_bn: activeVerse.text_bn,
-                    url: window.location.origin + (activeVerse.deep_link || '/quran'),
-                }}
-            />
+            {shareCardData && (
+                <ShareCardModal
+                    isOpen={isShareModalOpen}
+                    onClose={() => {
+                        setIsShareModalOpen(false);
+                        setShareCardData(null);
+                    }}
+                    data={shareCardData}
+                />
+            )}
         </Layout>
     );
 }
