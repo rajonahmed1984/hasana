@@ -44,3 +44,4 @@ temp.ps1
 # Built app bundles for the Play Store
 release/
 *.aab
+*.apk

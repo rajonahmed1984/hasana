@@ -18,8 +18,8 @@ class AppVersionController extends Controller
 
     public function show(): JsonResponse
     {
-        $dbVersion = (string) Setting::get('app_latest_version', '1.3');
-        $dbBuild = (int) Setting::get('app_latest_build', 4);
+        $dbVersion = (string) Setting::get('app_latest_version', '1.4');
+        $dbBuild = (int) Setting::get('app_latest_build', 5);
         $minBuild = (int) Setting::get('app_min_build', 1);
         $message = Setting::get('app_update_message') ?: null;
         $storeUrl = Setting::get('app_store_url') ?: self::DEFAULT_STORE_URL;
