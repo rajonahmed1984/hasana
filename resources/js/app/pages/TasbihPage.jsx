@@ -1,24 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { 
-    ArrowLeft, 
-    RotateCcw, 
-    Volume2, 
-    VolumeX, 
-    Smartphone, 
-    Sparkles, 
-    Check, 
-    Share2, 
-    ChevronDown, 
-    Award,
-    Heart,
-    BookOpen,
-    Info,
-    RefreshCw
-} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, RotateCcw, Volume2, VolumeX, Smartphone, Sparkles, ChevronDown } from 'lucide-react';
 import { Layout } from '../components/Layout';
-import { TasbihIcon } from '../components/IslamicIcons';
-import { hapticImpact, isNative } from '../native';
+import { hapticImpact } from '../native';
 
 const DHIKR_PRESETS = [
     {
@@ -288,198 +272,122 @@ export function TasbihPage() {
         return String(num).replace(/\d/g, (d) => bnDigits[Number(d)]);
     };
 
+    // Progress ring around the tap circle
+    const RING_R = 46;
+    const RING_C = 2 * Math.PI * RING_R;
+
+    const iconBtn = (active) => `w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition native-press ${
+        active ? 'bg-gold/20 text-gold' : 'bg-white/5 text-emerald-100/50'
+    }`;
+
     return (
         <Layout>
-            {/* Top Bar with Back Button & Sound/Vibrate Controls */}
-            <div className="bg-[#06241a] border-b border-gold/20 py-3 px-4 sticky top-0 z-30">
-                <div className="mx-auto max-w-2xl flex items-center justify-between">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            hapticImpact();
-                            navigate(-1);
-                        }}
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-emerald-100 hover:text-gold transition native-press"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        <span>ফিরে যান</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                        {/* Sound Toggle */}
+            {/* One screen-high column between the app header and the bottom navigation */}
+            <main className="tasbih-screen bg-gradient-to-b from-[#082e21] to-[#02130c] text-white select-none overflow-hidden">
+                <div className="mx-auto max-w-md h-full flex flex-col px-4 py-3 gap-3">
+                    {/* Controls: back, dhikr selector, sound, vibration, reset */}
+                    <div className="flex items-center gap-2 shrink-0">
                         <button
                             type="button"
-                            onClick={toggleSound}
-                            title={soundEnabled ? 'সাউন্ড বন্ধ করুন' : 'সাউন্ড চালু করুন'}
-                            className={`p-2 rounded-xl border text-xs font-semibold flex items-center justify-center transition native-press ${
-                                soundEnabled 
-                                    ? 'bg-gold/20 text-gold border-gold/40' 
-                                    : 'bg-black/30 text-emerald-100/60 border-white/10 hover:text-white'
-                            }`}
+                            aria-label="ফিরে যান"
+                            onClick={() => { hapticImpact(); navigate(-1); }}
+                            className={`${iconBtn(false)} !text-emerald-100/80`}
                         >
-                            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                            <ArrowLeft className="w-4 h-4" />
                         </button>
-
-                        {/* Vibration Toggle */}
-                        <button
-                            type="button"
-                            onClick={toggleVibration}
-                            title={vibrationEnabled ? 'ভাইব্রেশন সচল আছে' : 'ভাইব্রেশন বন্ধ'}
-                            className={`p-2 rounded-xl border text-xs font-semibold flex items-center justify-center transition native-press ${
-                                vibrationEnabled 
-                                    ? 'bg-gold/20 text-gold border-gold/40' 
-                                    : 'bg-black/30 text-emerald-100/60 border-white/10 hover:text-white'
-                            }`}
-                        >
-                            <Smartphone className="w-4 h-4" />
-                        </button>
-
-                        {/* Reset Count Button */}
-                        <button
-                            type="button"
-                            onClick={handleReset}
-                            title="গণনা রিসেট করুন"
-                            className="p-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-300 text-xs font-semibold flex items-center justify-center transition native-press"
-                        >
-                            <RotateCcw className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Tasbih Screen - Immersive Islamic Design */}
-            <main className="min-h-[calc(100vh-130px)] bg-gradient-to-b from-[#082e21] via-[#052016] to-[#02130c] text-white flex flex-col justify-between px-4 py-5 select-none relative overflow-hidden">
-                {/* Background Ambient Glow */}
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gold/10 blur-[100px] pointer-events-none rounded-full" />
-                <div className="absolute inset-0 pattern opacity-20 pointer-events-none" />
-
-                <div className="mx-auto max-w-md w-full relative z-10 space-y-4">
-                    {/* Dhikr Selector Bar */}
-                    <div className="relative">
-                        <label className="text-[11px] font-bold text-gold uppercase tracking-wider block mb-1">
-                            জিকির নির্বাচন করুন:
-                        </label>
-                        <div className="relative">
+                        <div className="relative flex-1 min-w-0">
                             <select
                                 value={selectedDhikrIndex}
                                 onChange={(e) => handleSelectDhikr(Number(e.target.value))}
-                                className="w-full bg-[#0a3a2a] border-2 border-gold/40 hover:border-gold/70 text-gold font-bold text-sm sm:text-base rounded-2xl px-4 py-3 appearance-none outline-none shadow-lg transition pr-10 cursor-pointer"
+                                aria-label="জিকির নির্বাচন করুন"
+                                className="w-full h-9 bg-white/5 border border-gold/30 text-gold font-semibold text-sm rounded-xl pl-3 pr-8 appearance-none outline-none truncate cursor-pointer"
                             >
                                 {DHIKR_PRESETS.map((d, i) => (
-                                    <option key={d.id} value={i} className="bg-[#052016] text-emerald-100 py-1">
-                                        {d.title_bn} ({d.title_ar})
+                                    <option key={d.id} value={i} className="bg-[#052016] text-emerald-100">
+                                        {d.title_bn}
                                     </option>
                                 ))}
                             </select>
-                            <ChevronDown className="w-5 h-5 text-gold absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <ChevronDown className="w-4 h-4 text-gold absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
+                        <button type="button" onClick={toggleSound} aria-label={soundEnabled ? 'সাউন্ড বন্ধ করুন' : 'সাউন্ড চালু করুন'} className={iconBtn(soundEnabled)}>
+                            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                        </button>
+                        <button type="button" onClick={toggleVibration} aria-label={vibrationEnabled ? 'ভাইব্রেশন বন্ধ করুন' : 'ভাইব্রেশন চালু করুন'} className={iconBtn(vibrationEnabled)}>
+                            <Smartphone className="w-4 h-4" />
+                        </button>
+                        <button type="button" onClick={handleReset} aria-label="গণনা রিসেট করুন" className={`${iconBtn(false)} !text-red-300/80`}>
+                            <RotateCcw className="w-4 h-4" />
+                        </button>
                     </div>
 
-                    {/* Active Dhikr Display Card */}
-                    <div className="rounded-3xl bg-black/40 border border-gold/30 p-4 sm:p-5 text-center backdrop-blur-md shadow-xl relative overflow-hidden">
-                        <p className="font-arabic text-2xl sm:text-3xl font-bold text-gold drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)] my-1.5" dir="rtl">
+                    {/* Current dhikr */}
+                    <div className="text-center shrink-0">
+                        <p className="font-arabic text-2xl font-bold text-gold leading-relaxed line-clamp-2" dir="rtl">
                             {currentDhikr.title_ar}
                         </p>
-                        <h2 className="text-lg sm:text-xl font-extrabold text-white">
-                            {currentDhikr.title_bn}
-                        </h2>
-                        <p className="text-xs text-emerald-200/80 mt-1 italic">
-                            "{currentDhikr.meaning}"
+                        <p className="text-xs text-emerald-100/70 mt-0.5 line-clamp-2">
+                            {currentDhikr.meaning}
                         </p>
                     </div>
 
-                    {/* Target Preset Selection Chips */}
-                    <div className="flex items-center justify-between gap-1.5 pt-1">
-                        <span className="text-[11px] font-semibold text-emerald-200/80">টার্গেট:</span>
-                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                            {TARGET_PRESETS.map((t) => (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    onClick={() => {
-                                        hapticImpact();
-                                        setTarget(t);
-                                    }}
-                                    className={`px-3 py-1 rounded-xl text-xs font-bold transition native-press border ${
-                                        target === t
-                                            ? 'bg-gold text-[#06241a] border-gold shadow-md scale-105'
-                                            : 'bg-black/35 text-emerald-100/80 border-white/10 hover:border-gold/40'
-                                    }`}
-                                >
-                                    {t === 0 ? 'অসীম (∞)' : toBn(t)}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Giant Interactive Tap Area */}
-                <div className="my-auto py-6 flex flex-col items-center justify-center relative z-10">
-                    {/* Celebration Banner on completing target */}
-                    {celebrating && (
-                        <div className="absolute -top-4 px-4 py-1.5 rounded-full bg-gold text-[#06241a] font-extrabold text-xs shadow-lg animate-bounce flex items-center gap-1.5">
-                            <Sparkles className="w-4 h-4" />
-                            <span>মাশাআল্লাহ! ১ চক্র সম্পন্ন হয়েছে</span>
-                        </div>
-                    )}
-
-                    {/* Main Circular Tap Button */}
-                    <div className="relative">
-                        {/* Outer Glow Ring */}
-                        <div className={`absolute -inset-4 rounded-full bg-gold/20 blur-xl transition-opacity duration-300 pointer-events-none ${
-                            buttonActive ? 'opacity-100 scale-105' : 'opacity-40'
-                        }`} />
+                    {/* Tap circle: takes the remaining height and scales with the screen */}
+                    <div className="tasbih-stage flex-1 min-h-0 flex items-center justify-center relative">
+                        {celebrating && (
+                            <div className="absolute top-0 px-3 py-1 rounded-full bg-gold text-[#06241a] font-bold text-xs shadow-lg flex items-center gap-1.5 z-10">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>মাশাআল্লাহ! ১ চক্র সম্পন্ন</span>
+                            </div>
+                        )}
 
                         <button
                             type="button"
                             onClick={handleTapCount}
-                            className={`w-60 h-60 sm:w-72 sm:h-72 rounded-full relative flex flex-col items-center justify-center text-center cursor-pointer select-none transition-all duration-100 border-4 shadow-[0_12px_45px_rgba(0,0,0,0.6)] ${
-                                buttonActive
-                                    ? 'scale-95 bg-gradient-to-br from-[#125841] to-[#0a3828] border-gold shadow-[0_4px_25px_rgba(212,175,55,0.6)]'
-                                    : 'bg-gradient-to-br from-[#0e4836] via-[#093526] to-[#041a12] border-gold/55 hover:border-gold'
+                            aria-label="গণনা করুন"
+                            className={`tasbih-circle relative rounded-full flex flex-col items-center justify-center cursor-pointer transition-transform duration-100 ${
+                                buttonActive ? 'scale-95' : ''
                             }`}
                         >
-                            {/* Inner Target Progress Ring */}
-                            {target > 0 && (
-                                <div className="text-[11px] font-bold text-gold/80 mb-1">
-                                    টার্গেট: {toBn(target)} ({toBn(progressPercent)}%)
-                                </div>
-                            )}
-
-                            {/* Huge Digits */}
-                            <div className="text-6xl sm:text-7xl font-black text-white tabular-nums tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] my-1">
+                            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full -rotate-90" aria-hidden="true">
+                                <circle cx="50" cy="50" r={RING_R} fill="#0b3a2b" stroke="rgba(212,175,55,0.15)" strokeWidth="3" />
+                                {target > 0 && (
+                                    <circle
+                                        cx="50" cy="50" r={RING_R} fill="none"
+                                        stroke="#d4af37" strokeWidth="3" strokeLinecap="round"
+                                        strokeDasharray={RING_C}
+                                        strokeDashoffset={RING_C * (1 - progressPercent / 100)}
+                                        className="transition-[stroke-dashoffset] duration-200"
+                                    />
+                                )}
+                            </svg>
+                            <span className="relative text-6xl font-black tabular-nums text-white">
                                 {toBn(count)}
-                            </div>
-
-                            <span className="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-gold mt-1 drop-shadow-[0_1px_4px_rgba(212,175,55,0.4)]">
-                                TAP TO COUNT
                             </span>
-
-                            {/* Laps indicator inside */}
+                            <span className="relative text-xs font-semibold text-gold/80 mt-1">
+                                {target > 0 ? `/ ${toBn(target)}` : 'ট্যাপ করুন'}
+                            </span>
                             {laps > 0 && (
-                                <div className="mt-2 text-[10px] font-bold text-emerald-200 bg-gold/20 border border-gold/40 px-2.5 py-0.5 rounded-full">
-                                    সম্পন্ন চক্র: {toBn(laps)}
-                                </div>
+                                <span className="relative mt-2 text-[11px] font-semibold text-emerald-100/80">
+                                    চক্র: {toBn(laps)}
+                                </span>
                             )}
                         </button>
                     </div>
 
-                    {/* Helper hint */}
-                    <p className="text-xs text-emerald-200/60 mt-4 text-center font-medium">
-                        গণনা করতে স্ক্রিনের মাঝের বৃত্তটিতে স্পর্শ (ট্যাপ) করুন
-                    </p>
-                </div>
-
-                {/* Bottom Virtue / Hadith Card */}
-                <div className="mx-auto max-w-md w-full relative z-10 pt-2 pb-6">
-                    <div className="rounded-2xl bg-black/40 border border-gold/25 p-3.5 sm:p-4 backdrop-blur-sm text-center">
-                        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-gold mb-1">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>জিকিরের বিশেষ ফজিলত</span>
-                        </div>
-                        <p className="text-xs text-emerald-100/90 leading-relaxed">
-                            {currentDhikr.virtue}
-                        </p>
+                    {/* Target presets */}
+                    <div className="flex items-center justify-center gap-1.5 flex-wrap shrink-0">
+                        {TARGET_PRESETS.map((t) => (
+                            <button
+                                key={t}
+                                type="button"
+                                onClick={() => { hapticImpact(); setTarget(t); }}
+                                className={`min-w-[2.75rem] px-2.5 py-1 rounded-lg text-xs font-bold transition native-press ${
+                                    target === t ? 'bg-gold text-[#06241a]' : 'bg-white/5 text-emerald-100/70'
+                                }`}
+                            >
+                                {t === 0 ? '∞' : toBn(t)}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </main>

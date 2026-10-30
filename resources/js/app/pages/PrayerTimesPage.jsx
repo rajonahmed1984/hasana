@@ -513,70 +513,54 @@ export function PrayerTimesPage() {
                             return (
                                 <div
                                     key={prayer.id}
-                                    className={`rounded-2xl transition-all duration-300 p-4 sm:p-5 border shadow-sm ${
+                                    className={`rounded-2xl p-4 border transition-colors ${
                                         isActive
-                                            ? 'bg-gradient-to-r from-emerald-950 via-teal-950 to-emerald-900 text-white border-gold/60 shadow-lg shadow-emerald-950/40 ring-2 ring-gold/40'
-                                            : 'bg-card text-card-foreground border-border/80 hover:border-gold/40'
+                                            ? 'bg-gradient-to-r from-emerald-950 to-emerald-900 text-white border-gold/50 shadow-md'
+                                            : 'bg-card text-card-foreground border-border/70'
                                     }`}
                                 >
-                                    <div className="flex items-center justify-between gap-3">
-                                        {/* Icon & Name */}
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border ${
-                                                isActive 
-                                                    ? 'bg-gold/25 border-gold/60 text-gold shadow-md' 
-                                                    : `${prayer.iconBg} ${prayer.iconColor}`
-                                            }`}>
-                                                <IconComponent className="w-5 h-5" />
-                                            </div>
-
-                                            <div className="min-w-0">
-                                                <div className="flex items-center gap-2 flex-wrap">
-                                                    <h3 className={`font-bold text-base sm:text-lg leading-tight ${isActive ? 'text-white' : 'text-foreground'}`}>
-                                                        {prayer.name}
-                                                    </h3>
-                                                    <span className={`font-arabic text-xs sm:text-sm font-semibold ${isActive ? 'text-gold' : 'text-muted-foreground/80'}`}>
-                                                        {prayer.arabicName}
-                                                    </span>
-                                                    {isActive && (
-                                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-gold text-primary shadow-xs uppercase tracking-wider">
-                                                            চলমান ওয়াক্ত
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className={`text-[11px] line-clamp-1 mt-0.5 ${isActive ? 'text-emerald-200/80' : 'text-muted-foreground'}`}>
-                                                    {prayer.desc}
-                                                </p>
-                                            </div>
+                                    {/* Name & time range */}
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                                            isActive ? 'bg-gold/20 text-gold' : `${prayer.iconBg} ${prayer.iconColor}`
+                                        }`}>
+                                            <IconComponent className="w-5 h-5" />
                                         </div>
 
-                                        {/* Start & End Times */}
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <h3 className={`font-bold text-base leading-tight ${isActive ? 'text-white' : 'text-foreground'}`}>
+                                                    {prayer.name}
+                                                </h3>
+                                                {isActive && (
+                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold text-primary">
+                                                        চলমান
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className={`font-arabic text-xs ${isActive ? 'text-gold/90' : 'text-muted-foreground'}`}>
+                                                {prayer.arabicName}
+                                            </span>
+                                        </div>
+
                                         <div className="text-right shrink-0">
-                                            <div className={`text-lg sm:text-xl font-black tabular-nums ${
-                                                isActive ? 'text-gold drop-shadow-[0_1px_4px_rgba(212,175,55,0.4)]' : 'text-primary'
-                                            }`}>
+                                            <div className={`text-xl font-bold tabular-nums leading-tight ${isActive ? 'text-gold' : 'text-primary'}`}>
                                                 {prayer.start}
                                             </div>
-                                            <div className={`text-[11px] font-semibold mt-0.5 ${
-                                                isActive ? 'text-emerald-200/90' : 'text-muted-foreground'
-                                            }`}>
-                                                শেষ: <span className="tabular-nums font-bold">{prayer.end}</span>
+                                            <div className={`text-[11px] tabular-nums ${isActive ? 'text-emerald-100/80' : 'text-muted-foreground'}`}>
+                                                শেষ {prayer.end}
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Rakats Breakdown */}
-                                    <div className={`mt-3 pt-2.5 border-t text-[11px] flex items-center justify-between ${
-                                        isActive ? 'border-white/15 text-emerald-100/75' : 'border-border/60 text-muted-foreground'
-                                    }`}>
-                                        <span className="flex items-center gap-1 font-medium">
-                                            <BookOpen className="w-3.5 h-3.5 text-gold shrink-0" />
-                                            <span>রাকাত সংখ্যা: {prayer.rakats}</span>
-                                        </span>
-                                        <span className="font-semibold text-gold">
-                                            {isActive ? '● ওয়াক্ত চলমান' : 'ওয়াক্ত'}
-                                        </span>
-                                    </div>
+                                    {/* Full description & rakats */}
+                                    <p className={`mt-3 text-xs leading-relaxed ${isActive ? 'text-emerald-100/85' : 'text-muted-foreground'}`}>
+                                        {prayer.desc}
+                                    </p>
+                                    <p className={`mt-2 text-[11px] flex items-start gap-1.5 ${isActive ? 'text-emerald-100/75' : 'text-muted-foreground'}`}>
+                                        <BookOpen className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+                                        <span>রাকাত: {prayer.rakats}</span>
+                                    </p>
                                 </div>
                             );
                         })}
@@ -597,32 +581,32 @@ export function PrayerTimesPage() {
                         {nafalTimes.map((item) => (
                             <div
                                 key={item.title}
-                                className="rounded-2xl bg-card border border-border/80 p-4 shadow-xs hover:border-gold/35 transition"
+                                className="rounded-2xl bg-card border border-border/70 p-4"
                             >
-                                <div className="flex items-start justify-between gap-3">
+                                {/* Title & badge */}
+                                <div className="flex items-start justify-between gap-2">
                                     <div className="min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <h3 className="font-bold text-sm sm:text-base text-foreground">
-                                                {item.title}
-                                            </h3>
-                                            <span className="font-arabic text-xs text-gold font-semibold">
-                                                {item.arabic}
-                                            </span>
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold/15 text-gold border border-gold/30 font-bold">
-                                                {item.badge}
-                                            </span>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                                            {item.desc}
-                                        </p>
-                                    </div>
-
-                                    <div className="text-right shrink-0">
-                                        <span className="inline-block text-xs font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-xl tabular-nums">
-                                            {item.timing}
+                                        <h3 className="font-bold text-base text-foreground leading-tight">
+                                            {item.title}
+                                        </h3>
+                                        <span className="font-arabic text-xs text-gold">
+                                            {item.arabic}
                                         </span>
                                     </div>
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold/15 text-gold font-bold shrink-0 max-w-[45%] text-center">
+                                        {item.badge}
+                                    </span>
                                 </div>
+
+                                {/* Timing on its own line so the text keeps the full width */}
+                                <p className="mt-2.5 flex items-start gap-1.5 text-xs font-semibold text-primary tabular-nums">
+                                    <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                                    <span>{item.timing}</span>
+                                </p>
+
+                                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                                    {item.desc}
+                                </p>
                             </div>
                         ))}
                     </div>

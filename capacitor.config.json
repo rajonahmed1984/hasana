@@ -30,7 +30,7 @@
       "insetsHandling": "disable"
     },
     "SplashScreen": {
-      "launchShowDuration": 8000,
+      "launchShowDuration": 0,
       "launchAutoHide": true,
       "launchFadeOutDuration": 300,
       "backgroundColor": "#0d3b34",

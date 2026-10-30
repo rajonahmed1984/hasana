@@ -17,12 +17,12 @@
     </style>
 
 
-    <!-- Launch splash. Android 12+ shows the system splash (background colour + centred icon);
-         older versions show @drawable/splash. It stays up until the web app calls SplashScreen.hide(). -->
+    <!-- Launch splash: only a plain background colour for the first frame. MainActivity then draws the full
+         Hasana splash (layout/splash_overlay.xml) until the web page with the same HTML splash is visible. -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
         <item name="windowSplashScreenBackground">@color/hasana_splash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_blank</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Soft golden glow behind the splash logo -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:centerColor="#26DFAB3B"
+        android:endColor="#00DFAB3B"
+        android:gradientRadius="110dp"
+        android:startColor="#66DFAB3B"
+        android:type="radial" />
+</shape>

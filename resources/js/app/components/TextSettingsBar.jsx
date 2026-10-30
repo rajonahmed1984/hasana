@@ -57,7 +57,7 @@ export function TextSettingsBar({ settings }) {
     const btnClass = "w-8 h-8 rounded-full bg-primary text-gold flex items-center justify-center disabled:opacity-40 active:scale-95 transition shadow-sm hover:opacity-90";
 
     return (
-        <div className="sticky top-16 z-20 mx-auto max-w-3xl px-4 py-2">
+        <div className="sticky top-below-header z-20 mx-auto max-w-3xl px-4 py-2">
             <div className="flex items-center justify-between gap-3 rounded-2xl bg-card border border-border shadow-md px-4 py-2.5 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-semibold text-muted-foreground">আরবি সাইজ</span>

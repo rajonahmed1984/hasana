@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, ShieldCheck, RefreshCw, Code2, ExternalLink, Bell, BellRing, BellOff, Check, Send, Sparkles, BookOpen, LogOut, Volume2 } from 'lucide-react';
+import { Moon, Sun, ShieldCheck, RefreshCw, ExternalLink, Bell, BellRing, BellOff, Check, Send, Sparkles, BookOpen, Volume2 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
 import { OfflineDownloadsCard } from '../components/OfflineDownloadsCard';
@@ -24,7 +24,7 @@ import { App as CapApp } from '@capacitor/app';
 import { isNative } from '../native';
 
 export function SettingsPage() {
-    const { confirm, alert: customAlert, confirmExit } = useModal();
+    const { confirm, alert: customAlert } = useModal();
     const [isDark, setIsDark] = useState(() => {
         return document.documentElement.getAttribute('data-theme') === 'dark' ||
             localStorage.getItem('hasana-theme') === 'dark';
@@ -440,27 +440,6 @@ export function SettingsPage() {
                     </a>
                 </div>
 
-                {/* Exit App Card */}
-                <div className="rounded-2xl bg-card border border-border p-5 shadow-sm flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
-                            <LogOut className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-base">অ্যাপ থেকে প্রস্থান</h3>
-                            <p className="text-xs text-muted-foreground">হাসানা অ্যাপ্লিকেশন বন্ধ বা প্রস্থান করুন</p>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={() => confirmExit()}
-                        className="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-700 hover:bg-amber-600 hover:text-white font-bold text-xs transition active:scale-95"
-                    >
-                        প্রস্থান করুন
-                    </button>
-                </div>
-
                 {/* App Version & Check Updates Card */}
                 <div className="rounded-2xl bg-card border-2 border-gold/40 p-5 shadow-sm space-y-3">
                     <div className="flex items-center justify-between gap-3">
@@ -520,29 +499,6 @@ export function SettingsPage() {
                             )}
                         </div>
                     )}
-                </div>
-
-                {/* Developer Info Card */}
-                <div className="rounded-2xl bg-card border border-border p-5 shadow-sm flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                            <Code2 className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-base">ডেভেলপার পরিচিতি</h3>
-                            <p className="text-xs text-muted-foreground">Developed by Apptimatic</p>
-                        </div>
-                    </div>
-
-                    <a
-                        href="https://apptimatic.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-gold text-xs font-bold transition"
-                    >
-                        <span>Apptimatic</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
                 </div>
 
                 {/* App Info Card */}

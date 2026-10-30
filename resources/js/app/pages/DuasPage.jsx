@@ -8,58 +8,13 @@ import {
     Search, 
     ChevronLeft, 
     ChevronRight, 
-    X,
-    Sun,
-    ShieldCheck,
-    Sparkles,
-    HandCoins,
-    BookOpen
+    X
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
 import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
 import { ShareCardModal } from '../components/ShareCardModal';
-import { DuaHandsIcon } from '../components/IslamicIcons';
 import { hapticImpact } from '../native';
-
-const masnoonCategories = [
-    { 
-        title: 'সকাল-সন্ধ্যার দোয়া', 
-        slug: 'morning-evening-adhkar', 
-        icon: Sun,
-        desc: 'দিনের শুরু ও সমাপ্তির শ্রেষ্ঠ আমল' 
-    },
-    { 
-        title: 'বিপদ মুক্তির দোয়া', 
-        slug: 'distress-and-protection', 
-        icon: ShieldCheck,
-        desc: 'কষ্ট, ভয় ও দুশ্চিন্তা থেকে মুক্তির আশ্রয়' 
-    },
-    { 
-        title: 'সালাতের পর দোয়া', 
-        slug: 'salah-and-adhkar', 
-        icon: DuaHandsIcon,
-        desc: 'ফরজ নামাজের পর পঠিতব্য মাসনুন জিকির' 
-    },
-    { 
-        title: 'কুরআনের দুআসমূহ', 
-        slug: 'quranic-duas', 
-        icon: BookOpen,
-        desc: 'পবিত্র কুরআনে বর্ণিত রব্বানা দোয়াসমূহ' 
-    },
-    { 
-        title: 'দৈনন্দিন জিকির', 
-        slug: 'daily-life-duas', 
-        icon: Sparkles,
-        desc: 'খাওয়া, শোয়া ও ঘরের প্রয়োজনীয় দোয়া' 
-    },
-    { 
-        title: 'রিজিক ও মাগফিরাত', 
-        slug: 'tawbah-and-forgiveness', 
-        icon: HandCoins,
-        desc: 'বরকত, প্রাচুর্য ও ক্ষমা প্রার্থনার আমল' 
-    },
-];
 
 const curatedDuas = [
     {
@@ -349,73 +304,6 @@ export function DuasPage() {
                             <X className="w-4 h-4" />
                         </button>
                     )}
-                </div>
-            </div>
-
-            {/* মাসনুন দোয়ার মূল বিভাগসমূহ (Masnoon Dua 6-Category Grid) */}
-            <div className="mx-auto max-w-6xl px-4 mt-6">
-                <div className="flex items-center justify-between mb-3.5">
-                    <div>
-                        <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
-                            <DuaHandsIcon className="w-5 h-5 text-gold" />
-                            <span>মাসনুন দোয়ার বিভাগসমূহ</span>
-                        </h2>
-                        <p className="text-xs text-muted-foreground">দৈনন্দিন জীবনের বরকতময় দোয়াসমূহ বেছে নিন</p>
-                    </div>
-                    {activeCategory !== 'all' && (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                hapticImpact();
-                                setActiveCategory('all');
-                            }}
-                            className="text-xs font-bold text-gold hover:underline flex items-center gap-1 native-press cursor-pointer"
-                        >
-                            <span>সব দোয়া দেখুন</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                    )}
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
-                    {masnoonCategories.map((cat) => {
-                        const CatIcon = cat.icon;
-                        const isSelected = activeCategory === cat.slug;
-
-                        return (
-                            <button
-                                key={cat.slug}
-                                type="button"
-                                onClick={() => {
-                                    hapticImpact();
-                                    setActiveCategory(isSelected ? 'all' : cat.slug);
-                                }}
-                                className={`rounded-2xl p-3 sm:p-3.5 text-center flex flex-col items-center justify-between group native-press select-none transition-all duration-200 border cursor-pointer ${
-                                    isSelected
-                                        ? 'bg-gradient-to-b from-[#0e4836] to-[#06241a] border-gold text-white shadow-md ring-2 ring-gold/50 scale-[1.02]'
-                                        : 'bg-card border-gold/25 hover:border-gold/55 shadow-xs hover:shadow-sm text-foreground'
-                                }`}
-                            >
-                                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 mb-2 transition-transform group-hover:scale-105 border ${
-                                    isSelected
-                                        ? 'bg-gold text-primary border-gold shadow-md'
-                                        : 'bg-gradient-to-br from-[#0a4232] to-[#041f17] border-gold/40 text-gold shadow-xs'
-                                }`}>
-                                    <CatIcon className={`w-5 h-5 ${isSelected ? 'text-primary' : 'text-gold'}`} />
-                                </div>
-                                <h3 className={`font-bold text-xs sm:text-sm leading-tight transition-colors ${
-                                    isSelected ? 'text-gold font-extrabold' : 'group-hover:text-gold text-foreground'
-                                }`}>
-                                    {cat.title}
-                                </h3>
-                                <p className={`text-[10px] mt-1 line-clamp-1 ${
-                                    isSelected ? 'text-emerald-100/80' : 'text-muted-foreground'
-                                }`}>
-                                    {cat.desc}
-                                </p>
-                            </button>
-                        );
-                    })}
                 </div>
             </div>
 

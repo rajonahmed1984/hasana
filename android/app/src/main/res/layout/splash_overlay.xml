@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Full launch splash drawn over the WebView (same layout as .hs-splash-screen in spa.blade.php).
+     MainActivity adds it on start and fades it out once the web page (with its identical HTML splash) is visible. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/splash_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:clipChildren="false"
+    android:focusable="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="24dp"
+    android:paddingTop="48dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="36dp">
+
+    <!-- top spacer + two flexible gaps = CSS "justify-content: space-between" -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/splash_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="20dp"
+            android:clipChildren="false">
+
+            <View
+                android:id="@+id/splash_glow"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center"
+                android:background="@drawable/splash_logo_glow" />
+
+            <FrameLayout
+                android:id="@+id/splash_logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/splash_logo_frame"
+                android:elevation="12dp"
+                android:padding="4dp">
+
+                <ImageView
+                    android:id="@+id/splash_logo_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/splash_icon" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/splash_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/hind_siliguri_bold"
+            android:includeFontPadding="false"
+            android:paddingTop="6dp"
+            android:paddingBottom="2dp"
+            android:text="হাসানা"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="26dp"
+            android:fontFamily="@font/hind_siliguri_regular"
+            android:text="পবিত্র কুরআন, হাদিস ও দোয়া"
+            android:textColor="#B3FFFFFF"
+            android:textSize="13.6sp" />
+
+        <FrameLayout
+            android:id="@+id/splash_loader"
+            android:layout_width="130dp"
+            android:layout_height="4dp"
+            android:background="@drawable/splash_loader_track">
+
+            <View
+                android:id="@+id/splash_bar"
+                android:layout_width="52dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/splash_loader_bar" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/splash_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:letterSpacing="0.2"
+            android:text="DEVELOPED BY"
+            android:textColor="#8CFFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/splash_badge"
+            android:elevation="6dp"
+            android:paddingLeft="22dp"
+            android:paddingTop="8dp"
+            android:paddingRight="22dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Apptimatic"
+                android:src="@drawable/splash_apptimatic" />
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

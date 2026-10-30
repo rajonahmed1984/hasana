@@ -24,7 +24,7 @@ use App\Http\Controllers\Api\StudyController as ApiStudyController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Frontend\HasanaController;
 
-Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(function () {
+Route::prefix('api')->name('api.')->middleware(['throttle:60,1,api'])->group(function () {
     Route::post('/analytics/track', [AnalyticsController::class, 'track'])->name('analytics.track');
     Route::post('/notifications/register-token', [ApiNotificationController::class, 'registerToken'])->name('notifications.register');
     Route::get('/notifications/prayer-schedule', [ApiNotificationController::class, 'getPrayerSchedule'])->name('notifications.schedule');
@@ -37,13 +37,13 @@ Route::prefix('api')->name('api.')->middleware(['throttle:60,1'])->group(functio
     Route::get('/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
     Route::get('/app/version', [ApiAppVersionController::class, 'show'])->name('app.version');
     Route::get('/explore/topics', [ApiStudyController::class, 'topics'])->name('explore.topics');
-    Route::get('/explore', [ApiStudyController::class, 'explore'])->middleware('throttle:20,1')->name('explore');
+    Route::get('/explore', [ApiStudyController::class, 'explore'])->middleware('throttle:20,1,explore')->name('explore');
     Route::get('/quran/words/{surah}/{ayah}', [ApiStudyController::class, 'words'])->whereNumber(['surah', 'ayah'])->name('quran.words');
     Route::get('/quiz', [ApiStudyController::class, 'quiz'])->name('quiz');
 });
 
 // Offline data packs (large, one request each) — separate limit so a full download doesn't hit the API limit
-Route::prefix('api/offline')->name('api.offline.')->middleware(['throttle:40,1'])->group(function () {
+Route::prefix('api/offline')->name('api.offline.')->middleware(['throttle:40,1,offline'])->group(function () {
     Route::get('/quran', [ApiOfflineController::class, 'quran'])->name('quran');
     Route::get('/hadiths/{category}', [ApiOfflineController::class, 'hadiths'])->name('hadiths');
     Route::get('/duas', [ApiOfflineController::class, 'duas'])->name('duas');
@@ -62,11 +62,10 @@ Route::view('/about', 'spa')->name('hasana.about');
 Route::view('/explore', 'spa')->name('hasana.explore');
 Route::get('/share', [HasanaController::class, 'share'])->name('hasana.share');
 
-// Admin login routes with rate limiting
-Route::middleware(['throttle:5,1'])->group(function () {
-    Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/admin/login', [LoginController::class, 'login'])->name('admin.login.attempt');
-});
+// Admin login: only the sign-in POST is rate limited, with its own counter (an unprefixed throttle shares
+// one per-IP counter with the API limits above). AuthenticatesUsers also locks out after 5 failed attempts.
+Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [LoginController::class, 'login'])->middleware('throttle:10,1,admin-login')->name('admin.login.attempt');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Protect clear-cache route - admin only

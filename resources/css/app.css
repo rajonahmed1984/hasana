@@ -186,6 +186,30 @@
 .bottom-above-nav {
   bottom: calc(4.75rem + var(--safe-bottom));
 }
+
+/* Sticky bars just below the sticky app header (4rem) plus the status bar inset it is padded with */
+.top-below-header {
+  top: calc(4rem + var(--safe-top));
+}
+
+/* Tasbih: exactly fills the screen between the header and the bottom navigation (padded by .pb-bottom-nav) */
+.tasbih-screen {
+  height: calc(100vh - 8.75rem - var(--safe-top) - var(--safe-bottom));
+  height: calc(100dvh - 8.75rem - var(--safe-top) - var(--safe-bottom));
+  min-height: 26rem;
+}
+.tasbih-stage {
+  container-type: size;
+}
+.tasbih-circle {
+  width: min(18rem, 92cqw, 92cqh);
+  aspect-ratio: 1;
+}
+@media (min-width: 768px) {
+  .tasbih-screen {
+    height: calc(100dvh - 4rem - var(--safe-top));
+  }
+}
 @media (min-width: 768px) {
   .pb-bottom-nav { padding-bottom: 0; }
   .bottom-above-nav { bottom: 1.5rem; }

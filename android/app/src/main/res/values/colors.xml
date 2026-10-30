@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="hasana_notification">#064E3B</color>
-    <color name="hasana_splash_background">#041A13</color>
+    <color name="hasana_splash_background">#083F30</color>
     <!-- Behind the status / navigation bars when the WebView can't draw under them (same as the app header) -->
     <color name="hasana_system_bars">#064E3B</color>
 </resources>
