@@ -101,9 +101,10 @@ class DispatchPrayerNotifications extends Command
                 }
 
                 if ($isDue($time['hour'], $time['minute'])) {
+                    $text = PrayerTimes::notificationFor($id, $now);
                     $due[$id] = [
-                        'title' => PrayerTimes::PRAYERS[$id]['title'],
-                        'body' => PrayerTimes::PRAYERS[$id]['body'],
+                        'title' => $text['title'],
+                        'body' => $text['body'],
                         'data' => ['type' => 'prayer', 'prayer' => $id, 'date' => $today, 'tag' => "namaz-{$id}-{$today}", 'url' => '/'],
                     ];
                 }

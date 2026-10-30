@@ -16,7 +16,9 @@ import {
     Navigation,
     Compass,
     X,
-    Search
+    Search,
+    CheckCircle2,
+    Circle
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
@@ -27,7 +29,7 @@ import {
     isPrayerNotificationEnabled, 
     enablePrayerNotifications, 
     disablePrayerNotifications,
-    fetchDailyAyah,
+    fetchDailyContent,
     isDailyAyahNotificationEnabled,
     setDailyAyahNotificationEnabled,
     requestNotifPermission
@@ -57,6 +59,12 @@ const dailyHadith = {
 
 const toBnDigits = (num) => String(num).replace(/[0-9]/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
 
+const pad2 = (n) => String(n).padStart(2, '0');
+const todayKey = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+};
+
 export function HomePage() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -65,6 +73,15 @@ export function HomePage() {
     const [nowTime, setNowTime] = useState(() => new Date());
     const [notifActive, setNotifActive] = useState(false);
     const [dailyAyah, setDailyAyah] = useState(null);
+    // Islamic day from the backend: occasion (Jumu'ah, Ramadan …), hijri date, hadith and amal list
+    const [dailyContent, setDailyContent] = useState(null);
+    const [amalDone, setAmalDone] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem(`hasana-amal-done-${todayKey()}`) || '[]');
+        } catch {
+            return [];
+        }
+    });
     const [dailyAyahNotifActive, setDailyAyahNotifActive] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [shareCardData, setShareCardData] = useState(null);
@@ -205,9 +222,12 @@ export function HomePage() {
         setNotifActive(isPrayerNotificationEnabled());
         setDailyAyahNotifActive(isDailyAyahNotificationEnabled());
 
-        // Fetch today's Ayah from backend
-        fetchDailyAyah().then((ayah) => {
-            if (ayah) setDailyAyah(ayah);
+        // Fetch today's Ayah, hadith and amal from backend
+        fetchDailyContent().then((content) => {
+            if (content) {
+                setDailyAyah(content.ayah);
+                setDailyContent(content);
+            }
         });
     }, []);
 
@@ -268,6 +288,17 @@ export function HomePage() {
         surah_name: 'আল-ফাতিহা',
     };
 
+    const todayHadith = dailyContent?.hadith || dailyHadith;
+
+    const toggleAmal = (index) => {
+        hapticImpact();
+        setAmalDone((prev) => {
+            const next = prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index];
+            try { localStorage.setItem(`hasana-amal-done-${todayKey()}`, JSON.stringify(next)); } catch {}
+            return next;
+        });
+    };
+
     // Photo card share for Ayah of the day
     const handleShareVerse = () => {
         hapticImpact();
@@ -288,9 +319,9 @@ export function HomePage() {
         setShareCardData({
             type: 'hadith',
             title: 'আজকের হাদিস',
-            reference: dailyHadith.reference,
-            text_ar: dailyHadith.text_ar,
-            text_bn: dailyHadith.text_bn,
+            reference: todayHadith.reference,
+            text_ar: todayHadith.text_ar,
+            text_bn: todayHadith.text_bn,
             url: `${window.location.origin}/hadith`,
         });
         setIsShareModalOpen(true);
@@ -456,6 +487,63 @@ export function HomePage() {
                 </section>
             )}
 
+            {/* Today's Amal (আজকের আমল) for the Islamic day */}
+            {dailyContent?.amal?.length > 0 && (
+                <section className="mx-auto max-w-3xl px-4 mt-8">
+                    <div className="rounded-3xl bg-card border border-gold/35 p-5 md:p-6 shadow-md">
+                        <div className="flex items-start justify-between gap-3 mb-4">
+                            <div className="min-w-0">
+                                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gold bg-gold/15 border border-gold/30 px-3 py-1 rounded-full">
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    আজকের আমল
+                                </span>
+                                <h2 className="mt-2 text-lg font-bold text-foreground">
+                                    {dailyContent.occasion?.title || new Date().toLocaleDateString('bn-BD', { weekday: 'long' })}
+                                </h2>
+                                {dailyContent.hijri?.label && (
+                                    <p className="text-xs text-muted-foreground">{dailyContent.hijri.label}</p>
+                                )}
+                            </div>
+                            <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full shrink-0 tabular-nums">
+                                {toBnDigits(amalDone.filter((i) => i < dailyContent.amal.length).length)}/{toBnDigits(dailyContent.amal.length)}
+                            </span>
+                        </div>
+
+                        {dailyContent.occasion?.others?.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mb-3">
+                                {dailyContent.occasion.others.map((title) => (
+                                    <span key={title} className="text-[11px] font-semibold text-gold bg-gold/10 px-2 py-0.5 rounded-full">
+                                        {title}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        <ul className="space-y-1">
+                            {dailyContent.amal.map((item, index) => {
+                                const done = amalDone.includes(index);
+                                return (
+                                    <li key={index}>
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleAmal(index)}
+                                            className="w-full flex items-start gap-2.5 text-left rounded-xl px-2 py-2 hover:bg-muted/60 transition native-press"
+                                        >
+                                            {done
+                                                ? <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                                                : <Circle className="w-5 h-5 text-muted-foreground/50 shrink-0" />}
+                                            <span className={`text-sm leading-relaxed ${done ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                                                {item}
+                                            </span>
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </section>
+            )}
+
             {/* Verse of the Day Card (আজকের দিনের আয়াত) */}
             <section className="mx-auto max-w-3xl px-4 mt-8">
                 <div className="rounded-3xl bg-card border border-gold/35 p-6 md:p-8 text-center shadow-md relative overflow-hidden">
@@ -533,14 +621,16 @@ export function HomePage() {
                         </div>
                     </div>
 
-                    <p className="font-arabic text-2xl md:text-4xl text-gold font-bold my-4 leading-loose drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">
-                        {dailyHadith.text_ar}
-                    </p>
-                    <p className="text-base md:text-lg text-foreground font-medium leading-relaxed max-w-2xl mx-auto">
-                        "{dailyHadith.text_bn}"
+                    {todayHadith.text_ar && (
+                        <p className="font-arabic text-2xl md:text-4xl text-gold font-bold my-4 leading-loose drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">
+                            {todayHadith.text_ar}
+                        </p>
+                    )}
+                    <p className={`text-base md:text-lg text-foreground font-medium leading-relaxed max-w-2xl mx-auto ${todayHadith.text_ar ? '' : 'mt-4'}`}>
+                        "{todayHadith.text_bn}"
                     </p>
                     <p className="text-xs md:text-sm text-gold font-bold mt-3">
-                        — {dailyHadith.reference}
+                        — {todayHadith.narrator ? `${todayHadith.narrator}, ` : ''}{todayHadith.reference}
                     </p>
 
                     <div className="mt-5 flex items-center justify-center gap-3">

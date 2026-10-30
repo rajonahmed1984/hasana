@@ -4,7 +4,7 @@
 import { App as CapApp } from '@capacitor/app';
 import { requestNotificationPermission } from './firebase';
 import { isNative } from '../native';
-import { getStoredLocation, calculateSolarPrayerTimes } from './locationService';
+import { getStoredLocation, calculateSolarPrayerTimes, withJumuah } from './locationService';
 import { syncDeviceWithBackend, savePushToken } from './deviceRegistration';
 import { playNotificationSound } from './soundService';
 import {
@@ -276,14 +276,18 @@ export const disablePrayerNotifications = () => {
 };
 
 /**
- * Fetch today's Ayah from backend
+ * Fetch the day's content from backend: ayah, Islamic occasion (Jumu'ah, Ramadan …), hadith and amal list.
+ * Cached per local date so it still shows offline. Returns null when nothing is available.
  */
-export const fetchDailyAyah = async () => {
+export const fetchDailyContent = async (date = new Date()) => {
+    const dateKey = localDateKey(date);
+    const cacheKey = `hasana-daily-content-${dateKey}`;
     try {
         const baseUrl = isNative() ? 'https://hasanaa.com' : '';
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 3500);
-        const response = await fetch(`${baseUrl}/api/notifications/daily-ayah`, {
+        // The server runs in UTC, so send the local date
+        const response = await fetch(`${baseUrl}/api/notifications/daily-ayah?date=${dateKey}`, {
             headers: {
                 'Accept': 'application/json'
             },
@@ -292,10 +296,27 @@ export const fetchDailyAyah = async () => {
         clearTimeout(timeout);
         const data = await response.json();
         if (data.success && data.ayah) {
-            return data.ayah;
+            try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch {}
+            return data;
         }
     } catch (err) {
-        console.warn('[PrayerNotifications] Failed to fetch daily ayah:', err);
+        console.warn('[PrayerNotifications] Failed to fetch daily content:', err);
+    }
+
+    try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+};
+
+/**
+ * Fetch today's Ayah from backend
+ */
+export const fetchDailyAyah = async () => {
+    const content = await fetchDailyContent();
+    if (content?.ayah) {
+        return content.ayah;
     }
 
     // High quality offline fallback
@@ -393,7 +414,7 @@ export const checkPrayerTimeAndNotify = () => {
         const dateStr = localDateKey(now);
 
         const prefs = getPrayerPreferences();
-        const schedule = getDynamicPrayerSchedule();
+        const schedule = withJumuah(getDynamicPrayerSchedule(), now);
 
         for (const prayer of schedule) {
             if (!prefs[prayer.id]) continue;

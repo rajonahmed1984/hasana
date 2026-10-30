@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DeviceToken;
 use App\Services\DailyAyah;
+use App\Services\IslamicDay;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -132,6 +133,8 @@ class NotificationController extends Controller
             'success' => true,
             'date' => $date->format('Y-m-d'),
             'ayah' => DailyAyah::forDate($date),
+            // Islamic day: occasion, hadith of the day and today's amal
+            ...IslamicDay::forDate($date),
         ]);
     }
 }

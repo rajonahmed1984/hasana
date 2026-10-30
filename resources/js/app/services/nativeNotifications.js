@@ -6,7 +6,7 @@
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { isNative } from '../native';
-import { getStoredLocation, calculateSolarPrayerTimes } from './locationService';
+import { getStoredLocation, calculateSolarPrayerTimes, withJumuah, JUMUAH_REMINDER } from './locationService';
 import { playNotificationSound } from './soundService';
 
 const DAYS_AHEAD = 7;
@@ -206,7 +206,8 @@ export const requestNativeNotificationPermission = async () => {
 const pad = (n) => String(n).padStart(2, '0');
 const localDateKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
-const fetchAyahForDate = async (dateKey) => {
+// Day's ayah, hadith and occasion from the backend, or null offline
+const fetchDailyForDate = async (dateKey) => {
     try {
         const baseUrl = isNative() ? 'https://hasanaa.com' : '';
         const controller = new AbortController();
@@ -217,11 +218,11 @@ const fetchAyahForDate = async (dateKey) => {
         });
         clearTimeout(timeout);
         const data = await res.json();
-        if (data?.success && data.ayah) return data.ayah;
+        if (data?.success && data.ayah) return data;
     } catch {
         // Fall back to offline pool
     }
-    return getOfflineAyahForDate(dateKey);
+    return null;
 };
 
 const getPrayerRemindBody = (prayerId) => {
@@ -270,8 +271,8 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
             return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
         });
 
-        const ayahs = ayahEnabled
-            ? await Promise.all(days.map((d) => fetchAyahForDate(localDateKey(d))))
+        const daily = ayahEnabled
+            ? await Promise.all(days.map((d) => fetchDailyForDate(localDateKey(d))))
             : [];
 
         days.forEach((day, dayIndex) => {
@@ -279,7 +280,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
 
             // 1. Prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha)
             if (prayerEnabled) {
-                const schedule = calculateSolarPrayerTimes(loc.latitude, loc.longitude, day);
+                const schedule = withJumuah(calculateSolarPrayerTimes(loc.latitude, loc.longitude, day), day);
                 schedule.forEach((prayer, slot) => {
                     if (prefs[prayer.id] === false) return;
                     const at = new Date(day.getFullYear(), day.getMonth(), day.getDate(), prayer.startHour, prayer.startMin, 0);
@@ -287,7 +288,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
 
                     const formattedTime = formatBnTime(prayer.startHour, prayer.startMin);
                     const title = `${prayer.name} : ওয়াক্ত শুরু @ ${formattedTime}`;
-                    const body = getPrayerRemindBody(prayer.id);
+                    const body = prayer.nameEn === "Jumu'ah" ? JUMUAH_REMINDER : getPrayerRemindBody(prayer.id);
 
                     toSchedule.push({
                         id: ID_BASE + dayIndex * 10 + slot,
@@ -307,7 +308,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
             if (ayahEnabled) {
                 const ayahAt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), AYAH_HOUR, AYAH_MIN, 0);
                 if (ayahAt > now) {
-                    const ayah = ayahs[dayIndex] || getOfflineAyahForDate(dateStr);
+                    const ayah = daily[dayIndex]?.ayah || getOfflineAyahForDate(dateStr);
                     toSchedule.push({
                         id: ID_BASE + dayIndex * 10 + AYAH_SLOT,
                         title: 'আজকের নোটিফিকেশন',
@@ -340,7 +341,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                 // 4. Daily Hadith (Night 20:30)
                 const hadithAt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), HADITH_HOUR, HADITH_MIN, 0);
                 if (hadithAt > now) {
-                    const hadith = getOfflineHadithForDate(dateStr);
+                    const hadith = daily[dayIndex]?.hadith || getOfflineHadithForDate(dateStr);
                     toSchedule.push({
                         id: ID_BASE + dayIndex * 10 + HADITH_SLOT,
                         title: 'আজকের নোটিফিকেশন',

@@ -32,6 +32,8 @@ import {
     getAccuratePrayerTimes,
     calculateSolarPrayerTimes,
     calculatePrayerCountdown,
+    isJumuahDay,
+    dhuhrNameFor,
     toBengaliDigits,
     formatBengaliTime
 } from '../services/locationService';
@@ -230,16 +232,20 @@ export function PrayerTimesPage() {
         {
             id: 'dhuhr',
             index: 1,
-            name: 'যোহর',
-            arabicName: 'صَلَاةُ الظُّهْر',
-            nameEn: 'Dhuhr',
+            name: dhuhrNameFor(nowTime),
+            arabicName: isJumuahDay(nowTime) ? 'صَلَاةُ الْجُمُعَة' : 'صَلَاةُ الظُّهْر',
+            nameEn: isJumuahDay(nowTime) ? "Jumu'ah" : 'Dhuhr',
             icon: Sun,
             iconColor: 'text-amber-400',
             iconBg: 'bg-amber-400/10 border-amber-400/25',
             start: prayerTimes[1]?.start || '--:--',
             end: prayerTimes[1]?.end || '--:--',
-            desc: 'দ্বিপ্রহরে সূর্য পশ্চিমাকাশে ঢলে পড়ার পর থেকে আসরের ওয়াক্তের পূর্ব পর্যন্ত সময় থাকে।',
-            rakats: '৪ রাকাত সুন্নত + ৪ রাকাত ফরজ + ২ রাকাত সুন্নত + ২ রাকাত নফল',
+            desc: isJumuahDay(nowTime)
+                ? 'আজ জুমার দিন — যোহরের ওয়াক্তেই জুমার নামাজ। আগে আগে মসজিদে গিয়ে মনোযোগ দিয়ে খুতবা শুনুন।'
+                : 'দ্বিপ্রহরে সূর্য পশ্চিমাকাশে ঢলে পড়ার পর থেকে আসরের ওয়াক্তের পূর্ব পর্যন্ত সময় থাকে।',
+            rakats: isJumuahDay(nowTime)
+                ? '৪ রাকাত সুন্নত (কাবলাল জুমা) + ২ রাকাত ফরজ + ৪ রাকাত সুন্নত (বাদাল জুমা)'
+                : '৪ রাকাত সুন্নত + ৪ রাকাত ফরজ + ২ রাকাত সুন্নত + ২ রাকাত নফল',
         },
         {
             id: 'asr',

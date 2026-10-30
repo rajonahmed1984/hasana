@@ -34,6 +34,22 @@ class PrayerTimes
         ],
     ];
 
+    // On Fridays the Dhuhr waqt is prayed as Jumu'ah (same as withJumuah() in locationService.js)
+    public const JUMUAH = [
+        'title' => 'জুমার নামাজের সময় হয়েছে 🕌',
+        'body' => 'গোসল করে পরিচ্ছন্ন পোশাক ও সুগন্ধি নিয়ে আগে আগে মসজিদে যান। মনোযোগ দিয়ে খুতবা শুনুন।',
+    ];
+
+    /**
+     * Notification text for a prayer on the given day.
+     *
+     * @return array{title:string, body:string}
+     */
+    public static function notificationFor(string $id, CarbonInterface $date): array
+    {
+        return $id === 'dhuhr' && $date->isFriday() ? self::JUMUAH : self::PRAYERS[$id];
+    }
+
     /**
      * @param  CarbonInterface  $date  A date in the device's own timezone.
      * @return array<string, array{hour:int, minute:int}>

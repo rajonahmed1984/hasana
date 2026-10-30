@@ -444,6 +444,23 @@ export const syncLocationWithBackend = (location) => syncDeviceWithBackend({
     city_name: location.cityName,
 });
 
+// On Fridays the Dhuhr waqt is prayed as Jumu'ah (জুমা)
+export const isJumuahDay = (date = new Date()) => date.getDay() === 5;
+
+export const dhuhrNameFor = (date = new Date()) => (isJumuahDay(date) ? 'জুমা' : 'যোহর');
+
+export const JUMUAH_REMINDER = 'গোসল করে পরিচ্ছন্ন পোশাক ও সুগন্ধি নিয়ে আগে আগে মসজিদে যান। মনোযোগ দিয়ে খুতবা শুনুন।';
+
+/**
+ * Same schedule with Dhuhr renamed to Jumu'ah when `date` is a Friday.
+ */
+export const withJumuah = (schedule, date = new Date()) => {
+    if (!schedule || !isJumuahDay(date)) return schedule;
+    return schedule.map((p) => (p.id === 'dhuhr'
+        ? { ...p, name: 'জুমা', nameEn: "Jumu'ah", title: 'জুমার নামাজের সময় হয়েছে 🕌', body: JUMUAH_REMINDER }
+        : p));
+};
+
 /**
  * Calculates live real-time countdown to the next prayer / end of current waqt.
  * Runs second-by-second and updates live.
@@ -483,6 +500,7 @@ export const calculatePrayerCountdown = (prayerTimes, now = new Date()) => {
     const ishaStart = getPrayerDate(prayerTimes[4]);
     const nextFajrStart = getPrayerDate(prayerTimes[0], 1);
 
+    const dhuhrName = dhuhrNameFor(now);
     let currentPrayerName = '';
     let nextPrayerName = '';
     let nextPrayerTime = '';
@@ -503,16 +521,16 @@ export const calculatePrayerCountdown = (prayerTimes, now = new Date()) => {
         label = 'ফজর ওয়াক্ত শেষ হতে বাকি';
     } else if (now >= sunriseEnd && now < dhuhrStart) {
         currentPrayerName = 'ইশরাক / চাশত';
-        nextPrayerName = 'যোহর';
+        nextPrayerName = dhuhrName;
         nextPrayerTime = prayerTimes[1].start;
         targetEndDate = dhuhrStart;
-        label = 'যোহর ওয়াক্ত শুরু হতে বাকি';
+        label = `${dhuhrName} ওয়াক্ত শুরু হতে বাকি`;
     } else if (now >= dhuhrStart && now < asrStart) {
-        currentPrayerName = 'যোহর';
+        currentPrayerName = dhuhrName;
         nextPrayerName = 'আসর';
         nextPrayerTime = prayerTimes[2].start;
         targetEndDate = asrStart;
-        label = 'যোহর ওয়াক্ত শেষ হতে বাকি';
+        label = `${dhuhrName} ওয়াক্ত শেষ হতে বাকি`;
     } else if (now >= asrStart && now < maghribStart) {
         currentPrayerName = 'আসর';
         nextPrayerName = 'মাগরিব';

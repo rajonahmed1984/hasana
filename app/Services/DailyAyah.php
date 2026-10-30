@@ -36,7 +36,8 @@ class DailyAyah
 
     public static function forDate(CarbonInterface $date): array
     {
-        $picked = self::FEATURED[(int) $date->format('z') % count(self::FEATURED)];
+        // A special Islamic day (Jumu'ah, Ramadan, Arafah …) gets its own ayah, other days rotate
+        $picked = IslamicDay::ayahRef($date) ?? self::FEATURED[(int) $date->format('z') % count(self::FEATURED)];
 
         $surah = Surah::where('number', $picked[0])->first();
         $ayah = null;

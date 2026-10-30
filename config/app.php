@@ -67,6 +67,9 @@ return [
 
     'timezone' => 'UTC',
 
+    // Days added to the Umm al-Qura Hijri date for local moon sighting (e.g. -1 when Bangladesh is a day behind)
+    'hijri_offset' => (int) env('HIJRI_OFFSET', 0),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
