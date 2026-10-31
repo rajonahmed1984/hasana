@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Minus, Plus, AlignJustify } from 'lucide-react';
 import { hapticImpact } from '../native';
 
-const STORAGE_KEY = 'hasana-arabic-settings';
-const DEFAULT_SETTINGS = { size: 1, leading: 0 };
-const SIZES = ['text-xl', 'text-2xl', 'text-3xl', 'text-4xl'];
-const LEADS = ['leading-relaxed', 'leading-2-2', 'leading-2-6', 'leading-3-0'];
+const STORAGE_KEY = 'hasana-bangla-settings';
+const DEFAULT_SETTINGS = { size: 1, leading: 1 };
+const SIZES = ['text-base', 'text-lg', 'text-xl', 'text-2xl'];
+const LEADS = ['leading-relaxed', 'leading-[1.85]', 'leading-[2.1]', 'leading-[2.4]'];
 
-export function useArabicSettings() {
+export function useBanglaSettings() {
     const [settings, setSettings] = useState(() => {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -60,20 +60,20 @@ export function TextSettingsBar({ settings }) {
         <div className="sticky top-below-header z-20 mx-auto max-w-3xl px-4 py-2">
             <div className="flex items-center justify-between gap-3 rounded-2xl bg-card border border-border shadow-md px-4 py-2.5 backdrop-blur-md">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-muted-foreground">আরবি সাইজ</span>
+                    <span className="text-xs font-semibold text-muted-foreground">বাংলা সাইজ</span>
                     <button
                         type="button"
-                        aria-label="আরবি ছোট করুন"
+                        aria-label="বাংলা লেখা ছোট করুন"
                         className={btnClass}
                         onClick={settings.decSize}
                         disabled={settings.size === 0}
                     >
                         <Minus className="w-4 h-4" />
                     </button>
-                    <span className="font-arabic text-gold text-lg font-bold px-1 select-none">ع</span>
+                    <span className="text-gold text-lg font-bold px-1 select-none">অ</span>
                     <button
                         type="button"
-                        aria-label="আরবি বড় করুন"
+                        aria-label="বাংলা লেখা বড় করুন"
                         className={btnClass}
                         onClick={settings.incSize}
                         disabled={settings.size === 3}

@@ -161,6 +161,12 @@ class ImportAllHadiths extends Command
             $bnText = trim($item['text'] ?? '');
             $arText = trim($arabicMap[$hadithNum] ?? '');
 
+            // The source leaves some numbers empty in every language
+            if ($bnText === '' && $arText === '') {
+                $bar->advance();
+                continue;
+            }
+
             // Clean title extraction
             $title = $this->generateCleanTitle($bookNameBn, $hadithNum, $bnText);
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Bookmark, Share2, Loader2, ScrollText, Check, Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
-import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
+import { TextSettingsBar, useBanglaSettings } from '../components/TextSettingsBar';
 import { ShareCardModal } from '../components/ShareCardModal';
 import { hapticImpact } from '../native';
 
@@ -29,7 +29,7 @@ export function HadithPage() {
         }
     });
 
-    const textSettings = useArabicSettings();
+    const textSettings = useBanglaSettings();
 
     const scrollTabs = (direction) => {
         hapticImpact();
@@ -322,14 +322,14 @@ export function HadithPage() {
 
                                             {item.text_ar && (
                                                 <p 
-                                                    className={`font-arabic ${textSettings.sizeClass} text-gold font-bold text-right my-3 ${textSettings.leadClass} drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]`}
+                                                    className="font-arabic text-2xl text-gold font-bold text-right my-3 leading-loose"
                                                     dir="rtl"
                                                 >
                                                     {item.text_ar}
                                                 </p>
                                             )}
 
-                                            <p className="text-base text-foreground font-normal leading-relaxed mt-2 whitespace-pre-line">
+                                            <p className={`text-foreground font-normal mt-2 whitespace-pre-line ${textSettings.sizeClass} ${textSettings.leadClass}`}>
                                                 {item.text_bn}
                                             </p>
                                         </div>

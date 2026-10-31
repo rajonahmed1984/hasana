@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { PageHero } from '../components/PageHero';
-import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
+import { TextSettingsBar, useBanglaSettings } from '../components/TextSettingsBar';
 import { ShareCardModal } from '../components/ShareCardModal';
 import { hapticImpact } from '../native';
 
@@ -127,7 +127,7 @@ export function DuasPage() {
     });
 
     const tabsContainerRef = useRef(null);
-    const textSettings = useArabicSettings();
+    const textSettings = useBanglaSettings();
 
     // Scroll tabs smoothly left / right
     const scrollTabs = (direction) => {
@@ -442,7 +442,7 @@ export function DuasPage() {
 
                                         {item.text_ar && (
                                             <p 
-                                                className={`font-arabic ${textSettings.sizeClass} text-gold font-bold text-right my-3 ${textSettings.leadClass} drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]`}
+                                                className="font-arabic text-2xl text-gold font-bold text-right my-3 leading-loose"
                                                 dir="rtl"
                                             >
                                                 {item.text_ar}
@@ -455,7 +455,7 @@ export function DuasPage() {
                                             </p>
                                         )}
 
-                                        <p className="text-base text-foreground font-normal leading-relaxed mt-1">
+                                        <p className={`text-foreground font-normal mt-1 ${textSettings.sizeClass} ${textSettings.leadClass}`}>
                                             <span className="font-semibold text-primary">অর্থ:</span> {item.text_bn}
                                         </p>
                                     </div>

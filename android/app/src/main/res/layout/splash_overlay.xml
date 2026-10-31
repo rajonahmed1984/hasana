@@ -58,6 +58,7 @@
                     android:id="@+id/splash_logo_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/splash_logo_image_clip"
                     android:contentDescription="@string/app_name"
                     android:scaleType="centerCrop"
                     android:src="@drawable/splash_icon" />

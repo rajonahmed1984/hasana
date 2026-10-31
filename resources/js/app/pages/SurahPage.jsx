@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { WordByWord } from '../components/WordByWord';
-import { TextSettingsBar, useArabicSettings } from '../components/TextSettingsBar';
+import { TextSettingsBar, useBanglaSettings } from '../components/TextSettingsBar';
 import { ShareCardModal } from '../components/ShareCardModal';
 import { hapticImpact } from '../native';
 
@@ -34,7 +34,7 @@ export function SurahPage() {
     const [shareCardData, setShareCardData] = useState(null);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [wordsOpen, setWordsOpen] = useState({});
-    const textSettings = useArabicSettings();
+    const textSettings = useBanglaSettings();
 
     useEffect(() => {
         const fetchSurah = async () => {
@@ -214,7 +214,7 @@ export function SurahPage() {
                 </div>
             </section>
 
-            {/* Sticky Arabic Text Settings Bar */}
+            {/* Sticky Bangla Text Settings Bar */}
             <TextSettingsBar settings={textSettings} />
 
             {/* Ayahs Container */}
@@ -229,12 +229,11 @@ export function SurahPage() {
 
                 {/* Bismillah Header */}
                 {isBismillahShown && (
-                    <div className="text-center py-6 px-4 rounded-3xl bg-card border border-gold/35 shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-12 bg-gold/15 blur-2xl pointer-events-none rounded-full" />
-                        <p className="font-arabic text-3xl md:text-5xl text-gold font-bold drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)] relative z-10">
-                            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                    <div className="text-center py-5 px-4 rounded-3xl bg-card border border-gold/35 shadow-sm">
+                        <p className="font-quran text-2xl md:text-3xl text-gold leading-[2.1]" dir="rtl">
+                            بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
                         </p>
-                        <p className="text-xs text-muted-foreground mt-2 relative z-10">
+                        <p className={`text-foreground font-medium mt-1 ${textSettings.sizeClass} ${textSettings.leadClass}`}>
                             পরম করুণাময় ও অসীম দয়ালু আল্লাহ তায়ালার নামে শুরু করছি
                         </p>
                     </div>
@@ -311,7 +310,7 @@ export function SurahPage() {
                             <div className="space-y-4">
                                 {/* Arabic Text */}
                                 <p 
-                                    className={`font-arabic text-gold font-bold text-right ${textSettings.sizeClass} ${textSettings.leadClass} select-text drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]`}
+                                    className="font-quran text-gold text-right text-2xl md:text-3xl leading-[2.1] select-text"
                                     dir="rtl"
                                 >
                                     {ayah.text_ar}
@@ -320,7 +319,7 @@ export function SurahPage() {
                                 {showWords && <WordByWord surah={surahData.number} ayah={ayah.number} />}
 
                                 {/* Bengali Translation */}
-                                <p className="text-base md:text-lg text-foreground font-normal leading-relaxed select-text pt-2">
+                                <p className={`text-foreground font-normal select-text pt-2 ${textSettings.sizeClass} ${textSettings.leadClass}`}>
                                     {ayah.text_bn}
                                 </p>
                             </div>

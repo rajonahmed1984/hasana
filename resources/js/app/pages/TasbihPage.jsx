@@ -326,7 +326,7 @@ export function TasbihPage() {
                         <p className="font-arabic text-2xl font-bold text-gold leading-relaxed line-clamp-2" dir="rtl">
                             {currentDhikr.title_ar}
                         </p>
-                        <p className="text-xs text-emerald-100/70 mt-0.5 line-clamp-2">
+                        <p className="text-sm text-emerald-100/70 mt-0.5 line-clamp-2">
                             {currentDhikr.meaning}
                         </p>
                     </div>
@@ -360,14 +360,14 @@ export function TasbihPage() {
                                     />
                                 )}
                             </svg>
-                            <span className="relative text-6xl font-black tabular-nums text-white">
+                            <span className="relative text-7xl font-black tabular-nums text-white">
                                 {toBn(count)}
                             </span>
-                            <span className="relative text-xs font-semibold text-gold/80 mt-1">
+                            <span className="relative text-base font-semibold text-gold/80 mt-1">
                                 {target > 0 ? `/ ${toBn(target)}` : 'ট্যাপ করুন'}
                             </span>
                             {laps > 0 && (
-                                <span className="relative mt-2 text-[11px] font-semibold text-emerald-100/80">
+                                <span className="relative mt-2 text-sm font-semibold text-emerald-100/80">
                                     চক্র: {toBn(laps)}
                                 </span>
                             )}
@@ -381,7 +381,7 @@ export function TasbihPage() {
                                 key={t}
                                 type="button"
                                 onClick={() => { hapticImpact(); setTarget(t); }}
-                                className={`min-w-[2.75rem] px-2.5 py-1 rounded-lg text-xs font-bold transition native-press ${
+                                className={`min-w-[2.75rem] px-2.5 py-1.5 rounded-lg text-base font-bold transition native-press ${
                                     target === t ? 'bg-gold text-[#06241a]' : 'bg-white/5 text-emerald-100/70'
                                 }`}
                             >

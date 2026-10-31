@@ -401,7 +401,7 @@ export function BookmarksPage() {
                                         </div>
 
                                         {/* Arabic Verse */}
-                                        <p className="font-arabic text-2xl md:text-3xl text-primary font-bold text-right leading-loose my-3" dir="rtl">
+                                        <p className="font-quran text-2xl md:text-3xl text-primary text-right leading-[2.1] my-3" dir="rtl">
                                             {b.text_ar}
                                         </p>
 

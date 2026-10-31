@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // nginx on the same server proxies every request, so the visitor's IP is in X-Forwarded-For
+        $middleware->trustProxies(at: '127.0.0.1', headers: Request::HEADER_X_FORWARDED_FOR);
+
         // Register globally for all web routes
         $middleware->web(append: [
             SetLocale::class,

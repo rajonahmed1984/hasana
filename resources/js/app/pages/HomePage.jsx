@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 import { DuaHandsIcon, KaabaIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
-import { DailyQuiz } from '../components/DailyQuiz';
 import { ShareCardModal } from '../components/ShareCardModal';
 import { hapticImpact, isNative } from '../native';
 import { 
@@ -281,7 +280,7 @@ export function HomePage() {
         surah_name: dailyAyah.surah_name,
     } : {
         title: 'আজকের দিনের আয়াত',
-        text_ar: 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
+        text_ar: 'ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ',
         text_bn: 'তুমি আমাদের (সরল ও) অবিচল পথটি দেখিয়ে দাও-',
         reference: 'সূরা আল-ফাতিহা, 1:6',
         deep_link: '/surah/al-fatiha?ayah=6',
@@ -577,7 +576,7 @@ export function HomePage() {
                         </div>
                     </div>
 
-                    <p className="font-arabic text-2xl md:text-4xl text-primary font-bold my-4 leading-loose">
+                    <p className="font-quran text-2xl md:text-3xl text-primary my-4 leading-[2.1]" dir="rtl">
                         {activeVerse.text_ar}
                     </p>
                     <p className="text-base md:text-lg text-foreground font-medium leading-relaxed max-w-2xl mx-auto">
@@ -646,7 +645,7 @@ export function HomePage() {
                 </div>
             </section>
 
-            {/* Ask / Explore & Daily Quiz */}
+            {/* Ask / Explore */}
             <section className="mx-auto max-w-3xl px-4 mt-8 space-y-5">
                 {isSearchOpen && (
                     <form
@@ -698,8 +697,6 @@ export function HomePage() {
                         </div>
                     </form>
                 )}
-
-                <DailyQuiz />
             </section>
 
             {/* Quick Access Grid */}

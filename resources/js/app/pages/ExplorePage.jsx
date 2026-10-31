@@ -124,7 +124,7 @@ export function ExplorePage() {
             <Section key="ayah" icon={BookOpen} title="কুরআনের আয়াত" count={result?.ayahs.length}>
                 {result?.ayahs.map((a) => (
                     <article key={a.id} className="rounded-2xl bg-card border border-gold/30 hover:border-gold/55 p-4 md:p-5 shadow-sm space-y-3">
-                        <p className="font-arabic text-2xl text-gold font-bold text-right leading-loose drop-shadow-[0_1px_3px_rgba(212,175,55,0.3)]" dir="rtl">{a.text_ar}</p>
+                        <p className="font-quran text-2xl text-gold text-right leading-[2.1]" dir="rtl">{a.text_ar}</p>
                         <p className="text-sm md:text-base leading-relaxed text-foreground"><Highlight text={a.text_bn} terms={terms} /></p>
                         <Link to={a.link} className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline">
                             {a.reference} <ChevronRight className="w-3.5 h-3.5" />

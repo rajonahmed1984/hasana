@@ -60,8 +60,6 @@
         window.HasanaConfig = { brand: @json(brand_assets()) };
     </script>
     <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
-    <link rel="preload" href="{{ asset('images/hasana-app-logo.png') }}" as="image">
-    <link rel="preload" href="{{ asset('images/apptimatic_logo.png') }}" as="image">
 
     <!-- PWA & Mobile Meta Tags -->
     <meta name="theme-color" content="#064e3b">
@@ -223,26 +221,33 @@
             $brandAssets = brand_assets();
             $splashLogo = asset('images/hasana-app-logo.png') . '?v=' . (file_exists(public_path('images/hasana-app-logo.png')) ? filemtime(public_path('images/hasana-app-logo.png')) : time());
         @endphp
-        <!-- Native-like initial splash while React loads -->
-        <div class="hs-splash-screen" aria-label="হাসানা লোড হচ্ছে...">
-            <div class="hs-splash-top"></div>
-            <div class="hs-splash-center">
-                <div class="hs-splash-logo">
-                    <img src="{{ $splashLogo }}" alt="হাসানা" onerror="this.onerror=null; this.src='{{ asset('favicon.png') }}';">
+        <!-- Android app only: continues the native splash while React loads (a template, so browsers fetch nothing) -->
+        <template id="hs-native-splash">
+            <div class="hs-splash-screen" aria-label="হাসানা লোড হচ্ছে...">
+                <div class="hs-splash-top"></div>
+                <div class="hs-splash-center">
+                    <div class="hs-splash-logo">
+                        <img src="{{ $splashLogo }}" alt="হাসানা" onerror="this.onerror=null; this.src='{{ asset('favicon.png') }}';">
+                    </div>
+                    <h1 class="hs-splash-title">হাসানা</h1>
+                    <p class="hs-splash-subtitle">পবিত্র কুরআন, হাদিস ও দোয়া</p>
+                    <div class="hs-splash-loader">
+                        <div class="hs-splash-bar"></div>
+                    </div>
                 </div>
-                <h1 class="hs-splash-title">হাসানা</h1>
-                <p class="hs-splash-subtitle">পবিত্র কুরআন, হাদিস ও দোয়া</p>
-                <div class="hs-splash-loader">
-                    <div class="hs-splash-bar"></div>
+                <div class="hs-splash-bottom">
+                    <div class="hs-splash-devby">DEVELOPED BY</div>
+                    <div class="hs-splash-badge">
+                        <img src="{{ asset('images/apptimatic_logo.png') }}" alt="Apptimatic" onerror="this.parentElement.style.display='none';">
+                    </div>
                 </div>
             </div>
-            <div class="hs-splash-bottom">
-                <div class="hs-splash-devby">DEVELOPED BY</div>
-                <div class="hs-splash-badge">
-                    <img src="{{ asset('images/apptimatic_logo.png') }}" alt="Apptimatic" onerror="this.parentElement.style.display='none';">
-                </div>
-            </div>
-        </div>
+        </template>
+        <script>
+            if (document.documentElement.classList.contains('is-capacitor-native')) {
+                document.getElementById('root').appendChild(document.getElementById('hs-native-splash').content);
+            }
+        </script>
     </div>
 </body>
 </html>

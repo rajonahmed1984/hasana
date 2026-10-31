@@ -25,7 +25,6 @@ const THEMES = [
         innerBorder: 'rgba(251, 191, 36, 0.3)',
         accent: 'text-amber-300',
         bismillah: 'text-amber-200/90',
-        arabic: 'text-amber-100',
         translit: 'text-emerald-200/85',
         translation: 'text-white',
         refBg: 'bg-amber-400/20 text-amber-300 border-amber-400/40',
@@ -41,7 +40,6 @@ const THEMES = [
         innerBorder: 'rgba(245, 158, 11, 0.25)',
         accent: 'text-amber-400',
         bismillah: 'text-amber-300/85',
-        arabic: 'text-white',
         translit: 'text-slate-300/80',
         translation: 'text-slate-100',
         refBg: 'bg-slate-800/90 text-amber-300 border-slate-700',
@@ -57,7 +55,6 @@ const THEMES = [
         innerBorder: 'rgba(252, 211, 77, 0.35)',
         accent: 'text-amber-200',
         bismillah: 'text-amber-200/90',
-        arabic: 'text-amber-100',
         translit: 'text-amber-200/80',
         translation: 'text-amber-50',
         refBg: 'bg-amber-500/25 text-amber-200 border-amber-300/40',
@@ -73,7 +70,6 @@ const THEMES = [
         innerBorder: 'rgba(15, 74, 52, 0.25)',
         accent: 'text-[#0f4a34]',
         bismillah: 'text-[#0f4a34]/85',
-        arabic: 'text-[#092c1f]',
         translit: 'text-[#0f4a34]/75',
         translation: 'text-slate-800',
         refBg: 'bg-[#0f4a34]/10 text-[#0f4a34] border-[#0f4a34]/30',
@@ -84,6 +80,18 @@ const THEMES = [
 
 const BN_FONT = "'Hind Siliguri', sans-serif";
 const AR_FONT = "'Amiri', serif";
+
+// Arabic letters and marks, except the ﷺ and ﷻ signs that Bangla text uses too
+const AR = '[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDF9\\uFDFC-\\uFDFF\\uFE70-\\uFEFF]';
+const ARABIC_RUN = new RegExp(`${AR}(?:[\\s\\p{Po}\\p{Pd}\\p{Pi}\\p{Pf}\\uFDFA\\uFDFB]*${AR})*`, 'gu');
+
+// Many hadith translations quote the Arabic inline, but the card shows Bangla only
+const banglaOnly = (text = '') => text
+    .replace(ARABIC_RUN, '')
+    .replace(/[(\[{]\s*[:;,.।\-]*\s*[)\]}]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/^[\s:;,.।\-)\]}]+/, '')
+    .trim();
 
 // getFontEmbedCSS fetches every font file, so it is computed once per page load
 let fontEmbedCSSCache = null;
@@ -105,6 +113,7 @@ function ShareCardDialog({ onClose, data }) {
 
     const cardRef = useRef(null);
     const theme = THEMES.find((t) => t.id === selectedThemeId) || THEMES[0];
+    const cardText = banglaOnly(data.text_bn);
 
     const showToastMessage = (msg) => {
         setToast(msg);
@@ -308,25 +317,14 @@ function ShareCardDialog({ onClose, data }) {
                                 </div>
                             )}
 
-                            {/* Arabic text */}
-                            {data.text_ar && (
-                                <p
-                                    className={`relative z-10 w-full text-[25px] leading-[2] font-bold ${theme.arabic}`}
-                                    style={{ fontFamily: AR_FONT }}
-                                    dir="rtl"
-                                >
-                                    {data.text_ar}
-                                </p>
-                            )}
-
                             {/* Bangla translation */}
-                            {data.text_bn && (
+                            {cardText && (
                                 <p
                                     className={`relative z-10 mt-3 w-full text-[15px] leading-[1.8] font-medium ${theme.translation}`}
                                     style={{ fontFamily: BN_FONT, textWrap: 'pretty' }}
                                 >
                                     <span className={`${theme.accent} font-bold`}>“</span>
-                                    {data.text_bn.trim()}
+                                    {cardText}
                                     <span className={`${theme.accent} font-bold`}>”</span>
                                 </p>
                             )}

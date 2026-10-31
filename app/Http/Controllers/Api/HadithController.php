@@ -18,7 +18,7 @@ class HadithController extends Controller
         $categories = HadithCategory::query()
             ->active()
             ->ordered()
-            ->withCount('hadiths')
+            ->withCount(['hadiths' => fn (Builder $query) => $query->active()])
             ->get();
 
         $data = CategoryResource::collection($categories)->resolve();

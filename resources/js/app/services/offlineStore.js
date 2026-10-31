@@ -9,7 +9,7 @@ const META_KEY = '/__offline/meta';
 const LOCAL_META_KEY = 'hasana-offline-packs';
 const QURAN_MAX_AGE_DAYS = 30;
 // Bump when downloaded texts were corrected on the server, so the app refreshes its copy right away
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 
 const supported = () => typeof window !== 'undefined' && 'caches' in window;
 

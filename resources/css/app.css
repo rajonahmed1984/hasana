@@ -7,6 +7,12 @@
 @source '../**/*.jsx';
 @source '../**/*.tsx';
 
+@font-face {
+  font-family: 'Uthmanic Hafs';
+  src: url('../fonts/UthmanicHafs1Ver18.woff2') format('woff2');
+  font-display: swap;
+}
+
 @theme {
   --font-sans: 'Hind Siliguri', sans-serif;
   --font-arabic: 'Amiri', serif;
@@ -87,6 +93,13 @@
   font-family: 'Amiri', serif;
 }
 
+/* Quran text only: the KFGQPC font its marks are encoded for. It has no bold, so bold must not be faked */
+.font-quran {
+  font-family: 'Uthmanic Hafs', 'Amiri', serif;
+  font-weight: 400;
+  font-synthesis: none;
+}
+
 .font-sans {
   font-family: 'Hind Siliguri', sans-serif;
 }
@@ -149,10 +162,6 @@
   border-top-right-radius: 9999px;
 }
 
-/* Text Settings Bar Helper */
-.leading-2-2 { line-height: 2.2; }
-.leading-2-6 { line-height: 2.6; }
-.leading-3-0 { line-height: 3; }
 
 /* Dynamic Safe Area Insets for Mobile App (iOS / Android Notch & Nav Bar)
    - On Android native app, MainActivity dynamically injects --safe-area-inset-* via OnApplyWindowInsetsListener.
@@ -192,11 +201,13 @@
   top: calc(4rem + var(--safe-top));
 }
 
-/* Tasbih: exactly fills the screen between the header and the bottom navigation (padded by .pb-bottom-nav) */
+/* Tasbih: exactly fills the screen between the header and the bottom navigation.
+   .pb-bottom-nav reserves a little more than the nav's height, so the margin takes that extra back to avoid a gap. */
 .tasbih-screen {
-  height: calc(100vh - 8.75rem - var(--safe-top) - var(--safe-bottom));
-  height: calc(100dvh - 8.75rem - var(--safe-top) - var(--safe-bottom));
+  height: calc(100vh - 7.875rem - var(--safe-top) - var(--safe-bottom));
+  height: calc(100dvh - 7.875rem - var(--safe-top) - var(--safe-bottom));
   min-height: 26rem;
+  margin-bottom: -0.6875rem;
 }
 .tasbih-stage {
   container-type: size;
@@ -208,6 +219,7 @@
 @media (min-width: 768px) {
   .tasbih-screen {
     height: calc(100dvh - 4rem - var(--safe-top));
+    margin-bottom: 0;
   }
 }
 @media (min-width: 768px) {

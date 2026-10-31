@@ -148,6 +148,10 @@ public class MainActivity extends BridgeActivity {
         });
         overlay.setBackground(background);
 
+        // Round the logo to its background shape so its square corners don't cover the gold frame
+        // (set here because the android:clipToOutline XML attribute needs Android 12)
+        overlay.findViewById(R.id.splash_logo_image).setClipToOutline(true);
+
         TextView title = overlay.findViewById(R.id.splash_title);
         View logo = overlay.findViewById(R.id.splash_logo);
         View glow = overlay.findViewById(R.id.splash_glow);
