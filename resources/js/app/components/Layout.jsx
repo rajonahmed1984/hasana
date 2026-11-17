@@ -135,7 +135,7 @@ export function Layout({ children }) {
         <div className="min-h-screen min-h-[100dvh] flex flex-col bg-background text-foreground pb-bottom-nav">
             {/* Sticky Top Header (extends under the status bar in the edge-to-edge app) */}
             <header className="sticky top-0 z-40 bg-gradient-to-r from-[#063b2c] via-[#084c39] to-[#063b2c] text-primary-foreground border-b border-gold/30 shadow-[0_2px_15px_rgba(0,0,0,0.25)] transition-colors pt-safe">
-                <div className="mx-auto max-w-6xl flex items-center justify-between px-4 py-3">
+                <div className="app-header-bar mx-auto max-w-6xl flex items-center justify-between px-3 sm:px-4 py-1.5">
                     <div className="flex items-center gap-3">
                         <button
                             type="button"
@@ -233,7 +233,7 @@ export function Layout({ children }) {
             </main>
 
             {/* Mobile Bottom Navigation Bar with Ultra-Clean Native Capsule UI/UX */}
-            <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#06241a]/95 dark:bg-[#03150e]/95 backdrop-blur-2xl text-primary-foreground border-t border-gold/30 grid grid-cols-5 px-1 py-1 pb-safe shadow-[0_-8px_25px_rgba(0,0,0,0.4)]">
+            <nav className="bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#06241a]/95 dark:bg-[#03150e]/95 backdrop-blur-2xl text-primary-foreground border-t border-gold/30 grid grid-cols-5 shadow-[0_-8px_25px_rgba(0,0,0,0.4)]" aria-label="প্রধান নেভিগেশন">
                 {navItems.map(({ to, label, icon: Icon }) => (
                     <NavLink
                         key={to}
@@ -241,7 +241,7 @@ export function Layout({ children }) {
                         end={to === '/'}
                         onClick={() => hapticImpact()}
                         className={({ isActive }) =>
-                            `relative flex flex-col items-center justify-center select-none native-press py-1 transition-all duration-300 ${
+                            `relative flex flex-col items-center justify-center select-none native-press h-full min-h-[3rem] transition-all duration-300 ${
                                 isActive
                                     ? 'text-gold'
                                     : 'text-emerald-100/65 dark:text-emerald-200/55 hover:text-white'

@@ -9,7 +9,6 @@ import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,17 +18,24 @@ import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.webkit.WebView;
 import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
+import androidx.activity.SystemBarStyle;
 import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.WebViewListener;
 import java.util.Locale;
 
 public class MainActivity extends BridgeActivity {
+
+    // Sane upper bounds (dp) so a bogus inset (e.g. while the screen is locked / turning on) never
+    // leaves a huge empty band in the header or footer.
+    private static final int MAX_TOP_INSET_DP = 72;
+    private static final int MAX_BOTTOM_INSET_DP = 64;
+    private static final int MAX_SIDE_INSET_DP = 64;
 
     private int lastTopPx = -1;
     private int lastBottomPx = -1;
@@ -37,6 +43,7 @@ public class MainActivity extends BridgeActivity {
     private int lastRightPx = -1;
 
     private View splashOverlay;
+    private Insets lastSystemBars = Insets.NONE;
     private final Handler splashHandler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -47,50 +54,54 @@ public class MainActivity extends BridgeActivity {
 
         super.onCreate(savedInstanceState);
 
+        // 1-3. True edge-to-edge on every Android version with transparent system bars and light (white) icons,
+        //      via the supported androidx API (the old setStatusBarColor / setNavigationBarColor calls are
+        //      deprecated since Android 15 and flagged by Play Console).
+        EdgeToEdge.enable(
+            this,
+            SystemBarStyle.dark(Color.TRANSPARENT),
+            SystemBarStyle.dark(Color.TRANSPARENT)
+        );
+
         Window window = getWindow();
-
-        // 1. Enable true edge-to-edge drawing so WebView extends under status & nav bars
         WindowCompat.setDecorFitsSystemWindows(window, false);
-
-        // 2. Make status bar and navigation bar transparent so the emerald app theme fills edge-to-edge
-        window.setStatusBarColor(Color.TRANSPARENT);
-        window.setNavigationBarColor(Color.TRANSPARENT);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.setNavigationBarContrastEnforced(false);
-        }
-
-        // 3. Keep status bar and navigation bar icons light (white) on dark emerald background
-        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window, window.getDecorView());
-        if (controller != null) {
-            controller.setAppearanceLightStatusBars(false);
-            controller.setAppearanceLightNavigationBars(false);
-        }
 
         // 4. Dynamic Screen Fit Insets Listener
         View decorView = window.getDecorView();
         ViewCompat.setOnApplyWindowInsetsListener(decorView, (v, insets) -> {
-            // NEVER let the native decorView shrink or add padding bars (fixes the double-gap issue)
-            v.setPadding(0, 0, 0, 0);
-
             Insets systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
             );
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
             boolean keyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            lastSystemBars = systemBars;
+            padSplashOverlay();
+
+            // The native decorView never gets padding bars (fixes the double-gap issue); only the keyboard
+            // pushes the WebView up so focused inputs stay visible.
+            v.setPadding(0, 0, 0, keyboardVisible ? ime.bottom : 0);
 
             float density = getResources().getDisplayMetrics().density;
             if (density <= 0f) {
                 density = 1.0f;
             }
 
-            int topPx = Math.round(systemBars.top / density);
-            int bottomPx = keyboardVisible ? 0 : Math.round(systemBars.bottom / density);
-            int leftPx = Math.round(systemBars.left / density);
-            int rightPx = Math.round(systemBars.right / density);
+            int topPx = clampInset(Math.round(systemBars.top / density), MAX_TOP_INSET_DP);
+            int bottomPx = keyboardVisible ? 0 : clampInset(Math.round(systemBars.bottom / density), MAX_BOTTOM_INSET_DP);
+            int leftPx = clampInset(Math.round(systemBars.left / density), MAX_SIDE_INSET_DP);
+            int rightPx = clampInset(Math.round(systemBars.right / density), MAX_SIDE_INSET_DP);
 
             applyInsetsToWeb(topPx, bottomPx, leftPx, rightPx);
 
-            return insets;
+            // Hand the WebView zeroed system-bar insets: the page already pads itself with the values injected
+            // above, so a newer Chromium WebView must not add its own safe-area / padding on top of them
+            // (that is what produced the extra header / footer gap on some devices and after screen off/on).
+            return new WindowInsetsCompat.Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout(),
+                    Insets.of(0, 0, 0, 0)
+                )
+                .build();
         });
 
         // 5. Full launch splash (same as the web splash) on top of the WebView until the page is visible
@@ -114,6 +125,29 @@ public class MainActivity extends BridgeActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Screen off/on or returning from another app: the system bars may have been reported differently
+        // while locked, so push the real insets to the page again.
+        forceRefreshInsets();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            forceRefreshInsets();
+        }
+    }
+
+    private static int clampInset(int valueDp, int maxDp) {
+        if (valueDp < 0) {
+            return 0;
+        }
+        return Math.min(valueDp, maxDp);
     }
 
     private void showSplashOverlay() {
@@ -169,15 +203,11 @@ public class MainActivity extends BridgeActivity {
             title.invalidate();
         });
 
-        // Keep the splash content clear of the status / navigation bars (like the web safe-area padding)
-        int padTop = overlay.getPaddingTop();
-        int padBottom = overlay.getPaddingBottom();
-        ViewCompat.setOnApplyWindowInsetsListener(overlay, (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(v.getPaddingLeft(), padTop + bars.top, v.getPaddingRight(), padBottom + bars.bottom);
-            return insets;
-        });
-        ViewCompat.requestApplyInsets(overlay);
+        // Keep the splash content clear of the status / navigation bars (like the web safe-area padding).
+        // The decorView listener hands children zeroed insets, so the overlay is padded from the raw values.
+        splashBasePadTop = overlay.getPaddingTop();
+        splashBasePadBottom = overlay.getPaddingBottom();
+        padSplashOverlay();
 
         // Logo glow pulse and indeterminate gold loader bar
         ObjectAnimator pulseX = ObjectAnimator.ofFloat(logo, View.SCALE_X, 0.98f, 1.02f);
@@ -202,6 +232,22 @@ public class MainActivity extends BridgeActivity {
         hideSplashOverlay(10000);
     }
 
+    private int splashBasePadTop = 0;
+    private int splashBasePadBottom = 0;
+
+    private void padSplashOverlay() {
+        View overlay = splashOverlay;
+        if (overlay == null) {
+            return;
+        }
+        overlay.setPadding(
+            overlay.getPaddingLeft(),
+            splashBasePadTop + lastSystemBars.top,
+            overlay.getPaddingRight(),
+            splashBasePadBottom + lastSystemBars.bottom
+        );
+    }
+
     private void hideSplashOverlay(long delayMs) {
         splashHandler.postDelayed(() -> {
             View overlay = splashOverlay;
@@ -221,6 +267,8 @@ public class MainActivity extends BridgeActivity {
     private void forceRefreshInsets() {
         lastTopPx = -1;
         lastBottomPx = -1;
+        lastLeftPx = -1;
+        lastRightPx = -1;
         runOnUiThread(() -> {
             if (getWindow() != null && getWindow().getDecorView() != null) {
                 getWindow().getDecorView().requestApplyInsets();

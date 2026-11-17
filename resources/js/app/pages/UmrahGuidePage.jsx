@@ -322,7 +322,7 @@ export function UmrahGuidePage() {
             </div>
 
             {/* Main Navigation Tabs */}
-            <div className="sticky top-0 z-30 bg-card/95 backdrop-blur-md border-b border-border shadow-xs">
+            <div className="sticky top-below-header z-30 bg-card/95 backdrop-blur-md border-b border-border shadow-xs">
                 <div className="mx-auto max-w-5xl px-4">
                     <div className="flex items-center gap-2 overflow-x-auto py-2.5 scrollbar-none" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                         <button
