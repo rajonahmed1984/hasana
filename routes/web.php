@@ -60,6 +60,15 @@ Route::get('/bookmarks/data', [HasanaController::class, 'bookmarkData'])->name('
 Route::view('/settings', 'spa')->name('hasana.settings');
 Route::view('/about', 'spa')->name('hasana.about');
 Route::view('/explore', 'spa')->name('hasana.explore');
+Route::view('/prayer-times', 'spa')->name('hasana.prayer_times');
+Route::view('/namaz-times', 'spa');
+Route::view('/prayer', 'spa');
+Route::view('/tasbih', 'spa')->name('hasana.tasbih');
+Route::view('/tasbeeh', 'spa');
+Route::view('/features', 'spa')->name('hasana.features');
+Route::view('/app-features', 'spa');
+// Opened by tapping a prayer / Quran / hadith notification (shows its full text)
+Route::view('/notification', 'spa')->name('hasana.notification');
 Route::get('/share', [HasanaController::class, 'share'])->name('hasana.share');
 
 // Admin login: only the sign-in POST is rate limited, with its own counter (an unprefixed throttle shares

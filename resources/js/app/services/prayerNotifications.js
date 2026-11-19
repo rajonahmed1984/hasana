@@ -12,6 +12,7 @@ import {
     rescheduleNativeNotifications,
     showNativeNotificationNow,
     initNativeNotificationListeners,
+    notificationPageUrl,
     toBnDigits,
     formatBnTime,
 } from './nativeNotifications';
@@ -190,11 +191,14 @@ export const requestNotifPermission = async () => {
 /**
  * Trigger a browser, service worker or native notification right away
  */
-export const showPrayerNotification = async (title, body, tag = 'namaz-alert', url = '/') => {
+export const showPrayerNotification = async (title, body, tag = 'namaz-alert', url = null) => {
     // Play soothing Islamic notification chime
     playNotificationSound();
 
-    if (isNative()) return showNativeNotificationNow(title, body);
+    // A tap shows the notification's own text instead of just opening Home
+    if (!url || url === '/') url = notificationPageUrl({ title, body });
+
+    if (isNative()) return showNativeNotificationNow(title, body, url);
 
     if (typeof window === 'undefined' || !('Notification' in window)) return false;
     if (Notification.permission !== 'granted') return false;
@@ -241,10 +245,13 @@ export const sendTestPrayerNotification = async () => {
         }
     }
 
+    const title = 'মাগরিব : ওয়াক্ত শুরু @ ০৫:২৩';
+    const body = 'মিসওয়াক করে ওযু করুন। নামাজের প্রস্তুতি নিন।';
     const sent = await showPrayerNotification(
-        'মাগরিব : ওয়াক্ত শুরু @ ০৫:২৩',
-        'মিসওয়াক করে ওযু করুন। নামাজের প্রস্তুতি নিন।',
-        'namaz-test-' + Date.now()
+        title,
+        body,
+        'namaz-test-' + Date.now(),
+        notificationPageUrl({ type: 'prayer', title, body, link: '/prayer-times' })
     );
 
     return {
@@ -334,6 +341,14 @@ export const fetchDailyAyah = async () => {
     };
 };
 
+// Notification page for the daily ayah: the verse text, with a link to it in its surah
+const ayahNotificationUrl = (ayah) => notificationPageUrl({
+    type: 'daily_ayah',
+    title: 'আজকের আয়াত',
+    body: `"${ayah.text_bn}"\n${ayah.reference}`,
+    link: ayah.deep_link || '/quran',
+});
+
 /**
  * Check if Daily Ayah notification is enabled. Defaults to true.
  */
@@ -366,7 +381,7 @@ export const sendTestDailyAyahNotification = async () => {
         'আজকের নোটিফিকেশন',
         `পবিত্র কুরআনে আল্লাহ তাআলা বলেছেন :\n"${ayah.text_bn}"\n— ${ayah.reference}`,
         'daily-ayah-test-' + Date.now(),
-        ayah.deep_link || '/'
+        ayahNotificationUrl(ayah)
     );
 
     return {
@@ -398,7 +413,7 @@ export const checkDailyAyahAndNotify = async () => {
                     'আজকের নোটিফিকেশন',
                     `পবিত্র কুরআনে আল্লাহ তাআলা বলেছেন :\n"${ayah.text_bn}"\n— ${ayah.reference}`,
                     `daily-ayah-${dateStr}`,
-                    ayah.deep_link || '/'
+                    ayahNotificationUrl(ayah)
                 );
             }
         }
@@ -427,10 +442,13 @@ export const checkPrayerTimeAndNotify = () => {
                 if (lastNotifiedDate !== dateStr) {
                     localStorage.setItem(lastNotifiedKey, dateStr);
                     const formattedTime = formatBnTime(prayer.startHour, prayer.startMin);
+                    const title = `${prayer.name} : ওয়াক্ত শুরু @ ${formattedTime}`;
+                    const body = prayer.body || 'মিসওয়াক করে ওযু করুন। নামাজের প্রস্তুতি নিন।';
                     showPrayerNotification(
-                        `${prayer.name} : ওয়াক্ত শুরু @ ${formattedTime}`,
-                        prayer.body || 'মিসওয়াক করে ওযু করুন। নামাজের প্রস্তুতি নিন।',
-                        `namaz-${prayer.id}-${dateStr}`
+                        title,
+                        body,
+                        `namaz-${prayer.id}-${dateStr}`,
+                        notificationPageUrl({ type: 'prayer', title, body, link: '/prayer-times' })
                     );
                     break;
                 }

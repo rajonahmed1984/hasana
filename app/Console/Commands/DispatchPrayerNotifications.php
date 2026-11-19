@@ -105,7 +105,13 @@ class DispatchPrayerNotifications extends Command
                     $due[$id] = [
                         'title' => $text['title'],
                         'body' => $text['body'],
-                        'data' => ['type' => 'prayer', 'prayer' => $id, 'date' => $today, 'tag' => "namaz-{$id}-{$today}", 'url' => '/'],
+                        'data' => [
+                            'type' => 'prayer',
+                            'prayer' => $id,
+                            'date' => $today,
+                            'tag' => "namaz-{$id}-{$today}",
+                            'url' => self::notificationPageUrl('prayer', $text['title'], $text['body'], '/prayer-times'),
+                        ],
                     ];
                 }
             }
@@ -114,13 +120,28 @@ class DispatchPrayerNotifications extends Command
         if ($device->ayah_enabled && ($log['ayah'] ?? null) !== $today && $isDue(self::AYAH_HOUR, 0)) {
             $ayah = $ayahCache[$today] ??= DailyAyah::forDate($now);
 
+            $title = "আজকের দিনের আয়াত 📖 ({$ayah['surah_name']})";
+            $body = "{$ayah['text_bn']}\n— {$ayah['reference']}";
             $due['ayah'] = [
-                'title' => "আজকের দিনের আয়াত 📖 ({$ayah['surah_name']})",
-                'body' => "{$ayah['text_bn']}\n— {$ayah['reference']}",
-                'data' => ['type' => 'daily_ayah', 'date' => $today, 'tag' => "daily-ayah-{$today}", 'url' => $ayah['deep_link']],
+                'title' => $title,
+                'body' => $body,
+                'data' => [
+                    'type' => 'daily_ayah',
+                    'date' => $today,
+                    'tag' => "daily-ayah-{$today}",
+                    'url' => self::notificationPageUrl('daily_ayah', $title, $body, $ayah['deep_link'] ?: '/quran'),
+                ],
             ];
         }
 
         return $due;
+    }
+
+    /**
+     * In-app page a tapped notification opens: its full text plus a link to the related screen.
+     */
+    private static function notificationPageUrl(string $type, string $title, string $body, string $link): string
+    {
+        return '/notification?'.http_build_query(compact('type', 'title', 'body', 'link'), '', '&', PHP_QUERY_RFC3986);
     }
 }

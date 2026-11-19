@@ -35,6 +35,19 @@ export const toBnDigits = (num) => {
     return String(num).replace(/[0-9]/g, (d) => bn[Number(d)]);
 };
 
+/**
+ * In-app URL a tapped notification opens: the notification page with its full text
+ * and a link to the related screen (surah ayah, prayer times, hadith …).
+ */
+export const notificationPageUrl = ({ type, title, body, link }) => {
+    const params = new URLSearchParams();
+    if (type) params.set('type', type);
+    if (title) params.set('title', title);
+    if (body) params.set('body', body);
+    if (link) params.set('link', link);
+    return `/notification?${params.toString()}`;
+};
+
 export const formatBnTime = (hour, minute) => {
     const h12 = hour % 12 || 12;
     const hStr = String(h12).padStart(2, '0');
@@ -56,7 +69,7 @@ const OFFLINE_AYAHS = [
         surah_name: 'সূরা আর-রাদ',
         reference: 'সূরা আর-রাদ, ১৩:২৮',
         text_bn: 'যারা ঈমান এনেছে এবং যাদের অন্তর আল্লাহর স্মরণে প্রশান্তি লাভ করে। জেনে রাখ, আল্লাহর স্মরণেই অন্তরসমূহ প্রশান্ত হয়।',
-        deep_link: '/surah/ar-rad?ayah=28',
+        deep_link: '/surah/ar-ra-d?ayah=28',
     },
     {
         surah_name: 'সূরা আল-বাকারা',
@@ -68,7 +81,7 @@ const OFFLINE_AYAHS = [
         surah_name: 'সূরা আলে-ইমরান',
         reference: 'সূরা আলে-ইমরান, ৩:১৩৯',
         text_bn: 'তোমরা নিরাশ হয়ো না এবং দুঃখিত হয়ো না; তোমরাই বিজয়ী হবে, যদি তোমরা সত্যিকারের মুমিন হও।',
-        deep_link: '/surah/ali-imran?ayah=139',
+        deep_link: '/surah/al-imran?ayah=139',
     },
     {
         surah_name: 'সূরা আল-ইনশিরাহ',
@@ -299,7 +312,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                         smallIcon: SMALL_ICON,
                         sound: NOTIFICATION_SOUND,
                         schedule: { at, allowWhileIdle: true },
-                        extra: { url: '/', type: 'prayer' },
+                        extra: { url: notificationPageUrl({ type: 'prayer', title, body, link: '/prayer-times' }), type: 'prayer' },
                     });
                 });
             }
@@ -309,32 +322,38 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                 const ayahAt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), AYAH_HOUR, AYAH_MIN, 0);
                 if (ayahAt > now) {
                     const ayah = daily[dayIndex]?.ayah || getOfflineAyahForDate(dateStr);
+                    const ayahBody = `পবিত্র কুরআনে আল্লাহ তাআলা বলেছেন :\n"${ayah.text_bn}"\n— ${ayah.reference}`;
                     toSchedule.push({
                         id: ID_BASE + dayIndex * 10 + AYAH_SLOT,
                         title: 'আজকের নোটিফিকেশন',
-                        body: `পবিত্র কুরআনে আল্লাহ তাআলা বলেছেন :\n"${ayah.text_bn}"\n— ${ayah.reference}`,
-                        largeBody: `পবিত্র কুরআনে আল্লাহ তাআলা বলেছেন :\n"${ayah.text_bn}"\n— ${ayah.reference}`,
+                        body: ayahBody,
+                        largeBody: ayahBody,
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
                         sound: NOTIFICATION_SOUND,
                         schedule: { at: ayahAt, allowWhileIdle: true },
-                        extra: { url: ayah?.deep_link || '/quran', type: 'daily_ayah' },
+                        extra: {
+                            url: notificationPageUrl({ type: 'daily_ayah', title: 'আজকের আয়াত', body: ayahBody, link: ayah?.deep_link || '/quran' }),
+                            type: 'daily_ayah',
+                        },
                     });
                 }
 
                 // 3. Daily Durood Reminder (Afternoon 13:30)
                 const duroodAt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), DUROOD_HOUR, DUROOD_MIN, 0);
                 if (duroodAt > now) {
+                    const duroodTitle = 'নবীজির ﷺ উপর দুরূদ পড়ুন';
+                    const duroodBody = 'সারাদিন ব্যাপী দুরূদ পড়ার অভ্যাস গড়তে দুরূদ রিমাইন্ডার ফিচারটি চালু করুন। আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ।';
                     toSchedule.push({
                         id: ID_BASE + dayIndex * 10 + DUROOD_SLOT,
-                        title: 'নবীজির ﷺ উপর দুরূদ পড়ুন',
-                        body: 'সারাদিন ব্যাপী দুরূদ পড়ার অভ্যাস গড়তে দুরূদ রিমাইন্ডার ফিচারটি চালু করুন। আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ।',
-                        largeBody: 'সারাদিন ব্যাপী দুরূদ পড়ার অভ্যাস গড়তে দুরূদ রিমাইন্ডার ফিচারটি চালু করুন। আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ।',
+                        title: duroodTitle,
+                        body: duroodBody,
+                        largeBody: duroodBody,
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
                         sound: NOTIFICATION_SOUND,
                         schedule: { at: duroodAt, allowWhileIdle: true },
-                        extra: { url: '/duas', type: 'durood' },
+                        extra: { url: notificationPageUrl({ type: 'durood', title: duroodTitle, body: duroodBody, link: '/duas' }), type: 'durood' },
                     });
                 }
 
@@ -342,16 +361,20 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
                 const hadithAt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), HADITH_HOUR, HADITH_MIN, 0);
                 if (hadithAt > now) {
                     const hadith = daily[dayIndex]?.hadith || getOfflineHadithForDate(dateStr);
+                    const hadithBody = `${hadith.narrator} থেকে বর্ণিত, রাসূলুল্লাহ ﷺ বলেছেন :\n"${hadith.text_bn}"\n— ${hadith.reference}`;
                     toSchedule.push({
                         id: ID_BASE + dayIndex * 10 + HADITH_SLOT,
                         title: 'আজকের নোটিফিকেশন',
-                        body: `${hadith.narrator} থেকে বর্ণিত, রাসূলুল্লাহ ﷺ বলেছেন :\n"${hadith.text_bn}"\n— ${hadith.reference}`,
-                        largeBody: `${hadith.narrator} থেকে বর্ণিত, রাসূলুল্লাহ ﷺ বলেছেন :\n"${hadith.text_bn}"\n— ${hadith.reference}`,
+                        body: hadithBody,
+                        largeBody: hadithBody,
                         channelId: PRAYER_CHANNEL,
                         smallIcon: SMALL_ICON,
                         sound: NOTIFICATION_SOUND,
                         schedule: { at: hadithAt, allowWhileIdle: true },
-                        extra: { url: '/hadith', type: 'daily_hadith' },
+                        extra: {
+                            url: notificationPageUrl({ type: 'daily_hadith', title: 'আজকের হাদিস', body: hadithBody, link: '/hadith' }),
+                            type: 'daily_hadith',
+                        },
                     });
                 }
             }
@@ -368,7 +391,7 @@ export const rescheduleNativeNotifications = async ({ prayerEnabled = true, ayah
 /**
  * Show a notification right away (used by the "test notification" buttons).
  */
-export const showNativeNotificationNow = async (title, body) => {
+export const showNativeNotificationNow = async (title, body, url = null) => {
     try {
         await ensureChannels();
         playNotificationSound();
@@ -382,6 +405,7 @@ export const showNativeNotificationNow = async (title, body) => {
                 smallIcon: SMALL_ICON,
                 sound: NOTIFICATION_SOUND,
                 schedule: { at: new Date(Date.now() + 500), allowWhileIdle: true },
+                extra: { url: url || notificationPageUrl({ title, body }) },
             }],
         });
         return true;
@@ -412,31 +436,38 @@ export const initNativeNotificationListeners = (navigate, onPushToken) => {
     if (!isNative() || listenersReady) return;
     listenersReady = true;
 
-    LocalNotifications.addListener('localNotificationActionPerformed', ({ notification }) => {
-        const url = notification?.extra?.url;
-        if (url) navigate(url);
-    });
-
-    PushNotifications.addListener('registration', ({ value }) => {
-        if (value) onPushToken(value);
-    });
-
-    PushNotifications.addListener('pushNotificationActionPerformed', ({ notification }) => {
-        const url = notification?.data?.url;
+    const open = (url) => {
         if (!url) return;
         if (/^https?:\/\//.test(url)) {
             window.location.href = url;
         } else {
             navigate(url);
         }
+    };
+
+    // Tapping a notification opens its full text (and a link to the related page), never just Home.
+    // Capacitor keeps the tap event until this listener is added, so cold starts work too.
+    LocalNotifications.addListener('localNotificationActionPerformed', ({ notification }) => {
+        open(notification?.extra?.url || notificationPageUrl({ title: notification?.title, body: notification?.body }));
+    });
+
+    PushNotifications.addListener('registration', ({ value }) => {
+        if (value) onPushToken(value);
+    });
+
+    // FCM only hands over the data payload on tap, so fall back to its title/body
+    PushNotifications.addListener('pushNotificationActionPerformed', ({ notification }) => {
+        const data = notification?.data || {};
+        const hasTarget = data.url && data.url !== '/';
+        open(hasTarget ? data.url : notificationPageUrl({ type: data.type, title: data.title, body: data.body }));
     });
 
     // Push messages that arrive while the app is open are not shown by Android, so show them locally
     PushNotifications.addListener('pushNotificationReceived', (notification) => {
-        showNativeNotificationNow(
-            notification.title || notification.data?.title || 'হাসানা',
-            notification.body || notification.data?.body || ''
-        );
+        const title = notification.title || notification.data?.title || 'হাসানা';
+        const body = notification.body || notification.data?.body || '';
+        const url = notification.data?.url;
+        showNativeNotificationNow(title, body, url && url !== '/' ? url : notificationPageUrl({ type: notification.data?.type, title, body }));
     });
 
     registerNativePush();

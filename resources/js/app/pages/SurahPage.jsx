@@ -74,8 +74,10 @@ export function SurahPage() {
     }, [slug]);
 
     useEffect(() => {
-        if (!loading && ayahs.length > 0 && window.location.hash) {
-            const targetId = window.location.hash.substring(1);
+        // Jump to an ayah from #ayah-N or ?ayah=N (the daily-ayah notification links use the latter)
+        const ayahParam = new URLSearchParams(window.location.search).get('ayah');
+        const targetId = window.location.hash ? window.location.hash.substring(1) : (ayahParam ? `ayah-${ayahParam}` : '');
+        if (!loading && ayahs.length > 0 && targetId) {
             const el = document.getElementById(targetId);
             if (el) {
                 setTimeout(() => {

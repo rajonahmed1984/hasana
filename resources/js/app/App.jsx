@@ -13,6 +13,7 @@ import { ExplorePage } from './pages/ExplorePage';
 import { PrayerTimesPage } from './pages/PrayerTimesPage';
 import { TasbihPage } from './pages/TasbihPage';
 import { FeaturesPage } from './pages/FeaturesPage';
+import { NotificationPage } from './pages/NotificationPage';
 import { initNativeAppHandlers } from './native';
 import { initPrayerScheduler, showPrayerNotification } from './services/prayerNotifications';
 import { playNotificationSound } from './services/soundService';
@@ -101,6 +102,7 @@ export function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/notification" element={<NotificationPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
