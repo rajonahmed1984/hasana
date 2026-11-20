@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Volume2, VolumeX, Smartphone, Sparkles, ChevronDown } from 'lucide-react';
 import { Layout } from '../components/Layout';
@@ -10,6 +10,7 @@ const DHIKR_PRESETS = [
         title_bn: 'সুবহানাল্লাহ',
         title_ar: 'سُبْحَانَ اللَّهِ',
         transliteration: 'SubhanAllah',
+        pronunciation_bn: 'সুবহানাল্লাহ',
         meaning: 'আল্লাহ অতি পবিত্র ও সকল ত্রুটিমুক্ত।',
         virtue: 'মিজানের পাল্লায় অত্যন্ত ভারী এবং আল্লাহর সবচেয়ে প্রিয় বাক্য।',
         target: 33,
@@ -19,6 +20,7 @@ const DHIKR_PRESETS = [
         title_bn: 'আলহামদুলিল্লাহ',
         title_ar: 'الْحَمْدُ لِلَّهِ',
         transliteration: 'Alhamdulillah',
+        pronunciation_bn: 'আলহামদুলিল্লাহ',
         meaning: 'সকল প্রশংসা কেবল আল্লাহর জন্য।',
         virtue: 'মিজানের পাল্লাকে নেকি দ্বারা পূর্ণ করে দেয়।',
         target: 33,
@@ -28,6 +30,7 @@ const DHIKR_PRESETS = [
         title_bn: 'আল্লাহু আকবার',
         title_ar: 'اللَّهُ أَكْبَرُ',
         transliteration: 'Allahu Akbar',
+        pronunciation_bn: 'আল্লাহু আকবার',
         meaning: 'আল্লাহ সর্বশ্রেষ্ঠ ও মহান।',
         virtue: 'আসমান ও জমিনের মধ্যবর্তী শূন্যস্থানকে সওয়াবে পূর্ণ করে।',
         target: 34,
@@ -37,6 +40,7 @@ const DHIKR_PRESETS = [
         title_bn: 'লা ইলাহা ইল্লাল্লাহ',
         title_ar: 'لَا إِلَهَ إِلَّا اللَّهُ',
         transliteration: 'La ilaha illallah',
+        pronunciation_bn: 'লা ইলাহা ইল্লাল্লাহ',
         meaning: 'আল্লাহ ছাড়া কোনো সত্য উপাস্য নেই।',
         virtue: 'সর্বোত্তম জিকির এবং জান্নাতের চাবিকাঠি।',
         target: 100,
@@ -46,6 +50,7 @@ const DHIKR_PRESETS = [
         title_bn: 'আস্তাগফিরুল্লাহ',
         title_ar: 'أَسْتَغْفِرُ اللَّهَ',
         transliteration: 'Astaghfirullah',
+        pronunciation_bn: 'আস্তাগফিরুল্লাহ',
         meaning: 'আমি আল্লাহর কাছে ক্ষমা প্রার্থনা করছি।',
         virtue: 'রিজিকে বরকত, দুশ্চিন্তা মুক্তি এবং গুনাহ মাফের শ্রেষ্ঠ মাধ্যম।',
         target: 100,
@@ -55,6 +60,7 @@ const DHIKR_PRESETS = [
         title_bn: 'দরূদ শরীফ',
         title_ar: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ',
         transliteration: 'Allahumma Salli Ala Muhammad',
+        pronunciation_bn: 'আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ',
         meaning: 'হে আল্লাহ! হযরত মুহাম্মাদ (সা.)-এর ওপর শান্তি ও রহমত বর্ষণ করুন।',
         virtue: 'একবার পাঠে ১০টি রহমত বর্ষিত হয়, ১০টি গুনাহ মাফ হয় এবং ১০টি মর্যাদা বৃদ্ধি পায়।',
         target: 100,
@@ -64,6 +70,7 @@ const DHIKR_PRESETS = [
         title_bn: 'সুবহানাল্লাহি ওয়া বিহামদিহি',
         title_ar: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ',
         transliteration: 'SubhanAllahi wa bihamdihi, SubhanAllahil Azeem',
+        pronunciation_bn: 'সুবহানাল্লাহি ওয়া বিহামদিহি, সুবহানাল্লাহিল আযীম',
         meaning: 'আল্লাহর প্রশংসাসহ তাঁর পবিত্রতা ঘোষণা করছি, মহান আল্লাহ পরম পবিত্র।',
         virtue: 'জিহ্বায় উচ্চারণে সহজ কিন্তু কিয়ামতের পাল্লায় অত্যন্ত ভারী দুটি বাক্য।',
         target: 100,
@@ -73,6 +80,7 @@ const DHIKR_PRESETS = [
         title_bn: 'লা হাওলা ওয়ালা কুওয়াতা ইল্লা বিল্লাহ',
         title_ar: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
         transliteration: 'La hawla wa la quwwata illa billah',
+        pronunciation_bn: 'লা হাওলা ওয়ালা কুওয়াতা ইল্লা বিল্লাহ',
         meaning: 'আল্লাহর সাহায্য ছাড়া অনিষ্ট থেকে বাঁচার বা সৎকাজ করার কোনো শক্তি নেই।',
         virtue: 'জান্নাতের অমূল্য রত্নভাণ্ডারের অন্যতম একটি রত্ন।',
         target: 33,
@@ -82,6 +90,7 @@ const DHIKR_PRESETS = [
         title_bn: 'হাসবুনাল্লাহু ওয়া নি\'মাল ওয়াকিল',
         title_ar: 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
         transliteration: 'Hasbunallahu wa ni\'mal wakeel',
+        pronunciation_bn: 'হাসবুনাল্লাহু ওয়া নি\'মাল ওয়াকীল',
         meaning: 'আল্লাহই আমাদের জন্য যথেষ্ট এবং তিনি উত্তম কর্মবিধায়ক।',
         virtue: 'বিপদ, শঙ্কা ও কঠিন সময়ে মুমিনের সর্বশ্রেষ্ঠ ভরসা।',
         target: 100,
@@ -89,6 +98,59 @@ const DHIKR_PRESETS = [
 ];
 
 const TARGET_PRESETS = [33, 99, 100, 300, 1000, 0]; // 0 = unlimited
+
+// ── Sound ──
+// One AudioContext for the whole page. Creating a new one per tap hits the
+// browser / WebView limit after a few taps and the sound drops out.
+let audioCtx = null;
+
+const getAudioCtx = () => {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    if (!audioCtx || audioCtx.state === 'closed') audioCtx = new AudioCtx();
+    // Suspended after backgrounding / autoplay policy; a tap is a user gesture so resume works
+    if (audioCtx.state !== 'running') audioCtx.resume().catch(() => {});
+    return audioCtx;
+};
+
+const playTone = (ctx, freq, start, duration, volume, type = 'sine') => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    // Short attack avoids the click a hard start makes
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.linearRampToValueAtTime(volume, start + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + duration + 0.02);
+};
+
+const playTapSound = () => {
+    try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        playTone(ctx, 880, ctx.currentTime, 0.06, 0.14);
+    } catch {
+        // ignore audio error
+    }
+};
+
+// Rising four-note chime for a completed round
+const playCompleteSound = () => {
+    try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        const t = ctx.currentTime;
+        [1046.5, 1318.5, 1568, 2093].forEach((freq, i) => {
+            playTone(ctx, freq, t + i * 0.13, 0.7, 0.16, 'triangle');
+        });
+    } catch {
+        // ignore audio error
+    }
+};
 
 export function TasbihPage() {
     const navigate = useNavigate();
@@ -178,52 +240,42 @@ export function TasbihPage() {
         setTarget(savedTarget !== null ? parseInt(savedTarget, 10) : dhikr.target);
     };
 
-    // Play subtle audio beep if sound enabled
-    const playBeep = (freq = 880, duration = 0.05) => {
-        if (!soundEnabled) return;
-        try {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) {
-                const ctx = new AudioCtx();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + duration);
-            }
-        } catch {
-            // ignore audio error
-        }
-    };
+    // Latest count for fast taps; side effects stay out of the state updater
+    const countRef = useRef(count);
+    useEffect(() => { countRef.current = count; }, [count]);
+    const celebrateTimer = useRef(null);
+    const pressTimer = useRef(null);
+    useEffect(() => () => {
+        clearTimeout(celebrateTimer.current);
+        clearTimeout(pressTimer.current);
+    }, []);
 
     // Increment count on tap
     const handleTapCount = useCallback(() => {
         setButtonActive(true);
-        setTimeout(() => setButtonActive(false), 120);
+        clearTimeout(pressTimer.current);
+        pressTimer.current = setTimeout(() => setButtonActive(false), 120);
 
         if (vibrationEnabled) {
             hapticImpact();
         }
 
-        playBeep(880, 0.04);
+        const next = countRef.current + 1;
+        if (target > 0 && next >= target) {
+            // Round complete: the chime always plays so the user knows the target is reached
+            countRef.current = 0;
+            setCount(0);
+            setLaps((l) => l + 1);
+            playCompleteSound();
+            setCelebrating(true);
+            clearTimeout(celebrateTimer.current);
+            celebrateTimer.current = setTimeout(() => setCelebrating(false), 1800);
+            return;
+        }
 
-        setCount((prev) => {
-            const next = prev + 1;
-            if (target > 0 && next >= target) {
-                // Reached target!
-                setCelebrating(true);
-                playBeep(1320, 0.15);
-                setLaps((l) => l + 1);
-                setTimeout(() => setCelebrating(false), 1200);
-                return 0; // reset for next lap
-            }
-            return next;
-        });
+        countRef.current = next;
+        setCount(next);
+        if (soundEnabled) playTapSound();
     }, [target, vibrationEnabled, soundEnabled]);
 
     // Keyboard support (Space bar to count)
@@ -326,6 +378,9 @@ export function TasbihPage() {
                         <p className="font-arabic text-2xl font-bold text-gold leading-relaxed line-clamp-2" dir="rtl">
                             {currentDhikr.title_ar}
                         </p>
+                        <p className="text-base font-semibold text-white mt-0.5 line-clamp-2">
+                            {currentDhikr.pronunciation_bn}
+                        </p>
                         <p className="text-sm text-emerald-100/70 mt-0.5 line-clamp-2">
                             {currentDhikr.meaning}
                         </p>
@@ -344,7 +399,7 @@ export function TasbihPage() {
                             type="button"
                             onClick={handleTapCount}
                             aria-label="গণনা করুন"
-                            className={`tasbih-circle relative rounded-full flex flex-col items-center justify-center cursor-pointer transition-transform duration-100 ${
+                            className={`tasbih-circle relative rounded-full flex flex-col items-center justify-center cursor-pointer touch-manipulation transition-transform duration-100 ${
                                 buttonActive ? 'scale-95' : ''
                             }`}
                         >

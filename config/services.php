@@ -40,4 +40,10 @@ return [
         'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/private/firebase-credentials.json')),
     ],
 
+    // Claude: understands Explore (জানুন) questions and ranks the matching texts. Empty key = keyword search only.
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('HASANA_AI_MODEL', 'claude-opus-5-5'),
+    ],
+
 ];

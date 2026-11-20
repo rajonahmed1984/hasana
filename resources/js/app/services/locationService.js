@@ -569,3 +569,59 @@ export const calculatePrayerCountdown = (prayerTimes, now = new Date()) => {
         label,
     };
 };
+
+// ── Forbidden prayer times (মাকরূহ ওয়াক্ত) ──
+// Same windows as the list on the prayer times page: 15 min from sunrise,
+// the 12 min before Dhuhr (zawal) and the 15 min before sunset (Maghrib).
+const FORBIDDEN_WINDOWS = [
+    { key: 'sunrise', name: 'সূর্যোদয়ের সময়', note: 'সূর্য পুরোপুরি ওঠা পর্যন্ত কোনো নামাজ পড়া যাবে না।' },
+    { key: 'zawal', name: 'ঠিক দ্বিপ্রহর (যাওয়াল)', note: 'সূর্য পশ্চিমে হেলে পড়া পর্যন্ত নামাজ থেকে বিরত থাকুন।' },
+    { key: 'sunset', name: 'সূর্যাস্তের সময়', note: 'নামাজ নিষেধ; তবে আজকের আসর বাকি থাকলে দ্রুত পড়ে নিন।' },
+];
+
+const pad2 = (n) => String(n).padStart(2, '0');
+const formatDuration = (totalSec) => {
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    return `${pad2(h)}:${pad2(m)}:${pad2(totalSec % 60)}`;
+};
+/** The day's three forbidden windows as { key, name, note, start, end } with Date bounds. */
+export const getForbiddenWindows = (prayerTimes, day = new Date()) => {
+    if (!prayerTimes || prayerTimes.length < 5) return [];
+    const at = (h, m, addMin = 0) => new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m + addMin, 0, 0);
+    const [fajr, dhuhr, , maghrib] = prayerTimes;
+    const bounds = {
+        sunrise: fajr.endHour != null ? [at(fajr.endHour, fajr.endMin), at(fajr.endHour, fajr.endMin, 15)] : null,
+        zawal: [at(dhuhr.startHour, dhuhr.startMin, -12), at(dhuhr.startHour, dhuhr.startMin)],
+        sunset: [at(maghrib.startHour, maghrib.startMin, -15), at(maghrib.startHour, maghrib.startMin)],
+    };
+    return FORBIDDEN_WINDOWS
+        .filter((w) => bounds[w.key])
+        .map((w) => ({ ...w, start: bounds[w.key][0], end: bounds[w.key][1] }));
+};
+
+/**
+ * Live forbidden-time status: the window running now (or null), the next one, and a countdown
+ * to the end of the running window / the start of the next one.
+ */
+export const getForbiddenStatus = (prayerTimes, now = new Date()) => {
+    const today = getForbiddenWindows(prayerTimes, now);
+    if (!today.length) return null;
+
+    const active = today.find((w) => now >= w.start && now < w.end) || null;
+    let next = today.find((w) => w.start > now);
+    if (!next) {
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        next = getForbiddenWindows(prayerTimes, tomorrow)[0];
+    }
+
+    const target = active ? active.end : next.start;
+    const remainingSeconds = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000));
+
+    return {
+        active,
+        next,
+        remainingSeconds,
+        formatted: formatDuration(remainingSeconds),
+    };
+};

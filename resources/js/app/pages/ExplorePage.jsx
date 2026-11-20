@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Loader2, BookOpen, ScrollText, TriangleAlert, ChevronRight, Info } from 'lucide-react';
+import { Search, Loader2, BookOpen, ScrollText, TriangleAlert, ChevronRight, Info, Sparkles } from 'lucide-react';
 import { Layout } from '../components/Layout';
+import { SmartSearchInput, addRecentSearch } from '../components/SmartSearchInput';
 import { PageHero } from '../components/PageHero';
 import { DuaHandsIcon } from '../components/IslamicIcons';
 import { hapticImpact } from '../native';
@@ -113,6 +114,8 @@ export function ExplorePage() {
         const value = text.trim();
         if (!value) return;
         hapticImpact();
+        addRecentSearch(value);
+        setInput(value);
         setSearchParams({ q: value });
     };
 
@@ -166,26 +169,16 @@ export function ExplorePage() {
 
     return (
         <Layout>
-            <PageHero ar="اطلب العلم" title="জানুন" sub="প্রশ্ন বা বিষয় লিখুন (বাংলা বা Banglish) — কুরআন, হাদিস ও দোয়া থেকে মিলিয়ে দেখানো হবে" />
+            <PageHero ar="اطلب العلم" title="জানুন" sub="যেকোনোভাবে প্রশ্ন লিখুন (বাংলা, Banglish বা English) — প্রশ্ন বুঝে কুরআন, হাদিস ও দোয়া থেকে সঠিক ফলাফল দেখানো হবে" />
 
             <div className="mx-auto max-w-3xl px-4 -mt-6 relative z-10">
-                <form
-                    onSubmit={(e) => { e.preventDefault(); ask(input); }}
-                    className="flex items-center gap-2 rounded-2xl bg-card border border-border shadow-md p-2"
-                >
-                    <Search className="w-5 h-5 text-muted-foreground ml-2 shrink-0" />
-                    <input
-                        type="search"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="যেমন: ধৈর্য নিয়ে কুরআনে কী বলা হয়েছে?"
-                        maxLength={200}
-                        className="flex-1 min-w-0 bg-transparent outline-none text-sm md:text-base py-2"
-                    />
-                    <button type="submit" disabled={loading} className="shrink-0 px-4 py-2 rounded-xl bg-primary text-gold font-bold text-sm native-press disabled:opacity-60">
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'খুঁজুন'}
-                    </button>
-                </form>
+                <SmartSearchInput
+                    value={input}
+                    onChange={setInput}
+                    onSearch={ask}
+                    loading={loading}
+                    placeholder="যেমন: ধৈর্য নিয়ে কুরআনে কী বলা হয়েছে?"
+                />
 
                 <div className="mt-4 flex flex-wrap gap-2">
                     {topics.map((t) => (
@@ -220,7 +213,7 @@ export function ExplorePage() {
                 {loading && (
                     <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
                         <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
-                        <p className="text-sm">কুরআন, হাদিস ও দোয়া থেকে খোঁজা হচ্ছে...</p>
+                        <p className="text-sm">প্রশ্নটি বুঝে কুরআন, হাদিস ও দোয়া থেকে খোঁজা হচ্ছে...</p>
                     </div>
                 )}
 
@@ -230,6 +223,21 @@ export function ExplorePage() {
 
                 {result && !loading && !error && (
                     <>
+                        {result.ai?.understood && (
+                            <div className="rounded-2xl bg-gradient-to-br from-[#0a4232] to-[#062b20] border border-gold/35 p-4 text-primary-foreground shadow-md">
+                                <p className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gold bg-gold/15 border border-gold/30 px-2.5 py-0.5 rounded-full">
+                                    <Sparkles className="w-3.5 h-3.5" />
+                                    AI যা বুঝেছে
+                                </p>
+                                <p className="mt-2 text-sm md:text-base text-white leading-relaxed">{result.ai.understood}</p>
+                                {result.ai.corrected_query && result.ai.corrected_query !== result.query && (
+                                    <p className="mt-1.5 text-xs text-emerald-100/75">
+                                        খোঁজা হয়েছে: <span className="font-semibold text-gold">{result.ai.corrected_query}</span>
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
                         {result.is_fiqh && (
                             <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex gap-3 text-amber-900 dark:text-amber-200">
                                 <TriangleAlert className="w-5 h-5 shrink-0 mt-0.5" />
@@ -240,15 +248,10 @@ export function ExplorePage() {
                             </div>
                         )}
 
-                        {Object.keys(result.converted || {}).length > 0 && (
-                            <p className="text-xs text-muted-foreground">
+                        {!result.ai && result.converted_query && (
+                            <p className="text-sm text-muted-foreground">
                                 বাংলায় বুঝে খোঁজা হয়েছে:{' '}
-                                {Object.entries(result.converted).map(([latin, bangla], i) => (
-                                    <span key={latin}>
-                                        {i > 0 && ', '}
-                                        <span className="font-semibold text-foreground">{latin}</span> → <span className="font-semibold text-primary">{bangla}</span>
-                                    </span>
-                                ))}
+                                <span className="font-semibold text-primary">“{result.converted_query}”</span>
                             </p>
                         )}
 
@@ -258,6 +261,7 @@ export function ExplorePage() {
                                     ? <>«{result.topics.join('», «')}» বিষয়ে </>
                                     : <>«{result.query}» এর জন্য </>}
                                 কুরআন, হাদিস ও দোয়া থেকে {total}টি ফলাফল পাওয়া গেছে।
+                                {' '}পুরো প্রশ্নের সাথে যেগুলো সবচেয়ে বেশি মেলে, সেগুলো আগে দেখানো হয়েছে।
                             </p>
                         ) : (
                             <div className="text-center py-12">
@@ -268,11 +272,32 @@ export function ExplorePage() {
 
                         {order.map((kind) => sections[kind])}
 
+                        {result.ai?.related?.length > 0 && (
+                            <section className="space-y-2">
+                                <h2 className="text-sm font-bold text-foreground">আরও জানতে পারেন</h2>
+                                <div className="flex flex-col gap-2">
+                                    {result.ai.related.map((r) => (
+                                        <button
+                                            key={r}
+                                            type="button"
+                                            onClick={() => ask(r)}
+                                            className="flex items-center gap-2 text-left rounded-xl bg-card border border-border hover:border-gold/50 px-3.5 py-2.5 text-sm text-foreground native-press"
+                                        >
+                                            <Search className="w-4 h-4 text-gold shrink-0" />
+                                            <span className="flex-1 min-w-0">{r}</span>
+                                            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
                         {total > 0 && (
                             <p className="flex gap-2 text-[11px] text-muted-foreground leading-relaxed border-t border-border pt-4">
                                 <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                                ফলাফলগুলো আপনার লেখা শব্দ ও সংশ্লিষ্ট শব্দ মিলিয়ে হাসানার কুরআন, হাদিস ও দোয়ার সংগ্রহ থেকে খোঁজা হয়েছে —
-                                কোনো ব্যাখ্যা বা মতামত যোগ করা হয়নি। প্রতিটি লেখার সাথে তার সূত্র দেওয়া আছে।
+                                {result.ai
+                                    ? 'AI শুধু আপনার প্রশ্ন বুঝে খোঁজার শব্দ বের করেছে ও ফলাফল সাজিয়েছে। দেখানো সব আয়াত, হাদিস ও দোয়া হাসানার যাচাইকৃত সংগ্রহ থেকে নেওয়া — AI কোনো ব্যাখ্যা বা মতামত যোগ করেনি। প্রতিটি লেখার সাথে তার সূত্র দেওয়া আছে।'
+                                    : 'ফলাফলগুলো আপনার লেখা শব্দ ও সংশ্লিষ্ট শব্দ মিলিয়ে হাসানার কুরআন, হাদিস ও দোয়ার সংগ্রহ থেকে খোঁজা হয়েছে — কোনো ব্যাখ্যা বা মতামত যোগ করা হয়নি। প্রতিটি লেখার সাথে তার সূত্র দেওয়া আছে।'}
                             </p>
                         )}
                     </>

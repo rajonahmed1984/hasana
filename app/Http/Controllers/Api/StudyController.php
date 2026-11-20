@@ -10,23 +10,32 @@ use App\Models\HadithCategory;
 use App\Models\Surah;
 use App\Services\Banglish;
 use App\Services\DailyAyah;
+use App\Services\ExploreAI;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Random\Engine\Mt19937;
 use Random\Randomizer;
 
 /**
- * Study helpers that work without any paid AI:
- * - explore(): "জানুন" — answers a question / topic with matching ayahs, hadiths and duas from our own data
+ * Study helpers:
+ * - explore(): "জানুন" — answers a question / topic with matching ayahs, hadiths and duas from our own data.
+ *   With an Anthropic key set, Claude reads the question and ranks the matches (see ExploreAI);
+ *   without one, keyword search only.
+ * - suggest(): type-ahead suggestions for the search box
  * - words():   word-by-word Bangla meaning of an ayah (from the free quran.com API, cached)
  * - quiz():    a small daily quiz generated from the database
  */
 class StudyController extends Controller
 {
-    private const MAX_TERMS = 12;
+    // At most this many concepts (parts) of a question are searched
+    private const MAX_CONCEPTS = 6;
+
+    // How much covering a topic concept is worth in the score (plain words: 40-70, AI keywords: 100)
+    private const TOPIC_IMPORTANCE = 150;
 
     public function topics(): JsonResponse
     {
@@ -47,9 +56,16 @@ class StudyController extends Controller
         $query = (string) $request->query('q');
         [$banglaQuery, $converted] = $this->convertBanglish($query);
 
-        $parsed = ['converted' => $converted, ...$this->parseQuery($banglaQuery), 'query' => $query];
+        $parsed = [
+            'converted' => $converted,
+            // The whole sentence as it was understood, shown instead of word-by-word conversions
+            'converted_query' => $converted ? trim(preg_replace('/\s+/u', ' ', $banglaQuery)) : null,
+            ...$this->parseQuery($banglaQuery),
+            'query' => $query,
+        ];
 
-        if (! $parsed['terms']) {
+        if (! $parsed['concepts']) {
+            unset($parsed['concepts']);
             return response()->json([
                 ...$parsed,
                 'ayahs' => [],
@@ -58,14 +74,175 @@ class StudyController extends Controller
             ]);
         }
 
-        $cacheKey = 'explore:' . md5(json_encode($parsed['terms']));
+        if (ExploreAI::enabled()) {
+            $normalized = mb_strtolower(trim(preg_replace('/\s+/u', ' ', Banglish::nfc($query))));
+            $aiResult = Cache::remember('explore-ai-v6:' . md5($normalized), now()->addWeek(), fn () => $this->exploreWithAI($query, $parsed));
+            if ($aiResult) {
+                return response()->json($aiResult);
+            }
+        }
+
+        $cacheKey = 'explore-v6:' . md5(json_encode($parsed['concepts']));
         $results = Cache::remember($cacheKey, now()->addDay(), fn () => [
-            'ayahs' => $this->searchAyahs($parsed['terms']),
-            'hadiths' => $this->searchHadiths($parsed['terms']),
-            'duas' => $this->searchDuas($parsed['terms']),
+            'ayahs' => $this->searchAyahs($parsed['concepts']),
+            'hadiths' => $this->searchHadiths($parsed['concepts']),
+            'duas' => $this->searchDuas($parsed['concepts']),
         ]);
 
-        return response()->json([...$parsed, ...$results]);
+        unset($parsed['concepts']);
+        return response()->json([...$parsed, ...$results, 'ai' => null]);
+    }
+
+    /**
+     * Claude reads the question → its keywords and topics widen our search → Claude ranks what we found.
+     * Returns null when the AI is unavailable, so the caller falls back to the keyword search
+     * (null is not cached by Cache::remember, so the next request tries the AI again).
+     */
+    private function exploreWithAI(string $query, array $parsed): ?array
+    {
+        $topics = config('hasana_explore.topics');
+        $ai = ExploreAI::understand($query, array_map(fn ($t) => $t['label'], $topics));
+        if (! $ai) {
+            return null;
+        }
+
+        // The AI's topics and keywords become extra concepts next to the ones read from the sentence
+        $concepts = $parsed['concepts'];
+        $topicLabels = $parsed['topics'];
+        foreach ($ai['topics'] as $key) {
+            if (in_array($topics[$key]['label'], $topicLabels, true)) {
+                continue;
+            }
+            $topicLabels[] = $topics[$key]['label'];
+            $group = [];
+            foreach ($topics[$key]['terms'] as $i => $term) {
+                $group[$term] = $i < 3 ? 3 : 1;
+            }
+            $concepts[] = ['importance' => self::TOPIC_IMPORTANCE, 'terms' => $group];
+        }
+        $known = $this->flattenConcepts($concepts);
+        foreach ($ai['keywords'] as $word) {
+            $word = mb_strtolower(Banglish::nfc($word));
+            if (mb_strlen($word) >= 2 && ! isset($known[$word])) {
+                $concepts[] = ['importance' => 100, 'terms' => [$word => 3]];
+            }
+        }
+        $concepts = $this->finishConcepts(array_slice($concepts, 0, self::MAX_CONCEPTS + 4));
+        $terms = $this->flattenConcepts($concepts);
+
+        // A wider net than the final list, so the ranking has something to choose from
+        $found = [
+            'ayah' => $concepts ? $this->searchAyahs($concepts, 16) : [],
+            'hadith' => $concepts ? $this->searchHadiths($concepts, 12) : [],
+            'dua' => $concepts ? $this->searchDuas($concepts, 8) : [],
+        ];
+        $limits = ['ayah' => 8, 'hadith' => 6, 'dua' => 5];
+
+        $ranking = ExploreAI::rank($query, $ai['understood'], [
+            'ayah' => collect($found['ayah'])->mapWithKeys(fn ($a) => [$a['id'] => $a['text_bn']])->all(),
+            'hadith' => collect($found['hadith'])->mapWithKeys(fn ($h) => [$h['id'] => $h['text_bn']])->all(),
+            'dua' => collect($found['dua'])->mapWithKeys(fn ($d) => [$d['id'] => "{$d['title']} — {$d['text_bn']}"])->all(),
+        ]);
+
+        $results = [];
+        foreach ($found as $kind => $items) {
+            $byId = collect($items)->keyBy('id');
+            $ordered = $ranking
+                ? collect($ranking[$kind])->map(fn ($id) => $byId[$id])->all()
+                : $items;
+            // If the ranking kept nothing of a kind while the database had strong matches, show the top few
+            if ($ranking && ! $ordered && ! $ranking['ayah'] && ! $ranking['hadith'] && ! $ranking['dua']) {
+                $ordered = array_slice($items, 0, 3);
+            }
+            $results[$kind] = array_values(array_slice($ordered, 0, $limits[$kind]));
+        }
+
+        return [
+            'query' => $query,
+            'converted' => $parsed['converted'],
+            'converted_query' => $parsed['converted_query'],
+            'terms' => $terms,
+            'topics' => array_values(array_unique($topicLabels)),
+            'focus' => $ai['focus'] ?? $parsed['focus'],
+            'is_fiqh' => $ai['is_fiqh'] || $parsed['is_fiqh'],
+            'ayahs' => $results['ayah'],
+            'hadiths' => $results['hadith'],
+            'duas' => $results['dua'],
+            'ai' => [
+                'understood' => $ai['understood'],
+                'corrected_query' => $ai['corrected_query'],
+                'related' => $ai['related'],
+                'ranked' => $ranking !== null,
+            ],
+        ];
+    }
+
+    /**
+     * Type-ahead suggestions while the user types (no AI, so it answers instantly):
+     * matching topics turned into ready questions, dua titles and surah names.
+     */
+    public function suggest(Request $request): JsonResponse
+    {
+        $request->validate(['q' => 'nullable|string|max:100']);
+        $raw = trim((string) $request->query('q'));
+        // One letter matches almost everything
+        if (mb_strlen($raw) < 2) {
+            return response()->json(['suggestions' => []]);
+        }
+
+        [$bangla] = $this->convertBanglish($raw);
+        $needle = mb_strtolower(trim(Banglish::nfc($bangla)));
+        $tokens = preg_split('/\s+/u', $needle, -1, PREG_SPLIT_NO_EMPTY);
+        $last = end($tokens) ?: $needle;
+
+        $matches = fn (string $word) => ($w = mb_strtolower(Banglish::nfc($word))) !== ''
+            && (str_contains($w, $needle) || str_contains($needle, $w) || (mb_strlen($last) >= 2 && str_starts_with($w, $last)));
+
+        $suggestions = [];
+        foreach (config('hasana_explore.topics') as $topic) {
+            $words = [$topic['label'], ...$topic['aliases'], ...$topic['terms']];
+            if (! collect($words)->contains($matches)) {
+                continue;
+            }
+            $label = $topic['label'];
+            $suggestions[] = ['text' => $label, 'type' => 'topic'];
+            $suggestions[] = ['text' => "{$label} নিয়ে কুরআনে কী বলা হয়েছে?", 'type' => 'question'];
+            $suggestions[] = ['text' => "{$label} সম্পর্কে হাদিস", 'type' => 'question'];
+            $suggestions[] = ['text' => "{$label} বিষয়ে দোয়া", 'type' => 'question'];
+            if (count($suggestions) >= 8) {
+                break;
+            }
+        }
+
+        if (mb_strlen($needle) >= 2) {
+            Dua::query()->active()
+                ->where('title', 'like', '%' . $needle . '%')
+                ->orderBy('sort_order')
+                ->limit(4)
+                ->pluck('title')
+                ->each(function ($title) use (&$suggestions) {
+                    $suggestions[] = ['text' => $title, 'type' => 'dua'];
+                });
+
+            Surah::query()
+                ->where(fn ($q) => $q
+                    ->where('meta->name_bn', 'like', '%' . $needle . '%')
+                    ->orWhere('name_en', 'like', '%' . $raw . '%'))
+                ->orderBy('number')
+                ->limit(3)
+                ->get(['number', 'slug', 'name_en', 'meta'])
+                ->each(function (Surah $surah) use (&$suggestions) {
+                    $suggestions[] = [
+                        'text' => 'সূরা ' . ($surah->meta['name_bn'] ?? $surah->name_en),
+                        'type' => 'surah',
+                        'link' => "/surah/{$surah->slug}",
+                    ];
+                });
+        }
+
+        return response()->json([
+            'suggestions' => collect($suggestions)->unique('text')->take(10)->values(),
+        ]);
     }
 
     /**
@@ -75,16 +252,23 @@ class StudyController extends Controller
     private function convertBanglish(string $q): array
     {
         $dictionary = config('hasana_explore.latin');
+        $suffixes = config('hasana_explore.latin_suffixes');
         $converted = [];
 
-        $banglaQuery = preg_replace_callback("/[A-Za-z']+/", function ($m) use ($dictionary, &$converted) {
-            $word = strtolower($m[0]);
+        // A word optionally followed by a suffix typed apart ("nari der" → নারী + দের = নারীদের)
+        $suffixAlt = implode('|', array_map('preg_quote', array_keys($suffixes)));
+        $pattern = "/([A-Za-z']+)(?:\\s+({$suffixAlt}))?(?![A-Za-z'])/i";
+
+        $banglaQuery = preg_replace_callback($pattern, function ($m) use ($dictionary, $suffixes, &$converted) {
+            $word = strtolower($m[1]);
             $bangla = $dictionary[$word]
                 ?? $dictionary[rtrim($word, 's')]
                 ?? Banglish::toBangla($word);
+            $suffix = isset($m[2]) && $m[2] !== '' ? $suffixes[strtolower($m[2])] : '';
             if ($bangla === null) {
                 return $m[0];
             }
+            $bangla .= $suffix;
             $converted[$m[0]] = $bangla;
             return $bangla;
         }, $q);
@@ -132,7 +316,9 @@ class StudyController extends Controller
             return false;
         };
 
-        $terms = [];
+        // The question is split into concepts: "নারীদের পর্দা নিয়ে কী আছে" → [নারী], [পর্দা].
+        // Each concept is a group of interchangeable words; results that cover every concept rank first.
+        $concepts = [];
         $topics = [];
         $consumed = [];
         foreach ($config['topics'] as $topic) {
@@ -142,11 +328,15 @@ class StudyController extends Controller
                 continue;
             }
             $topics[] = $topic['label'];
+            $group = [];
             foreach ($topic['terms'] as $i => $term) {
                 // The first terms are the topic's core words
-                $terms[$term] = max($terms[$term] ?? 0, $i < 3 ? 3 : 1);
+                $group[$term] = $i < 3 ? 3 : 1;
             }
-            foreach ($words as $w) {
+            $concepts[] = ['importance' => self::TOPIC_IMPORTANCE, 'terms' => $group];
+            // Only the topic's own names absorb a word of the sentence; any other word stays a concept
+            // of its own ("বাবা মায়ের সাথে সদ্ব্যবহার" → [বাবা-মা], [সদ্ব্যবহার]), so texts with both rank first
+            foreach ([...$topic['aliases'], $topic['label']] as $w) {
                 $w = mb_strtolower($w);
                 foreach ($tokens as $token) {
                     // Multi-word aliases ("মন খারাপ") cover each of their words
@@ -157,28 +347,28 @@ class StudyController extends Controller
             }
         }
 
-        // Words that are not part of a known topic are searched as they are
+        // Words that are not part of a known topic are searched by their stem ("পর্দার" → "পর্দা")
         // (very short ones like "মা" would match inside unrelated words, so they are skipped)
+        $seen = [];
         foreach ($tokens as $token) {
-            if (! isset($consumed[$token]) && mb_strlen($token) >= 3) {
-                $terms[$token] = max($terms[$token] ?? 0, 2);
+            $stem = $this->stem($token);
+            if (! isset($consumed[$token]) && ! isset($seen[$stem]) && mb_strlen($stem) >= 3 && ! in_array($stem, $config['stopwords'], true)) {
+                $seen[$stem] = true;
+                // A plain word counts less than a topic, and a common word less than a specific one
+                // ("সুদ খাওয়ার শাস্তি": the subject is সুদ, not খাওয়া), so it can't outweigh the subject
+                $concepts[] = [
+                    'importance' => 40 + 15 * ($this->rarity($stem) - 1),
+                    'terms' => [$stem => 2] + array_fill_keys($this->synonymsOf($stem), 2),
+                ];
             }
         }
 
-        arsort($terms);
-        $terms = array_slice($terms, 0, self::MAX_TERMS, true);
-
-        // Our texts mix both encodings of য় / ড় / ঢ় (one code point, or letter + nukta): search both
-        foreach ($terms as $term => $weight) {
-            $composed = Banglish::composed($term);
-            if ($composed !== $term) {
-                $terms[$composed] = $weight;
-            }
-        }
+        $concepts = $this->finishConcepts(array_slice($concepts, 0, self::MAX_CONCEPTS));
 
         return [
             'query' => $q,
-            'terms' => $terms,
+            'concepts' => $concepts,
+            'terms' => $this->flattenConcepts($concepts),
             'topics' => $topics,
             'focus' => $focus,
             'is_fiqh' => $isFiqh,
@@ -186,24 +376,164 @@ class StudyController extends Controller
     }
 
     /**
-     * Relevance score SQL: for each term, how often it occurs in the column (counted up to 3),
-     * times the term's and the column's weight. Rows scoring 0 don't mention any term.
+     * Our texts mix both encodings of য় / ড় / ঢ় (one code point, or letter + nukta): every term is
+     * searched in both. Also caps each group's size so the score SQL stays small.
      */
-    private function scoreSql(array $columns, array $terms): array
+    private function finishConcepts(array $concepts): array
+    {
+        return array_values(array_filter(array_map(function (array $concept) {
+            $group = $concept['terms'];
+            arsort($group);
+            $group = array_slice($group, 0, 8, true);
+            foreach ($group as $term => $weight) {
+                $composed = Banglish::composed((string) $term);
+                if ($composed !== (string) $term) {
+                    $group[$composed] = $weight;
+                }
+            }
+            return $group ? ['importance' => $concept['importance'], 'terms' => $group] : null;
+        }, $concepts)));
+    }
+
+    /** All terms of all concepts [term => weight], for the FULLTEXT pre-filter and for highlighting. */
+    private function flattenConcepts(array $concepts): array
+    {
+        $terms = [];
+        foreach ($concepts as $concept) {
+            foreach ($concept['terms'] as $term => $weight) {
+                $terms[$term] = max($terms[$term] ?? 0, $weight);
+            }
+        }
+        arsort($terms);
+        return $terms;
+    }
+
+    /**
+     * Other words for a plain word, from the 'synonyms' groups in config/hasana_explore.php
+     * (people write "পুরস্কার", translations say "প্রতিদান").
+     */
+    private function synonymsOf(string $stem): array
+    {
+        foreach (config('hasana_explore.synonyms', []) as $group) {
+            foreach ($group as $word) {
+                $word = Banglish::nfc($word);
+                if ($stem === $word || (mb_strlen($word) >= 3 && str_starts_with($stem, $word))) {
+                    return array_values(array_diff(array_map([Banglish::class, 'nfc'], $group), [$stem]));
+                }
+            }
+        }
+        return [];
+    }
+
+    /**
+     * Strip a Bangla case / plural ending so the word matches all its forms:
+     * নারীদের / নারীরা / নারীকে → নারী, পর্দার → পর্দা, মানুষের → মানুষ.
+     * "র" / "রা" / "কে" are only taken off after a vowel sign, so অন্তর or আকাশকে-like roots stay whole.
+     */
+    private function stem(string $token): string
+    {
+        $vowelSign = '[\x{09BE}-\x{09CC}]';
+        $rules = [
+            '/^(.{2,}?)(দেরকে|দের|গুলো|গুলি|গুলা|েরা|ের)$/u',
+            "/^(.{2,}?{$vowelSign})(রা|র|কে)$/u",
+        ];
+        foreach ($rules as $rule) {
+            if (preg_match($rule, $token, $m)) {
+                return $m[1];
+            }
+        }
+        return $token;
+    }
+
+    /**
+     * How specific a term is, from how many ayahs and hadiths contain it: a rare word like
+     * "পর্দা" says more about the question than a common one like "নারী" or "আল্লাহ".
+     * Returns a multiplier from 1 (very common) to 3 (rare). Cached, as the texts rarely change.
+     */
+    private function rarity(string $term): int
+    {
+        // Both encodings of য় / ড় share one rarity; multi-word terms are judged by their first word
+        $word = Banglish::nfc(explode(' ', $term)[0]);
+        $freq = Cache::remember('explore-freq:' . md5($word), now()->addMonth(), function () use ($word) {
+            // search_words holds every word of our texts with its frequency (php artisan search:build-words);
+            // a prefix lookup on its unique index takes a few milliseconds
+            $sum = 0;
+            foreach (array_unique([$word, Banglish::composed($word)]) as $form) {
+                $sum += (int) DB::table('search_words')->where('word', 'like', addcslashes($form, '%_\\') . '%')->sum('freq');
+            }
+            return $sum;
+        });
+
+        return match (true) {
+            $freq <= 80 => 3,
+            $freq <= 500 => 2,
+            default => 1,
+        };
+    }
+
+    /**
+     * SQL test (a sprintf pattern taking the column) and its binding for "the text contains this term".
+     * Short words (3 letters or fewer: সুদ, রাগ) must stand as a word or carry a common ending, so
+     * "সুদ" finds সুদ / সুদের / সুদখোর but not সুদক্ষ / সুদূর / মাসুদ. Longer words use a plain, much
+     * faster substring test; they rarely hide inside unrelated words.
+     */
+    private function matchSql(string $term): array
+    {
+        $length = mb_strlen($term);
+        if ($length > 5) {
+            return ['(LOCATE(?, %s) > 0)', $term];
+        }
+
+        $letter = '\x{0980}-\x{09FF}\x{200C}\x{200D}';
+        $start = "(^|[^{$letter}])" . addcslashes($term, '.^$*+?()[]{}|\\');
+        if ($length > 3) {
+            // 4-5 letters: must start a word ("রিবা" is not in "পরিবার"), any ending allowed
+            return ['(%s REGEXP ?)', $start];
+        }
+
+        // 3 letters or fewer: a whole word or the word plus a common ending
+        $endings = 'ের|এর|কে|রা|দের|খোর|ও|ই|টি|টা|গুলো|সমূহ';
+        return ['(%s REGEXP ?)', "{$start}($|[^{$letter}]|{$endings})"];
+    }
+
+    /**
+     * Relevance score SQL, built so the whole sentence matters, not single words:
+     * for every concept the row mentions it earns that concept's importance (a topic 150, a plain word
+     * 40-70 by how specific it is), plus the weight × rarity of the best word it used for it. So a text
+     * covering the whole question outranks one that repeats a single word, and the subject of the
+     * question outweighs incidental words; among equal coverage, specific words beat common ones.
+     * Rows scoring 0 mention no concept.
+     */
+    private function scoreSql(array $columns, array $concepts): array
     {
         $parts = [];
         $bindings = [];
 
-        foreach ($columns as $column => $columnWeight) {
-            $col = "COALESCE({$column}, '')";
-            foreach ($terms as $term => $weight) {
-                $parts[] = "LEAST(3, (CHAR_LENGTH({$col}) - CHAR_LENGTH(REPLACE({$col}, ?, ''))) DIV "
-                    . mb_strlen((string) $term) . ') * ' . ((int) $weight * (int) $columnWeight);
-                $bindings[] = (string) $term;
+        foreach ($concepts as $concept) {
+            $importance = (int) $concept['importance'];
+            $best = [];
+            $extra = [];
+            $groupBindings = [];
+            foreach ($concept['terms'] as $term => $weight) {
+                $term = (string) $term;
+                $rarity = $this->rarity($term);
+                [$test, $needle] = $this->matchSql($term);
+                foreach ($columns as $column => $columnWeight) {
+                    $w = (int) $weight * $rarity * (int) $columnWeight;
+                    $hit = sprintf($test, "COALESCE({$column}, '')");
+                    $best[] = "{$hit} * " . ($importance + $w);
+                    $extra[] = "{$hit} * {$w}";
+                    $groupBindings[] = $needle;
+                }
             }
+            // The concept's importance for covering it + the best word's weight, plus a little for each further
+            // synonym of the same concept the text uses (a text about the concept uses several)
+            $parts[] = (count($best) === 1 ? $best[0] : 'GREATEST(' . implode(', ', $best) . ')')
+                . ' + (' . implode(' + ', $extra) . ') DIV 2';
+            array_push($bindings, ...$groupBindings, ...$groupBindings);
         }
 
-        return [implode(' + ', $parts), $bindings];
+        return [implode(' + ', $parts) ?: '0', $bindings];
     }
 
     /**
@@ -219,20 +549,22 @@ class StudyController extends Controller
             ->implode(' ');
     }
 
-    private function searchAyahs(array $terms): array
+    private function searchAyahs(array $concepts, int $limit = 8): array
     {
-        [$score, $bindings] = $this->scoreSql(['text_bn' => 1], $terms);
+        [$score, $bindings] = $this->scoreSql(['text_bn' => 1], $concepts);
 
         return Ayah::query()
             ->select(['id', 'surah_id', 'number', 'text_ar', 'text_bn'])
             ->selectRaw("({$score}) AS score", $bindings)
-            ->whereFullText('text_bn', $this->fulltextQuery($terms), ['mode' => 'boolean'])
+            ->whereFullText('text_bn', $this->fulltextQuery($this->flattenConcepts($concepts)), ['mode' => 'boolean'])
             ->where('is_active', true)
             ->having('score', '>', 0)
             ->with('surah:id,number,slug,name_en,name_ar,meta')
             ->orderByDesc('score')
+            // Equal scores: a short ayah that mentions the concepts is more about them than a long one
+            ->orderByRaw('CHAR_LENGTH(text_bn)')
             ->orderBy('id')
-            ->limit(8)
+            ->limit($limit)
             ->get()
             ->map(function (Ayah $ayah) {
                 $surahName = $ayah->surah?->meta['name_bn'] ?? $ayah->surah?->name_en;
@@ -250,22 +582,26 @@ class StudyController extends Controller
             ->all();
     }
 
-    private function searchHadiths(array $terms): array
+    private function searchHadiths(array $concepts, int $limit = 6): array
     {
-        [$score, $bindings] = $this->scoreSql(['text_bn' => 1], $terms);
+        [$score, $bindings] = $this->scoreSql(['text_bn' => 1], $concepts);
 
         return Hadith::query()
             ->select(['id', 'hadith_category_id', 'title', 'text_bn', 'reference'])
             ->selectRaw("({$score}) AS score", $bindings)
-            ->whereFullText('text_bn', $this->fulltextQuery($terms), ['mode' => 'boolean'])
+            ->whereFullText('text_bn', $this->fulltextQuery($this->flattenConcepts($concepts)), ['mode' => 'boolean'])
             ->active()
             ->having('score', '>', 0)
             ->with('category:id,name')
             // Among equally good matches, shorter hadiths are easier to read
             ->orderByDesc('score')
             ->orderByRaw('CHAR_LENGTH(text_bn)')
-            ->limit(6)
+            // Fetch extra: the collections hold some hadiths twice, duplicates are dropped below
+            ->limit($limit * 2)
             ->get()
+            ->unique(fn (Hadith $hadith) => mb_substr(preg_replace('/\s+/u', '', $hadith->text_bn), 0, 160))
+            ->take($limit)
+            ->values()
             ->map(fn (Hadith $hadith) => [
                 'id' => $hadith->id,
                 'title' => $hadith->title,
@@ -276,9 +612,9 @@ class StudyController extends Controller
             ->all();
     }
 
-    private function searchDuas(array $terms): array
+    private function searchDuas(array $concepts, int $limit = 5): array
     {
-        [$score, $bindings] = $this->scoreSql(['title' => 3, 'text_bn' => 1], $terms);
+        [$score, $bindings] = $this->scoreSql(['title' => 3, 'text_bn' => 1], $concepts);
 
         return Dua::query()
             ->select(['id', 'title', 'text_ar', 'text_bn', 'transliteration', 'reference'])
@@ -287,7 +623,7 @@ class StudyController extends Controller
             ->having('score', '>', 0)
             ->orderByDesc('score')
             ->orderBy('sort_order')
-            ->limit(5)
+            ->limit($limit)
             ->get()
             ->map(fn (Dua $dua) => $dua->only(['id', 'title', 'text_ar', 'text_bn', 'transliteration', 'reference']))
             ->all();

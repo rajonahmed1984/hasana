@@ -7,8 +7,10 @@ import {
     MapPin, 
     Share2, 
     Sun,
-    ChevronRight, 
-    Calendar,
+    ChevronRight,
+    CalendarDays,
+    Ban,
+    Leaf,
     Bell,
     BellRing,
     Sparkles,
@@ -23,6 +25,7 @@ import {
 import { DuaHandsIcon, KaabaIcon, TasbihIcon } from '../components/IslamicIcons';
 import { Layout } from '../components/Layout';
 import { ShareCardModal } from '../components/ShareCardModal';
+import { SmartSearchInput } from '../components/SmartSearchInput';
 import { hapticImpact, isNative } from '../native';
 import { 
     isPrayerNotificationEnabled, 
@@ -38,8 +41,12 @@ import {
     requestUserLocation, 
     getAccuratePrayerTimes,
     calculateSolarPrayerTimes,
-    calculatePrayerCountdown
+    calculatePrayerCountdown,
+    isJumuahDay,
+    withJumuah,
+    getForbiddenStatus
 } from '../services/locationService';
+import { getBanglaDate, getHijriFallback } from '../services/banglaCalendar';
 import { subscribeToUpdateState } from '../services/appUpdate';
 
 const quickAccess = [
@@ -67,8 +74,6 @@ const todayKey = () => {
 export function HomePage() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [currentTime, setCurrentTime] = useState('');
-    const [currentDate, setCurrentDate] = useState('');
     const [nowTime, setNowTime] = useState(() => new Date());
     const [notifActive, setNotifActive] = useState(false);
     const [dailyAyah, setDailyAyah] = useState(null);
@@ -86,6 +91,7 @@ export function HomePage() {
     const [shareCardData, setShareCardData] = useState(null);
     const [appUpdateInfo, setAppUpdateInfo] = useState(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [homeQuery, setHomeQuery] = useState('');
 
     // Toggle search card when header search button is clicked or ?search=open in URL
     useEffect(() => {
@@ -258,14 +264,7 @@ export function HomePage() {
     };
 
     useEffect(() => {
-        const updateClock = () => {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('bn-BD-u-nu-latn', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = now.toLocaleDateString('bn-BD-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            setCurrentTime(timeStr);
-            setCurrentDate(dateStr);
-            setNowTime(now);
-        };
+        const updateClock = () => setNowTime(new Date());
         updateClock();
         const interval = setInterval(updateClock, 1000);
         return () => clearInterval(interval);
@@ -326,7 +325,39 @@ export function HomePage() {
         setIsShareModalOpen(true);
     };
 
-    const hijriLabel = dailyContent?.hijri?.label;
+    // While a forbidden prayer time runs, the whole card turns red and counts down to its end
+    const forbidden = getForbiddenStatus(prayerTimes, nowTime);
+    const inForbidden = Boolean(forbidden?.active);
+
+    // On Fridays the Dhuhr tile reads "জুমা"
+    const isFriday = isJumuahDay(nowTime);
+    const displayTimes = withJumuah(prayerTimes, nowTime);
+
+    // Three calendars side by side: Gregorian, Hijri and Bangla
+    const weekday = nowTime.toLocaleDateString('bn-BD', { weekday: 'long' });
+    const banglaDate = getBanglaDate(nowTime);
+    const hijri = dailyContent?.hijri?.day ? dailyContent.hijri : getHijriFallback(nowTime);
+    const dateCells = [
+        {
+            key: 'gregorian',
+            day: nowTime.getDate(),
+            month: nowTime.toLocaleDateString('bn-BD', { month: 'long' }),
+            year: `${nowTime.getFullYear()} খ্রিস্টাব্দ`,
+        },
+        {
+            key: 'hijri',
+            day: hijri?.day ?? '--',
+            month: hijri?.month_bn ?? '—',
+            year: hijri ? `${hijri.year} হিজরি` : '',
+        },
+        {
+            key: 'bangla',
+            day: banglaDate.day,
+            month: banglaDate.monthName,
+            year: `${banglaDate.year} বঙ্গাব্দ`,
+        },
+    ];
+
     const amalTotal = dailyContent?.amal?.length || 0;
     const amalDoneCount = amalDone.filter((i) => i < amalTotal).length;
 
@@ -346,40 +377,61 @@ export function HomePage() {
 
                 <div className="relative mx-auto max-w-5xl px-4 pt-4 pb-10 md:pt-10 md:pb-16">
                     {/* Greeting row */}
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                            <p className="font-arabic text-lg md:text-2xl text-gold leading-tight drop-shadow-[0_1px_6px_rgba(212,175,55,0.35)]">
-                                السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ
-                            </p>
-                            <h1 className="text-xl md:text-3xl font-extrabold text-white mt-0.5">আসসালামু আলাইকুম</h1>
-                            <p className="mt-1.5 text-[11px] md:text-xs text-emerald-100/85 flex items-center gap-1.5 flex-wrap">
-                                <Calendar className="w-3.5 h-3.5 text-gold shrink-0" />
-                                <span>{currentDate || 'আজকের দিন'}</span>
-                                {hijriLabel && (
-                                    <>
-                                        <span className="text-gold/60">•</span>
-                                        <span className="text-gold/90 font-semibold">{hijriLabel}</span>
-                                    </>
-                                )}
-                            </p>
-                        </div>
+                    <div className="flex flex-col items-center text-center">
+                        <p className="font-arabic text-lg md:text-2xl text-gold leading-tight drop-shadow-[0_1px_6px_rgba(212,175,55,0.35)]">
+                            السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ
+                        </p>
+                        <h1 className="text-xl md:text-3xl font-extrabold text-white mt-0.5">আসসালামু আলাইকুম</h1>
 
-                        <button
-                            type="button"
-                            onClick={() => handleDetectLocation(true)}
-                            disabled={locationLoading}
-                            className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/15 border border-gold/40 px-3 py-1.5 text-[11px] md:text-xs text-gold font-semibold backdrop-blur-sm native-press max-w-[45%]"
-                            title="অবস্থান নির্ণয় করুন"
-                        >
-                            {locationLoading
-                                ? <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
-                                : <MapPin className="w-3.5 h-3.5 shrink-0" />}
-                            <span className="truncate">{locationData?.city || 'অবস্থান'}</span>
-                        </button>
+                        {/* Weekday | Jumu'ah / season | location */}
+                        <div className="mt-2.5 inline-flex items-stretch max-w-full rounded-full border border-gold/30 bg-primary-foreground/[0.07] backdrop-blur-sm divide-x divide-gold/20 text-[11px] md:text-xs overflow-hidden">
+                            <span className="inline-flex items-center gap-1 px-3 py-1.5 font-semibold text-emerald-50 whitespace-nowrap">
+                                <CalendarDays className="w-3.5 h-3.5 text-gold" />
+                                {weekday}
+                            </span>
+                            {isFriday ? (
+                                <span className="inline-flex items-center gap-1 px-3 py-1.5 font-bold text-gold bg-gold/15 whitespace-nowrap">
+                                    <Sparkles className="w-3.5 h-3.5" />
+                                    জুমা মুবারক
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-1 px-3 py-1.5 font-medium text-emerald-100/85 whitespace-nowrap">
+                                    <Leaf className="w-3.5 h-3.5 text-gold/80" />
+                                    {banglaDate.season}কাল
+                                </span>
+                            )}
+                            <button
+                                type="button"
+                                onClick={() => handleDetectLocation(true)}
+                                disabled={locationLoading}
+                                className="inline-flex items-center gap-1 min-w-0 px-3 py-1.5 font-semibold text-gold hover:bg-primary-foreground/10 transition native-press"
+                                title="অবস্থান নির্ণয় করুন"
+                            >
+                                {locationLoading
+                                    ? <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                                    : <MapPin className="w-3.5 h-3.5 shrink-0" />}
+                                <span className="truncate max-w-[6.5rem] md:max-w-[10rem]">{locationData?.city || 'অবস্থান'}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Date strip: Gregorian · Hijri · Bangla */}
+                    <div className="mt-3 md:mt-5 grid grid-cols-3 rounded-xl border border-gold/25 bg-primary-foreground/[0.05] backdrop-blur-sm divide-x divide-gold/15 overflow-hidden">
+                        {dateCells.map(({ key, day, month, year }) => (
+                            <div key={key} className="min-w-0 px-1.5 py-2 md:px-3 md:py-2.5 text-center">
+                                <p className="text-[12px] md:text-sm font-bold text-white leading-tight">
+                                    <span className="tabular-nums text-gold">{day}</span> {month}
+                                </p>
+                                <p className="mt-0.5 text-[9.5px] md:text-[11px] text-emerald-100/60 tabular-nums leading-none">{year}</p>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Live prayer card */}
-                    <div className="mt-5 md:mt-8 rounded-3xl border border-gold/35 bg-black/20 backdrop-blur-sm shadow-[0_10px_40px_rgba(0,0,0,0.35)] relative overflow-hidden">
+                    <div className={`mt-5 md:mt-8 rounded-3xl border bg-black/20 backdrop-blur-sm shadow-[0_10px_40px_rgba(0,0,0,0.35)] relative overflow-hidden transition-colors ${
+                        inForbidden ? 'border-rose-400/50' : 'border-gold/35'
+                    }`}>
+                        {inForbidden && <div className="absolute inset-0 bg-gradient-to-b from-rose-500/15 to-transparent pointer-events-none" />}
                         {/* Mosque silhouette backdrop */}
                         <svg viewBox="0 0 240 75" className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-[26rem] max-w-none h-auto text-gold opacity-[0.12] pointer-events-none" fill="none" stroke="currentColor" aria-hidden="true">
                             <path d="M 12 75 C 12 38, 48 16, 120 4 C 192 16, 228 38, 228 75" strokeWidth="2" strokeLinecap="round" />
@@ -393,20 +445,43 @@ export function HomePage() {
 
                         <div className="relative p-4 md:p-6">
                             <div className="md:flex md:items-center md:justify-between md:gap-6">
-                                <div className="text-center md:text-left">
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 border border-gold/45 text-gold text-[11px] md:text-xs font-bold uppercase tracking-wider">
-                                        <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                                        <span>{`বর্তমান ওয়াক্ত: ${countdownData.currentPrayerName}`}</span>
-                                    </span>
+                                <div className="text-center md:text-left md:flex-1 md:min-w-0">
+                                    {inForbidden ? (
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400/50 text-rose-200 text-[11px] md:text-xs font-bold">
+                                            <Ban className="w-3.5 h-3.5 animate-pulse" />
+                                            <span>এখন নামাজের নিষিদ্ধ সময়</span>
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 border border-gold/45 text-gold text-[11px] md:text-xs font-bold">
+                                            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                                            <span>{`বর্তমান ওয়াক্ত: ${countdownData.currentPrayerName}`}</span>
+                                        </span>
+                                    )}
 
-                                    <p className="mt-2.5 text-[2.6rem] leading-none sm:text-5xl md:text-6xl font-black text-gold tracking-tight tabular-nums drop-shadow-[0_2px_14px_rgba(212,175,55,0.45)]">
-                                        {countdownData.formattedCountdown}
+                                    <p className={`mt-2.5 text-[2.6rem] leading-none sm:text-5xl md:text-6xl font-black tracking-tight tabular-nums ${
+                                        inForbidden
+                                            ? 'text-rose-200 drop-shadow-[0_2px_14px_rgba(244,63,94,0.45)]'
+                                            : 'text-gold drop-shadow-[0_2px_14px_rgba(212,175,55,0.45)]'
+                                    }`}>
+                                        {inForbidden ? forbidden.formatted : countdownData.formattedCountdown}
                                     </p>
-                                    <p className="mt-2 text-xs text-emerald-100/90 flex items-center justify-center md:justify-start gap-1.5 flex-wrap">
-                                        <span className="text-gold/90 font-semibold">{countdownData.label}</span>
-                                        <span className="text-gold/50">•</span>
-                                        <span>পরবর্তী: {countdownData.nextPrayerName} ({countdownData.nextPrayerTime})</span>
-                                    </p>
+                                    {inForbidden ? (
+                                        <>
+                                            <p className="mt-2 text-xs text-rose-100/90 flex items-center justify-center md:justify-start gap-1.5 flex-wrap">
+                                                <span className="font-semibold text-rose-200">{forbidden.active.name} শেষ হতে বাকি</span>
+                                                <span className="text-rose-200/50">•</span>
+                                                <span>পরবর্তী: {countdownData.nextPrayerName} ({countdownData.nextPrayerTime})</span>
+                                            </p>
+                                            <p className="mt-1.5 text-[11px] text-rose-100/75">{forbidden.active.note}</p>
+                                        </>
+                                    ) : (
+                                        <p className="mt-2 text-xs text-emerald-100/90 flex items-center justify-center md:justify-start gap-1.5 flex-wrap">
+                                            <span className="font-semibold text-gold/90">{countdownData.label}</span>
+                                            <span className="text-gold/50">•</span>
+                                            <span>পরবর্তী: {countdownData.nextPrayerName} ({countdownData.nextPrayerTime})</span>
+                                        </p>
+                                    )}
+
                                 </div>
 
                                 <div className="mt-4 md:mt-0 flex items-center justify-center gap-2 shrink-0">
@@ -436,8 +511,9 @@ export function HomePage() {
 
                             {/* Today's five waqts */}
                             <div className="mt-4 md:mt-5 grid grid-cols-5 gap-1.5 md:gap-2.5">
-                                {prayerTimes.map((p, i) => {
+                                {displayTimes.map((p, i) => {
                                     const active = i === activePrayerIndex;
+                                    const jumuah = isFriday && p.id === 'dhuhr';
                                     return (
                                         <Link
                                             key={p.id || p.name}
@@ -446,7 +522,9 @@ export function HomePage() {
                                             className={`rounded-2xl px-1 py-2 md:py-3 text-center border transition native-press ${
                                                 active
                                                     ? 'bg-gold text-[#062319] border-gold shadow-[0_4px_18px_rgba(212,175,55,0.45)]'
-                                                    : 'bg-primary-foreground/[0.06] border-primary-foreground/10 text-emerald-50/90 hover:bg-primary-foreground/10'
+                                                    : jumuah
+                                                        ? 'bg-gold/10 border-gold/45 text-emerald-50/90 hover:bg-gold/15'
+                                                        : 'bg-primary-foreground/[0.06] border-primary-foreground/10 text-emerald-50/90 hover:bg-primary-foreground/10'
                                             }`}
                                         >
                                             <p className={`text-[11px] md:text-xs font-bold truncate ${active ? '' : 'text-gold/90'}`}>{p.name}</p>
@@ -506,17 +584,12 @@ export function HomePage() {
             {/* ───── Search (opens from header / shortcut) ───── */}
             {isSearchOpen && (
                 <section className="mx-auto max-w-5xl px-4 mt-5">
-                    <form
+                    {/* Not overflow-hidden: the suggestion list drops below the card */}
+                    <div
                         id="home-search-form"
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            const q = e.currentTarget.elements.q.value.trim();
-                            hapticImpact();
-                            navigate(q ? `/explore?q=${encodeURIComponent(q)}` : '/explore');
-                        }}
-                        className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-2xl border-2 border-gold/50 relative overflow-hidden scroll-mt-28 animate-in fade-in slide-in-from-top-3"
+                        className="rounded-3xl bg-hero text-primary-foreground p-5 md:p-7 shadow-2xl border-2 border-gold/50 relative scroll-mt-28 animate-in fade-in slide-in-from-top-3"
                     >
-                        <div className="absolute inset-0 pattern opacity-30 pointer-events-none" />
+                        <div className="absolute inset-0 rounded-3xl pattern opacity-30 pointer-events-none" />
                         <div className="relative">
                             <div className="flex items-start justify-between gap-3 mb-2">
                                 <div>
@@ -538,22 +611,19 @@ export function HomePage() {
                                     <X className="w-4 h-4" />
                                 </button>
                             </div>
-                            <div className="mt-4 flex items-center gap-2 rounded-2xl bg-card border-2 border-gold/40 p-1.5 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/50 shadow-inner transition">
-                                <Search className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
-                                <input
-                                    id="home-search-input"
-                                    name="q"
-                                    type="search"
-                                    maxLength={200}
-                                    placeholder="যেমন: মন খারাপ হলে কী করব?"
-                                    className="flex-1 min-w-0 bg-transparent outline-none text-sm text-foreground py-2"
-                                />
-                                <button type="submit" className="shrink-0 px-4 py-2 rounded-xl gold-gradient-btn font-bold text-xs native-press cursor-pointer">
-                                    খুঁজুন
-                                </button>
-                            </div>
+                            <SmartSearchInput
+                                className="mt-4"
+                                inputId="home-search-input"
+                                value={homeQuery}
+                                onChange={setHomeQuery}
+                                onSearch={(q) => {
+                                    hapticImpact();
+                                    navigate(`/explore?q=${encodeURIComponent(q)}`);
+                                }}
+                                buttonClassName="gold-gradient-btn"
+                            />
                         </div>
-                    </form>
+                    </div>
                 </section>
             )}
 

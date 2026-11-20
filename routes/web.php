@@ -37,6 +37,7 @@ Route::prefix('api')->name('api.')->middleware(['throttle:60,1,api'])->group(fun
     Route::get('/duas', [ApiDuaController::class, 'index'])->name('hasana.duas.index');
     Route::get('/app/version', [ApiAppVersionController::class, 'show'])->name('app.version');
     Route::get('/explore/topics', [ApiStudyController::class, 'topics'])->name('explore.topics');
+    Route::get('/explore/suggest', [ApiStudyController::class, 'suggest'])->middleware('throttle:90,1,explore-suggest')->name('explore.suggest');
     Route::get('/explore', [ApiStudyController::class, 'explore'])->middleware('throttle:20,1,explore')->name('explore');
     Route::get('/quran/words/{surah}/{ayah}', [ApiStudyController::class, 'words'])->whereNumber(['surah', 'ayah'])->name('quran.words');
     Route::get('/quiz', [ApiStudyController::class, 'quiz'])->name('quiz');
